@@ -1,3 +1,3 @@
 #include "Rook.h"
 
-Rook::Rook() : Piece{'r'} {}
+Rook::Rook() : Piece{"♖"} {}

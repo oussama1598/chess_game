@@ -1,13 +1,14 @@
 #pragma once
+#include <iostream>
 
 class Piece
 {
 protected:
-    char type_;
+    std::string graphic_;
 
 public:
     Piece();
-    Piece(char type);
+    Piece(std::string graphic_);
 
-    char get_type();
+    std::string get_graphic();
 };

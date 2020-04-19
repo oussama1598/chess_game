@@ -1,5 +1,5 @@
 #include "Knight.h"
 
-Knight::Knight() : Piece{'k'}
+Knight::Knight() : Piece{"♘"}
 {
 }

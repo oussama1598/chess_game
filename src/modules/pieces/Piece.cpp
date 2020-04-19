@@ -1,9 +1,9 @@
 #include "Piece.h"
 
-Piece::Piece() : type_{'e'} {}
-Piece::Piece(char type) : type_{type} {}
+Piece::Piece() : graphic_{" "} {}
+Piece::Piece(std::string graphic) : graphic_{graphic} {}
 
-char Piece::get_type()
+std::string Piece::get_graphic()
 {
-    return type_;
+    return graphic_;
 }

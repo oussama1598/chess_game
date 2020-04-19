@@ -1,5 +1,5 @@
 #include "Queen.h"
 
-Queen::Queen() : Piece{'q'}
+Queen::Queen() : Piece{"♕"}
 {
 }

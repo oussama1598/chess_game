@@ -1,5 +1,5 @@
 #include "Pawn.h"
 
-Pawn::Pawn() : Piece{'p'}
+Pawn::Pawn() : Piece{"♙"}
 {
 }

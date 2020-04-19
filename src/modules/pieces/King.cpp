@@ -1,5 +1,5 @@
 #include "King.h"
 
-King::King() : Piece{'K'}
+King::King() : Piece{"♔"}
 {
 }
