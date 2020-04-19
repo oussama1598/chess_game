@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <array>
+#include <map>
+#include <boost/lexical_cast.hpp>
+#include <string>
 #include "pieces/Piece.h"
 #include "pieces/King.h"
 #include "pieces/Queen.h"
@@ -16,12 +19,15 @@ private:
     static const signed int cols{8};
     static const signed int rows{8};
 
+    const std::map<char, int> cols_map_{{'A', 0}, {'B', 1}, {'C', 2}, {'D', 3}, {'E', 4}, {'F', 5}, {'G', 6}, {'H', 7}};
+
 public:
     std::array<std::array<Piece, cols>, 8> pieces_;
 
     Board();
     ~Board();
 
+    void add_piece(std::string place, Piece piece);
     void build_board();
     void render();
 };
