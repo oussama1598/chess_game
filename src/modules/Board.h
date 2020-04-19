@@ -15,13 +15,11 @@
 
 class Board
 {
-private:
+public:
     static const signed int cols{8};
     static const signed int rows{8};
 
-    const std::map<char, int> cols_map_{{'A', 0}, {'B', 1}, {'C', 2}, {'D', 3}, {'E', 4}, {'F', 5}, {'G', 6}, {'H', 7}};
-
-public:
+    const std::map<char, size_t> cols_map_{{'A', 0}, {'B', 1}, {'C', 2}, {'D', 3}, {'E', 4}, {'F', 5}, {'G', 6}, {'H', 7}};
     std::array<std::array<Piece, cols>, 8> pieces_;
 
     Board();

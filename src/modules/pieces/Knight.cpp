@@ -1,5 +1,3 @@
 #include "Knight.h"
 
-Knight::Knight() : Piece{"♘"}
-{
-}
+Knight::Knight(bool is_dark) : Piece{{"♘", "♞"}, is_dark} {}

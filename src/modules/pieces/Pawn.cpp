@@ -1,5 +1,3 @@
 #include "Pawn.h"
 
-Pawn::Pawn() : Piece{"♙"}
-{
-}
+Pawn::Pawn(bool is_dark) : Piece{{"♙", "♟"}, is_dark} {}

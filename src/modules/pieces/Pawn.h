@@ -6,5 +6,5 @@
 class Pawn : public Piece
 {
 public:
-    Pawn();
+    Pawn(bool is_dark = false);
 };

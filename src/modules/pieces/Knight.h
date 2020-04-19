@@ -6,5 +6,5 @@
 class Knight : public Piece
 {
 public:
-    Knight();
+    Knight(bool is_dark = true);
 };

@@ -6,5 +6,5 @@
 class King : public Piece
 {
 public:
-    King();
+    King(bool is_dark = true);
 };

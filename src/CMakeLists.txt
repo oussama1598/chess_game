@@ -23,6 +23,8 @@ set(FILES
 
     modules/pieces/Knight.h
     modules/pieces/Knight.cpp
+
+    modules/Player.h
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${FILES})

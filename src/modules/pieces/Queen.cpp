@@ -1,5 +1,3 @@
 #include "Queen.h"
 
-Queen::Queen() : Piece{"♕"}
-{
-}
+Queen::Queen(bool is_dark) : Piece{{"♕", "♛"}, is_dark} {}

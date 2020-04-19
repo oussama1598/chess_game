@@ -1,5 +1,3 @@
 #include "Bishop.h"
 
-Bishop::Bishop() : Piece{"♗"}
-{
-}
+Bishop::Bishop(bool is_dark) : Piece{{"♗", "♝"}, is_dark} {}
