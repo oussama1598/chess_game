@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="chess_game" targetName="chess_game" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="781184dd-7ee7-4339-a526-c8718bc510f3" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ProjectId" id="1aoWylV1NVJeM3FOUC9MPFAw2o7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
+  </component>
+  <component name="RunManager">
+    <configuration name="chess_game" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="chess_game" TARGET_NAME="chess_game" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="chess_game" RUN_TARGET_NAME="chess_game">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="577" y="196" width="800" height="719" key="#Plugins" timestamp="1587414598041">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state x="577" y="196" width="800" height="719" key="#Plugins/44.25.1876.1055@44.25.1876.1055" timestamp="1587414598041" />
+    <state width="406" height="594" key="GridCell.Tab.0.bottom" timestamp="1587414601776">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state width="406" height="594" key="GridCell.Tab.0.bottom/44.25.1876.1055@44.25.1876.1055" timestamp="1587414601776" />
+    <state width="406" height="594" key="GridCell.Tab.0.center" timestamp="1587414601776">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state width="406" height="594" key="GridCell.Tab.0.center/44.25.1876.1055@44.25.1876.1055" timestamp="1587414601776" />
+    <state width="406" height="594" key="GridCell.Tab.0.left" timestamp="1587414601775">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state width="406" height="594" key="GridCell.Tab.0.left/44.25.1876.1055@44.25.1876.1055" timestamp="1587414601775" />
+    <state width="406" height="594" key="GridCell.Tab.0.right" timestamp="1587414601776">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state width="406" height="594" key="GridCell.Tab.0.right/44.25.1876.1055@44.25.1876.1055" timestamp="1587414601776" />
+    <state x="590" y="247" width="1226" height="737" key="SettingsEditor" timestamp="1587410845042">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state x="590" y="247" width="1226" height="737" key="SettingsEditor/44.25.1876.1055@44.25.1876.1055" timestamp="1587410845042" />
+    <state x="646" y="251" key="run.anything.popup" timestamp="1587410292060">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state x="646" y="251" key="run.anything.popup/44.25.1876.1055@44.25.1876.1055" timestamp="1587410292060" />
+    <state x="645" y="257" width="672" height="678" key="search.everywhere.popup" timestamp="1587414590973">
+      <screen x="44" y="25" width="1876" height="1055" />
+    </state>
+    <state x="645" y="257" width="672" height="678" key="search.everywhere.popup/44.25.1876.1055@44.25.1876.1055" timestamp="1587414590973" />
+  </component>
+</project>

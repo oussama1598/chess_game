@@ -1,0 +1,13 @@
+{
+ "profile_host": "[settings]\narch=x86_64\narch_build=x86_64\nbuild_type=Debug\ncompiler=gcc\ncompiler.libcxx=libstdc++11\ncompiler.version=9\nos=Linux\nos_build=Linux\n[options]\n[build_requires]\n[env]\n",
+ "graph_lock": {
+  "nodes": {
+   "0": {
+    "pref": null,
+    "options": "",
+    "path": "/home/red-scule/Desktop/projects/cpp_projects/chess_game/conanfile.txt"
+   }
+  }
+ },
+ "version": "0.3"
+}
