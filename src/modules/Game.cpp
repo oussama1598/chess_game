@@ -31,7 +31,7 @@ void Game::initialize_game() {
         game_board_.add_piece("G" + fist_row_index_string, new Knight(player.player_id));
         game_board_.add_piece("H" + fist_row_index_string, new Rook(player.player_id));
 
-        for (auto &column : game_board_.cols_map_)
+        for (auto &column : Piece::cols_map_)
             game_board_.add_piece(std::string(1, column.first) + second_row_index_string, new Pawn(player.player_id));
     }
 }
@@ -51,8 +51,8 @@ void Game::make_move(const std::string &from, const std::string &to) {
     if (from == to)
         throw std::runtime_error(Errors::SOURCE_SAME_AS_DESTINATION);
 
-    Piece::piece_coordinates from_piece_coordinates = game_board_.get_piece_coordinates_from_id(from);
-    Piece::piece_coordinates to_piece_coordinates = game_board_.get_piece_coordinates_from_id(to);
+    Piece::piece_coordinates from_piece_coordinates = Piece::get_piece_coordinates_from_id(from);
+    Piece::piece_coordinates to_piece_coordinates = Piece::get_piece_coordinates_from_id(to);
 
     if (from_piece_coordinates.line == -1 || from_piece_coordinates.column == -1)
         throw std::runtime_error(Errors::INVALID_SOURCE_POSITION);
@@ -70,7 +70,7 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     Player source_player = players_.at(source_piece->get_player_id());
 
-    if (!source_piece->is_valid_move(source_player, from_piece_coordinates, to_piece_coordinates))
+    if (!source_piece->is_valid_move(source_player, from, to))
         throw std::runtime_error(Errors::ILLEGAL_MOVE);
 
 //    Piece distance_piece = game_board_.get_piece_at(

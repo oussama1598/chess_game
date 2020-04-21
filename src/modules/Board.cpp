@@ -4,24 +4,12 @@ Board::Board() {
     build_board();
 }
 
-Piece::piece_coordinates Board::get_piece_coordinates_from_id(const std::string &id) {
-    int line = (int) boost::lexical_cast<size_t>(id[1]) - 1;
-
-    // this checks if the id is valid
-    if (cols_map_.find(id[0]) == cols_map_.end() || line > (cols - 1))
-        return {-1, -1};
-
-    int column = cols_map_.at(id[0]);
-
-    return {line, column};
-}
-
 Piece *Board::get_piece_at(const int line, const int column) {
     return pieces_.at(line).at(column);
 }
 
 void Board::add_piece(const std::string &id, Piece *piece) {
-    Piece::piece_coordinates piece_coordinates = get_piece_coordinates_from_id(id);
+    Piece::piece_coordinates piece_coordinates = Piece::get_piece_coordinates_from_id(id);
 
     if (piece_coordinates.line == -1 || piece_coordinates.column == -1) {
         std::cout << "Invalid place for a piece" << std::endl;
@@ -62,7 +50,7 @@ void Board::render(std::vector<Player> &players) {
     }
 
     std::cout << "     ";
-    for (auto &column : cols_map_) {
+    for (auto &column : Piece::cols_map_) {
         std::cout << column.first << "   ";
     }
     std::cout << std::endl;

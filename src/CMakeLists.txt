@@ -27,4 +27,6 @@ set(FILES
         modules/Player.h
         Errors.h Errors.cpp)
 
+add_library(game ${FILES})
+target_include_directories(game INTERFACE ..)
 add_executable(${PROJECT_NAME} main.cpp ${FILES})
