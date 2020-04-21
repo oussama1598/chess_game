@@ -5,7 +5,7 @@ Bishop::Bishop(int player_id) : Piece{{{"light", "♗"}, {"dark", "♝"}},
 
 std::vector<std::string>
 Bishop::get_possible_moves([[maybe_unused]] bool is_top,
-                           [[maybe_unused]]const std::string &from) {
+                           const std::string &from) {
     piece_coordinates source = get_piece_coordinates_from_id(from);
     std::vector<std::string> possible_moves;
 

@@ -25,8 +25,8 @@ namespace {
                 );
             }
 
-//        SECTION("Test the is valid move") {
-//            CHECK(bishop.is_valid_move(top_player, "A1", "A2"));
-//        }
+        SECTION("Test the is valid move") {
+            CHECK(bishop.is_valid_move(top_player, "D2", "E3"));
+        }
     }
 }
