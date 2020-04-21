@@ -5,7 +5,7 @@
 		<Option title="chess_game"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\scripts\;CMake Files\cmake-build-debug\;CMake Files\src\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\scripts\;CMake Files\cmake-build-debug\;CMake Files\src\;CMake Files\test\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug"/>
@@ -32,6 +32,16 @@
 				<Option type="4"/>
 				<MakeCommands>
 					<Build command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option working_dir="/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 test"/>
 					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
@@ -84,6 +94,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.cpp">
+			<Option target="chess_game"/>
+		</Unit>
+		<Unit filename="/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h">
+			<Option target="chess_game"/>
+		</Unit>
 		<Unit filename="/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/main.cpp">
 			<Option target="chess_game"/>
 		</Unit>
@@ -158,6 +174,9 @@
 		</Unit>
 		<Unit filename="/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="/home/red-scule/Desktop/projects/cpp_projects/chess_game/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

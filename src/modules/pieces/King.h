@@ -6,5 +6,5 @@
 class King : public Piece
 {
 public:
-    King(bool is_dark = true);
+    explicit King(int player_id);
 };

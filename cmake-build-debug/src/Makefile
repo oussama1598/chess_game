@@ -67,6 +67,17 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/home/red-scule/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/201.6668.126/bin/cmake/linux/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -124,6 +135,33 @@ chess_game: src/CMakeFiles/chess_game.dir/rule
 chess_game/fast:
 	cd /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug && $(MAKE) -f src/CMakeFiles/chess_game.dir/build.make src/CMakeFiles/chess_game.dir/build
 .PHONY : chess_game/fast
+
+Errors.o: Errors.cpp.o
+
+.PHONY : Errors.o
+
+# target to build an object file
+Errors.cpp.o:
+	cd /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug && $(MAKE) -f src/CMakeFiles/chess_game.dir/build.make src/CMakeFiles/chess_game.dir/Errors.cpp.o
+.PHONY : Errors.cpp.o
+
+Errors.i: Errors.cpp.i
+
+.PHONY : Errors.i
+
+# target to preprocess a source file
+Errors.cpp.i:
+	cd /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug && $(MAKE) -f src/CMakeFiles/chess_game.dir/build.make src/CMakeFiles/chess_game.dir/Errors.cpp.i
+.PHONY : Errors.cpp.i
+
+Errors.s: Errors.cpp.s
+
+.PHONY : Errors.s
+
+# target to generate assembly for a file
+Errors.cpp.s:
+	cd /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug && $(MAKE) -f src/CMakeFiles/chess_game.dir/build.make src/CMakeFiles/chess_game.dir/Errors.cpp.s
+.PHONY : Errors.cpp.s
 
 main.o: main.cpp.o
 
@@ -402,8 +440,12 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... test"
 	@echo "... edit_cache"
 	@echo "... chess_game"
+	@echo "... Errors.o"
+	@echo "... Errors.i"
+	@echo "... Errors.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

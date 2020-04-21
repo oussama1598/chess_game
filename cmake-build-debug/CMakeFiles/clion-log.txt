@@ -25,8 +25,8 @@ Requirements
 Packages
 
 Installing (downloading, building) binaries...
-conanfile.txt: Generator txt created conanbuildinfo.txt
 conanfile.txt: Generator cmake created conanbuildinfo.cmake
+conanfile.txt: Generator txt created conanbuildinfo.txt
 conanfile.txt: Generated conaninfo.txt
 conanfile.txt: Generated graphinfo
 -- Conan: Loading conanbuildinfo.cmake
@@ -37,6 +37,13 @@ conanfile.txt: Generated graphinfo
 -- Current conanbuildinfo.cmake directory: /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug
 -- Conan: Compiler GCC>=5, checking major version 9
 -- Conan: Checking correct version: 9
--- Configuring done
--- Generating done
--- Build files have been written to: /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug
+CMake Error at CMakeLists.txt:31 (add_subdirectory):
+  The source directory
+
+    /home/red-scule/Desktop/projects/cpp_projects/chess_game/test
+
+  does not contain a CMakeLists.txt file.
+
+
+-- Configuring incomplete, errors occurred!
+See also "/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/CMakeFiles/CMakeOutput.log".

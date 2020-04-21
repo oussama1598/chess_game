@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.cpp" "/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/src/CMakeFiles/chess_game.dir/Errors.cpp.o"
   "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/main.cpp" "/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/src/CMakeFiles/chess_game.dir/main.cpp.o"
   "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Board.cpp" "/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/src/CMakeFiles/chess_game.dir/modules/Board.cpp.o"
   "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Game.cpp" "/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/src/CMakeFiles/chess_game.dir/modules/Game.cpp.o"

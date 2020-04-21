@@ -1,12 +1,16 @@
 #include <iostream>
-#include "modules/Game.h"
 
-int main()
-{
+#include "modules/Game.h"
+#include "Errors.h"
+
+int main() {
     Game game;
 
-    game.make_move("A1", "B5");
-    game.make_move("A2", "C5");
+    try {
+        game.make_move("A2", "A4");
+    } catch (std::exception &error) {
+        std::cout << error.what() << std::endl;
+    }
 
     game.render();
 

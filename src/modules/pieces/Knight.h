@@ -6,5 +6,5 @@
 class Knight : public Piece
 {
 public:
-    Knight(bool is_dark = true);
+    explicit Knight(int player_id);
 };

@@ -1,10 +1,10 @@
 #pragma once
 
+#include <variant>
+#include "../Errors.h"
 #include "Board.h"
-#include "Player.h"
 
-class Game
-{
+class Game {
 private:
     Board game_board_;
     std::vector<Player> players_;
@@ -12,8 +12,13 @@ private:
 public:
     Game();
 
-    void add_player(const int player_number, const bool is_dark, const bool is_top);
+    void add_player(int player_id, bool is_dark, bool is_top);
+
     void initialize_game();
+
+    Player &get_player_by_number(size_t id);
+
     void make_move(const std::string &from, const std::string &to);
+
     void render();
 };

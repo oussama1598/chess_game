@@ -23,7 +23,9 @@ conan_cmake_run(
 )
 
 set(CMAKE_CXX_STANDARD 17)
+enable_testing()
 
 add_compile_options(-Wall -Werror -Wextra)
 
 add_subdirectory(src)
+add_subdirectory(test)

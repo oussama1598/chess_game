@@ -6,5 +6,5 @@
 class Bishop : public Piece
 {
 public:
-    Bishop(bool is_dark = true);
+    explicit Bishop(int player_id);
 };

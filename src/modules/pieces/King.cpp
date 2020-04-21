@@ -1,3 +1,3 @@
 #include "King.h"
 
-King::King(bool is_dark) : Piece{{"♔", "♚"}, is_dark} {}
+King::King(int player_id) : Piece{{{"light", "♔"}, {"dark", "♚"}}, player_id} {}

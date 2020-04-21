@@ -38,6 +38,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "../conanfile.txt"
   "../scripts/conan.cmake"
   "../src/CMakeLists.txt"
+  "../test/CMakeLists.txt"
   )
 
 # The corresponding makefile is:
@@ -50,6 +51,7 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "test/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:

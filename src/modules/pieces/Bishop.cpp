@@ -1,3 +1,3 @@
 #include "Bishop.h"
 
-Bishop::Bishop(bool is_dark) : Piece{{"♗", "♝"}, is_dark} {}
+Bishop::Bishop(int player_id) : Piece{{{"light", "♗"}, {"dark", "♝"}}, player_id} {}

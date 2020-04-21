@@ -40,6 +40,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/src/cmake_install.cmake")
+  include("/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/test/cmake_install.cmake")
 
 endif()
 

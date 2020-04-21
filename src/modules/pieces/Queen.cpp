@@ -1,3 +1,3 @@
 #include "Queen.h"
 
-Queen::Queen(bool is_dark) : Piece{{"♕", "♛"}, is_dark} {}
+Queen::Queen(int player_id) : Piece{{{"light", "♕"}, {"dark", "♛"}}, player_id} {}

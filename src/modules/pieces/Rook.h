@@ -6,5 +6,5 @@
 class Rook : public Piece
 {
 public:
-    Rook(bool is_dark = true);
+    explicit Rook(int player_id);
 };

@@ -6,11 +6,19 @@
 
 #IncludeRegexTransform: 
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h
+map
+-
+string
+-
+
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/main.cpp
 iostream
 -
 modules/Game.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Game.h
+Errors.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Board.h
 iostream
@@ -38,11 +46,17 @@ pieces/Rook.h
 pieces/Pawn.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Pawn.h
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Game.cpp
+Game.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Game.h
+
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Game.h
+variant
+-
+../Errors.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h
 Board.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Board.h
-Player.h
-/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Player.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Player.h
 
@@ -73,8 +87,10 @@ Piece.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
 iostream
 -
-array
+map
 -
+../Player.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Player.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Queen.h
 iostream

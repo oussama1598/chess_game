@@ -6,5 +6,5 @@
 class Queen : public Piece
 {
 public:
-    Queen(bool is_dark = true);
+    explicit Queen(int player_id);
 };

@@ -1,3 +1,3 @@
 #include "Rook.h"
 
-Rook::Rook(bool is_dark) : Piece{{"♖", "♜"}, is_dark} {}
+Rook::Rook(int player_id) : Piece{{{"light", "♖"}, {"dark", "♜"}}, player_id} {}
