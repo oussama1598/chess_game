@@ -122,6 +122,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named chess_test
+
+# Build rule for target.
+chess_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 chess_test
+.PHONY : chess_test
+
+# fast build rule for target.
+chess_test/fast:
+	$(MAKE) -f test/CMakeFiles/chess_test.dir/build.make test/CMakeFiles/chess_test.dir/build
+.PHONY : chess_test/fast
+
+#=============================================================================
 # Target rules for targets named chess_game
 
 # Build rule for target.
@@ -143,6 +156,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... test"
+	@echo "... chess_test"
 	@echo "... chess_game"
 .PHONY : help
 

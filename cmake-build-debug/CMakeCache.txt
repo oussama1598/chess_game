@@ -226,6 +226,12 @@ CONAN:FILEPATH=/home/red-scule/.local/bin/conan
 //Path to a program.
 CONAN_CMD:FILEPATH=/home/red-scule/.local/bin/conan
 
+//Value Computed by CMake
+Google_tests_BINARY_DIR:STATIC=/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/test
+
+//Value Computed by CMake
+Google_tests_SOURCE_DIR:STATIC=/home/red-scule/Desktop/projects/cpp_projects/chess_game/test
+
 //Path to a program.
 ProcessorCount_cmd_nproc:FILEPATH=/usr/bin/nproc
 

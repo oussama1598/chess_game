@@ -5,7 +5,14 @@
    "0": {
     "pref": null,
     "options": "",
+    "requires": [
+     "1"
+    ],
     "path": "/home/red-scule/Desktop/projects/cpp_projects/chess_game/conanfile.txt"
+   },
+   "1": {
+    "pref": "Catch2/2.9.1@catchorg/stable#0:5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9#0",
+    "options": ""
    }
   }
  },

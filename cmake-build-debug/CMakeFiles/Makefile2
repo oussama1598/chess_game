@@ -53,20 +53,20 @@ CMAKE_BINARY_DIR = /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmak
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: src/all
 all: test/all
+all: src/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall: src/preinstall
 preinstall: test/preinstall
+preinstall: src/preinstall
 
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: src/clean
 clean: test/clean
+clean: src/clean
 
 .PHONY : clean
 
@@ -92,7 +92,7 @@ src/clean: src/CMakeFiles/chess_game.dir/clean
 # Directory level rules for directory test
 
 # Recursive "all" directory target.
-test/all:
+test/all: test/CMakeFiles/chess_test.dir/all
 
 .PHONY : test/all
 
@@ -102,9 +102,36 @@ test/preinstall:
 .PHONY : test/preinstall
 
 # Recursive "clean" directory target.
-test/clean:
+test/clean: test/CMakeFiles/chess_test.dir/clean
 
 .PHONY : test/clean
+
+#=============================================================================
+# Target rules for target test/CMakeFiles/chess_test.dir
+
+# All Build rule for target.
+test/CMakeFiles/chess_test.dir/all:
+	$(MAKE) -f test/CMakeFiles/chess_test.dir/build.make test/CMakeFiles/chess_test.dir/depend
+	$(MAKE) -f test/CMakeFiles/chess_test.dir/build.make test/CMakeFiles/chess_test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/CMakeFiles --progress-num=13,14 "Built target chess_test"
+.PHONY : test/CMakeFiles/chess_test.dir/all
+
+# Build rule for subdir invocation for target.
+test/CMakeFiles/chess_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 test/CMakeFiles/chess_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/red-scule/Desktop/projects/cpp_projects/chess_game/cmake-build-debug/CMakeFiles 0
+.PHONY : test/CMakeFiles/chess_test.dir/rule
+
+# Convenience name for target.
+chess_test: test/CMakeFiles/chess_test.dir/rule
+
+.PHONY : chess_test
+
+# clean rule for target.
+test/CMakeFiles/chess_test.dir/clean:
+	$(MAKE) -f test/CMakeFiles/chess_test.dir/build.make test/CMakeFiles/chess_test.dir/clean
+.PHONY : test/CMakeFiles/chess_test.dir/clean
 
 #=============================================================================
 # Target rules for target src/CMakeFiles/chess_game.dir

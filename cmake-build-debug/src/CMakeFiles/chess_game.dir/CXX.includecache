@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.cpp
+Errors.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h
+
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h
 map
 -
@@ -19,6 +23,10 @@ modules/Game.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Game.h
 Errors.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/Errors.h
+
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Board.cpp
+Board.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Board.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Board.h
 iostream
@@ -60,11 +68,19 @@ Board.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Player.h
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Bishop.cpp
+Bishop.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Bishop.h
+
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Bishop.h
 iostream
 -
 Piece.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
+
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/King.cpp
+King.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/King.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/King.h
 iostream
@@ -72,15 +88,27 @@ iostream
 Piece.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Knight.cpp
+Knight.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Knight.h
+
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Knight.h
 iostream
 -
 Piece.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Pawn.cpp
+Pawn.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Pawn.h
+
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Pawn.h
 iostream
 -
+Piece.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
+
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.cpp
 Piece.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
 
@@ -92,11 +120,19 @@ map
 ../Player.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/Player.h
 
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Queen.cpp
+Queen.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Queen.h
+
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Queen.h
 iostream
 -
 Piece.h
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Piece.h
+
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Rook.cpp
+Rook.h
+/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Rook.h
 
 /home/red-scule/Desktop/projects/cpp_projects/chess_game/src/modules/pieces/Rook.h
 iostream

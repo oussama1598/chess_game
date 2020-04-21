@@ -6,6 +6,9 @@ bool Pawn::is_valid_move([[maybe_unused]] Player &player, [[maybe_unused]] Piece
                          [[maybe_unused]] Piece::piece_coordinates destination) {
     // TODO: check for horizontal movement
 
+    if (source.line == destination.line)
+        return false;
+
     int first_allowed_line = source.line + (player.is_top ? -1 : 1);
     int second_allowed_line = source.line + (player.is_top ? -2 : 2);
 
