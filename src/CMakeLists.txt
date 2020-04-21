@@ -25,7 +25,7 @@ set(FILES
         modules/pieces/Knight.cpp
 
         modules/Player.h
-        Errors.h Errors.cpp)
+        modules/Errors.h modules/Errors.cpp)
 
 add_library(game ${FILES})
 target_include_directories(game INTERFACE ..)

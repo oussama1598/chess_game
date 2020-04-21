@@ -7,5 +7,6 @@ class Pawn : public Piece {
 public:
     explicit Pawn(int player_id);
 
-    bool is_valid_move(Player &player, const std::string &from, const std::string &to) override;
+    std::vector<std::string>
+    get_possible_moves(bool is_top, const std::string &from) override;
 };

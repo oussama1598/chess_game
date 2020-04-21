@@ -2,25 +2,45 @@
 
 Pawn::Pawn(int player_id) : Piece{{{"light", "♙"}, {"dark", "♟"}}, player_id} {}
 
-bool Pawn::is_valid_move([[maybe_unused]] Player &player, [[maybe_unused]] const std::string &from,
-                         [[maybe_unused]] const std::string &to) {
+std::vector<std::string>
+Pawn::get_possible_moves(const bool is_top, const std::string &from) {
     piece_coordinates source = get_piece_coordinates_from_id(from);
-    piece_coordinates destination = get_piece_coordinates_from_id(to);
+    bool is_first_move = is_top ? source.line >= rows - 2 : source.line < 2;
 
-    //TODO: create a list of possible movements from that place and check against it
+    std::vector<std::string> possible_moves;
 
-    // Horizontal movement restriction
-    if (source.column != destination.column)
-        return false;
+    for (int i = -1; i < 2; ++i) {
+        int line = source.line + (is_top ? -1 : 1);
+        int column = source.column + i;
 
-    int first_allowed_line = source.line + (player.is_top ? -1 : 1);
-    int second_allowed_line = source.line + (player.is_top ? -2 : 2);
+        // avoid left/right edges
+        if (column < 0 || column >= cols)
+            continue;
 
-    if (is_first_move_ && (first_allowed_line != destination.line && second_allowed_line != destination.line))
-        return false;
+        // avoid top/down edges
+        if (line < 0 || line >= rows)
+            continue;
 
-    if (!is_first_move_ && first_allowed_line != destination.line)
-        return false;
+        possible_moves.push_back(
+                get_id_from_coordinates(
+                        {
+                                line,
+                                column
+                        }
+                )
+        );
+    }
 
-    return true;
+    // add the first move, two steps manually
+    if (is_first_move)
+        possible_moves.push_back(
+                get_id_from_coordinates(
+                        {
+                                source.line + (is_top ? -2 : 2),
+                                source.column
+                        }
+                )
+        );
+
+    return possible_moves;
 }

@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "modules/Game.h"
-#include "Errors.h"
 
 int main() {
     Game game;
