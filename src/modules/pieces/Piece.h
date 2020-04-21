@@ -34,6 +34,15 @@ public:
 
     [[nodiscard]] bool is_first_move() const;
 
+    void generate_horizontal_movements(std::vector<std::string> &possible_moves,
+                                       piece_coordinates &source);
+
+    void generate_vertical_movements(std::vector<std::string> &possible_moves,
+                                     piece_coordinates &source);
+
+    void generate_diagonal_movements(std::vector<std::string> &possible_moves,
+                                     piece_coordinates &source);
+
     virtual std::vector<std::string>
     get_possible_moves(bool is_top, const std::string &from);
 
