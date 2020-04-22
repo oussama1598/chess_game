@@ -9,4 +9,5 @@ struct Errors {
     static const std::string SOURCE_SAME_AS_DESTINATION;
     static const std::string PLAYER_DOES_NOT_EXIST;
     static const std::string ILLEGAL_MOVE;
+    static const std::string KING_IS_NOT_SAFE;
 };

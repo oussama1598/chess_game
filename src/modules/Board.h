@@ -40,5 +40,12 @@ public:
 
     bool is_valid_move(const std::string &from, const std::string &to);
 
+    bool can_make_move(Piece *source_piece, Player &source_player,
+                       const std::string &from, const std::string &to);
+
+    Piece::piece_coordinates find_king(Player &player);
+
+    bool is_king_safe(Player &player);
+
     void render(std::vector<Player> &players);
 };

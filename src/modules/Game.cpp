@@ -83,14 +83,7 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     Player source_player = players_.at(source_piece->get_player_id());
 
-    if (!source_piece->is_valid_move(source_player, from, to))
-        throw std::runtime_error(Errors::ILLEGAL_MOVE);
-
-    // check if the current piece is a knight since
-    // the next check is not applicable to it
-    bool is_knight = dynamic_cast<const Knight *>(source_piece) != nullptr;
-
-    if (!game_board_.is_valid_move(from, to) && !is_knight)
+    if (!game_board_.can_make_move(source_piece, source_player, from, to))
         throw std::runtime_error(Errors::ILLEGAL_MOVE);
 
     Piece *destination_piece = game_board_.get_piece_at(
@@ -101,15 +94,27 @@ void Game::make_move(const std::string &from, const std::string &to) {
     if (destination_piece->get_player_id() == source_piece->get_player_id())
         throw std::runtime_error(Errors::ILLEGAL_MOVE);
     else {
-        delete destination_piece;
+        Piece *new_piece = new Piece();
 
         // Change the current piece to the wanted place
         game_board_.pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
                 = source_piece;
         // create a new empty piece
         game_board_.pieces_[from_piece_coordinates.line][from_piece_coordinates.column]
-                = new Piece();
+                = new_piece;
 
+        if(!game_board_.is_king_safe(source_player))
+        {
+            // revert back the actions
+            game_board_.pieces_[from_piece_coordinates.line][from_piece_coordinates.column] = source_piece;
+            game_board_.pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
+                    = destination_piece;
+
+            delete new_piece;
+
+            throw std::runtime_error(Errors::KING_IS_NOT_SAFE);
+        }else
+            delete destination_piece;
     }
 }
 

@@ -247,15 +247,6 @@ Board::generate_diagonal_movements(std::vector<std::string> &possible_moves,
                 )
         );
 
-        [[maybe_unused]] std::string id = Piece::get_id_from_coordinates(
-                {
-                        line,
-                        column
-                }
-        );
-
-        [[maybe_unused]]  Piece *p = pieces_[line][column];
-
         if (pieces_[line][column]->get_player_id() != -1)
             break;
     }
@@ -281,6 +272,54 @@ bool Board::is_valid_move(const std::string &from, const std::string &to) {
     return find(empty_spots.begin(), empty_spots.end(), to) !=
            empty_spots.end();
 }
+
+bool Board::can_make_move(Piece *source_piece, Player &source_player,
+                          const std::string &from,
+                          const std::string &to) {
+    if (!source_piece->is_valid_move(source_player, from, to))
+        return false;
+
+    // check if the current piece is a knight since
+    // the next check is not applicable to it
+    bool is_knight = dynamic_cast<const Knight *>(source_piece) != nullptr;
+
+    return !(!is_valid_move(from, to) && !is_knight);
+}
+
+Piece::piece_coordinates Board::find_king(Player &player) {
+    for (int i = 0; (size_t) i < pieces_.size(); ++i)
+        for (int j = 0; (size_t) j < pieces_[i].size(); ++j) {
+            Piece *piece = pieces_[i][j];
+            bool is_king = dynamic_cast<const King *>(piece) != nullptr;
+
+            if (is_king && piece->get_player_id() == player.player_id)
+                return {i, j};
+
+        }
+
+    return {-1, -1};
+}
+
+bool Board::is_king_safe(Player &player) {
+    Piece::piece_coordinates king_coordinates = find_king(player);
+    std::string king_id = Piece::get_id_from_coordinates(king_coordinates);
+    [[maybe_unused]] King *king = (King *) pieces_[king_coordinates.line][king_coordinates.column];
+
+    for (int i = 0; (size_t) i < pieces_.size(); ++i)
+        for (int j = 0; (size_t) j < pieces_[i].size(); ++j) {
+            Piece *piece = pieces_[i][j];
+            std::string target_id = Piece::get_id_from_coordinates({i, j});
+
+            if (piece->get_player_id() == -1 || piece->get_player_id() == player.player_id || piece == king)
+                continue;
+
+            if (can_make_move(piece, player, king_id, target_id))
+                return false;
+        }
+
+    return true;
+}
+
 
 void Board::render(std::vector<Player> &players) {
     std::string lineSeparator = "   +---+---+---+---+---+---+---+---+";
