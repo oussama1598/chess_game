@@ -17,9 +17,13 @@ public:
     static const signed int cols{8};
     static const signed int rows{8};
 
-    std::array<std::array<Piece *, cols>, 8> pieces_{};
+    typedef std::array<std::array<Piece *, cols>, rows> piecesType;
+
+    piecesType pieces_{};
 
     Board();
+
+    piecesType &get_pieces();
 
     void generate_horizontal_movements(std::vector<std::string> &possible_moves,
                                        Piece::piece_coordinates &source);
@@ -54,6 +58,4 @@ public:
                       Piece *destination_piece, bool reset = false);
 
     bool player_has_valid_move(Player &player);
-
-    void render(std::vector<Player> &players);
 };

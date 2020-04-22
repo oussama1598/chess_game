@@ -10,10 +10,16 @@ private:
     std::vector<Player> players_;
     bool is_game_in_check_;
     bool is_game_ended_;
-    Player *current_player_;
+    Player *current_player_{};
 
 public:
     Game();
+
+    std::vector<Player> &get_players();
+
+    bool is_game_in_check() const;
+
+    Board::piecesType &get_board_pieces();
 
     Player *get_current_player();
 
@@ -24,6 +30,4 @@ public:
     Player &get_player_by_number(size_t id);
 
     void make_move(const std::string &from, const std::string &to);
-
-    void render();
 };

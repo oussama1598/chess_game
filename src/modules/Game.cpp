@@ -7,6 +7,18 @@ Game::Game() : is_game_in_check_{false}, is_game_ended_{false} {
     initialize_game();
 }
 
+std::vector<Player> &Game::get_players() {
+    return players_;
+}
+
+bool Game::is_game_in_check() const {
+    return is_game_in_check_;
+}
+
+Board::piecesType &Game::get_board_pieces() {
+    return game_board_.get_pieces();
+}
+
 Player *Game::get_current_player() {
     return current_player_;
 }
@@ -126,11 +138,4 @@ void Game::make_move(const std::string &from, const std::string &to) {
     }
 
     current_player_ = &players_.at(opponent_player.player_id);
-}
-
-void Game::render() {
-    if (is_game_in_check_)
-        std::cout << "Game is in check" << std::endl;
-
-    game_board_.render(players_);
 }
