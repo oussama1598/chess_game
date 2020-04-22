@@ -8,6 +8,9 @@ Piece::Piece(std::map<std::string, std::string> graphics, int player_id)
         : graphics_{graphics}, player_id_{player_id},
           is_first_move_{true} {}
 
+
+Piece::~Piece() = default;
+
 const std::map<char, size_t> Piece::cols_map_{{'A', 0},
                                               {'B', 1},
                                               {'C', 2},
@@ -107,8 +110,9 @@ Piece::generate_vertical_movements(std::vector<std::string> &possible_moves,
     }
 }
 
-void Piece::generate_diagonal_movements(std::vector<std::string> &possible_moves,
-                                       piece_coordinates &source) {
+void
+Piece::generate_diagonal_movements(std::vector<std::string> &possible_moves,
+                                   piece_coordinates &source) {
     for (int i = -cols; i < cols; ++i) {
         int line = source.line + i;
         int column = source.column + i;

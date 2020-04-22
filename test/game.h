@@ -1,14 +1,4 @@
-//
-// Created by red-scule on 4/21/20.
-//
+#pragma once
 
-#ifndef CHESS_GAME_GAME_H
-#define CHESS_GAME_GAME_H
-
-
-class game {
-
-};
-
-
-#endif //CHESS_GAME_GAME_H
+#include <catch2/catch.hpp>
+#include "src/modules/Game.h"

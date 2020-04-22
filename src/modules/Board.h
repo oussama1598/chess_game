@@ -21,13 +21,24 @@ public:
 
     Board();
 
-    Piece::piece_coordinates get_piece_coordinates_from_id(const std::string &id);
+    void generate_horizontal_movements(std::vector<std::string> &possible_moves,
+                                       Piece::piece_coordinates &source);
 
-    Piece* get_piece_at(int line, int column);
+    void generate_vertical_movements(std::vector<std::string> &possible_moves,
+                                     Piece::piece_coordinates &source);
+
+    void generate_diagonal_movements(std::vector<std::string> &possible_moves,
+                                     Piece::piece_coordinates &source);
+
+    Piece *get_piece_at(int line, int column);
 
     void add_piece(const std::string &place, Piece *piece);
 
     void build_board();
+
+    std::vector<std::string> get_all_empty_spots(const std::string &from);
+
+    bool is_valid_move(const std::string &from, const std::string &to);
 
     void render(std::vector<Player> &players);
 };

@@ -27,7 +27,11 @@ public:
 
     Piece(std::map<std::string, std::string>, int player_id);
 
-    static piece_coordinates get_piece_coordinates_from_id(const std::string &id);
+    virtual ~Piece();
+
+    static piece_coordinates
+    get_piece_coordinates_from_id(const std::string &id);
+
     static std::string get_id_from_coordinates(piece_coordinates coordinates);
 
     [[nodiscard]] int get_player_id() const;
@@ -46,7 +50,8 @@ public:
     virtual std::vector<std::string>
     get_possible_moves(bool is_top, const std::string &from);
 
-    virtual bool is_valid_move(Player &player, const std::string &from, const std::string &to);
+    virtual bool is_valid_move(Player &player, const std::string &from,
+                               const std::string &to);
 
     std::string get_graphic(std::string &type);
 };

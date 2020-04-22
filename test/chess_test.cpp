@@ -4,3 +4,4 @@
 #include "pieces/bishop.h"
 #include "pieces/rook.h"
 #include "pieces/queen.h"
+#include "game.h"
