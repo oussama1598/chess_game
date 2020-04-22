@@ -8,9 +8,14 @@ class Game {
 private:
     Board game_board_;
     std::vector<Player> players_;
+    bool is_game_in_check_;
+    bool is_game_ended_;
+    Player *current_player_;
 
 public:
     Game();
+
+    Player *get_current_player();
 
     void add_player(int player_id, bool is_dark, bool is_top);
 

@@ -1,10 +1,14 @@
 #include "Game.h"
 
-Game::Game() {
+Game::Game() : is_game_in_check_{false}, is_game_ended_{false} {
     add_player(0, true, true);
     add_player(1, false, false);
 
     initialize_game();
+}
+
+Player *Game::get_current_player() {
+    return current_player_;
 }
 
 void Game::add_player(const int player_id, const bool is_dark,
@@ -13,6 +17,8 @@ void Game::add_player(const int player_id, const bool is_dark,
 }
 
 void Game::initialize_game() {
+    current_player_ = &players_.at(0);
+
     for (auto &player : players_) {
         const signed int first_row_index = player.is_top ? Board::cols : 1;
         const signed int second_row_index = player.is_top ? Board::cols - 1 : 2;
@@ -58,6 +64,8 @@ Player &Game::get_player_by_number(const size_t id) {
 }
 
 void Game::make_move(const std::string &from, const std::string &to) {
+    if (is_game_ended_) return;
+
     // TODO: check if its the current's player piece
 
     if (from == to)
@@ -83,6 +91,9 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     Player source_player = players_.at(source_piece->get_player_id());
 
+    if (source_player.player_id != current_player_->player_id)
+        throw std::runtime_error(Errors::NOT_PLAYERS_PIECE);
+
     if (!game_board_.can_make_move(source_piece, source_player, from, to))
         throw std::runtime_error(Errors::ILLEGAL_MOVE);
 
@@ -93,29 +104,37 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     if (destination_piece->get_player_id() == source_piece->get_player_id())
         throw std::runtime_error(Errors::ILLEGAL_MOVE);
-    else {
-        Piece *new_piece = new Piece();
 
-        // Change the current piece to the wanted place
-        game_board_.pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
-                = source_piece;
-        // create a new empty piece
-        game_board_.pieces_[from_piece_coordinates.line][from_piece_coordinates.column]
-                = new_piece;
+    if (!game_board_.perform_move(source_player, from_piece_coordinates,
+                                  source_piece,
+                                  to_piece_coordinates, destination_piece))
+        throw std::runtime_error(Errors::KING_IS_NOT_SAFE);
 
-        if(!game_board_.is_king_safe(source_player))
-        {
-            // revert back the actions
-            game_board_.pieces_[from_piece_coordinates.line][from_piece_coordinates.column] = source_piece;
-            game_board_.pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
-                    = destination_piece;
+    // if it was previously in check reset it
+    is_game_in_check_ = false;
 
-            delete new_piece;
+    // check if the other player king's safe
+    Player opponent_player = players_.at(
+            (source_player.player_id + 1) % players_.size());
 
-            throw std::runtime_error(Errors::KING_IS_NOT_SAFE);
-        }else
-            delete destination_piece;
+    is_game_in_check_ = !game_board_.is_king_safe(opponent_player);
+
+    if (!game_board_.player_has_valid_move(opponent_player)) {
+        if (is_game_in_check_)
+            std::cout << "Check mate" << std::endl;
+        else
+            std::cout << "Stale mate" << std::endl;
+
+        is_game_ended_ = true;
+        return;
     }
+
+    current_player_ = &players_.at(opponent_player.player_id);
 }
 
-void Game::render() { game_board_.render(players_); }
+void Game::render() {
+    if (is_game_in_check_)
+        std::cout << "Game is in check" << std::endl;
+
+    game_board_.render(players_);
+}

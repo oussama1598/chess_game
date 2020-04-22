@@ -283,6 +283,8 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
     // the next check is not applicable to it
     bool is_knight = dynamic_cast<const Knight *>(source_piece) != nullptr;
 
+    // TODO: check if its a pawn and moving diagnally means you can eat
+
     return !(!is_valid_move(from, to) && !is_knight);
 }
 
@@ -310,7 +312,8 @@ bool Board::is_king_safe(Player &player) {
             Piece *piece = pieces_[i][j];
             std::string target_id = Piece::get_id_from_coordinates({i, j});
 
-            if (piece->get_player_id() == -1 || piece->get_player_id() == player.player_id || piece == king)
+            if (piece->get_player_id() == -1 ||
+                piece->get_player_id() == player.player_id || piece == king)
                 continue;
 
             if (can_make_move(piece, player, king_id, target_id))
@@ -318,6 +321,71 @@ bool Board::is_king_safe(Player &player) {
         }
 
     return true;
+}
+
+bool Board::perform_move(Player &source_player,
+                         Piece::piece_coordinates from_piece_coordinates,
+                         Piece *source_piece,
+                         Piece::piece_coordinates to_piece_coordinates,
+                         Piece *destination_piece, bool reset) {
+    Piece *new_piece = new Piece();
+
+    // Change the current piece to the wanted place
+    pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
+            = source_piece;
+    // create a new empty piece
+    pieces_[from_piece_coordinates.line][from_piece_coordinates.column]
+            = new_piece;
+
+    if (!is_king_safe(source_player)) {
+        // revert back the actions
+        pieces_[from_piece_coordinates.line][from_piece_coordinates.column] = source_piece;
+        pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
+                = destination_piece;
+
+        delete new_piece;
+
+        return false;
+    } else if (reset) {
+        // revert back the actions
+        pieces_[from_piece_coordinates.line][from_piece_coordinates.column] = source_piece;
+        pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
+                = destination_piece;
+
+        delete new_piece;
+    }
+
+    return true;
+}
+
+bool Board::player_has_valid_move(Player &player) {
+    for (int i = 0; (size_t) i < pieces_.size(); ++i)
+        for (int j = 0; (size_t) j < pieces_[i].size(); ++j) {
+            Piece *source_piece = pieces_[i][j];
+            std::string from = Piece::get_id_from_coordinates({i, j});
+
+            if (source_piece->get_player_id() == player.player_id) {
+                for (int k = 0; (size_t) k < pieces_.size(); ++k)
+                    for (int l = 0; (size_t) l < pieces_[k].size(); ++l) {
+                        Piece *destination_piece = pieces_[k][l];
+                        std::string to = Piece::get_id_from_coordinates({k, l});
+
+                        if (destination_piece->get_player_id() == -1) {
+                            if (can_make_move(source_piece, player, from, to)) {
+                                if (perform_move(player,
+                                                 {i, j},
+                                                 source_piece,
+                                                 {k, l},
+                                                 destination_piece, true)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+
+    return false;
 }
 
 

@@ -60,5 +60,23 @@ namespace {
 
             CHECK(board_.is_king_safe(player));
         }
+
+        SECTION("Testing has valid moves function") {
+            Board board_;
+            Player player{0, true, true, true};
+
+            board_.add_piece("A1", new King(0));
+            board_.add_piece("A2", new Pawn(1));
+            board_.add_piece("B1", new Pawn(1));
+
+            CHECK(!board_.player_has_valid_move(player));
+
+            Board board1_;
+            Player player1{0, true, true, true};
+
+            board1_.add_piece("A1", new King(0));
+
+            CHECK(board1_.player_has_valid_move(player1));
+        }
     }
 }

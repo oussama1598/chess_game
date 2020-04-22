@@ -47,5 +47,13 @@ public:
 
     bool is_king_safe(Player &player);
 
+    bool perform_move(Player &source_player,
+                      Piece::piece_coordinates from_piece_coordinates,
+                      Piece *source_piece,
+                      Piece::piece_coordinates to_piece_coordinates,
+                      Piece *destination_piece, bool reset = false);
+
+    bool player_has_valid_move(Player &player);
+
     void render(std::vector<Player> &players);
 };

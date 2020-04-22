@@ -18,7 +18,7 @@ int main() {
         std::string input;
         std::vector<std::string> inputs;
 
-        std::cout << "Make a move: ";
+        std::cout << "Player: " << game.get_current_player()->player_id << " Make a move: ";
         std::getline(std::cin, input);
 
         boost::split(inputs, input, boost::is_any_of(" "));
