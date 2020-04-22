@@ -17,6 +17,8 @@ void Board::add_piece(const std::string &id, Piece *piece) {
         return;
     }
 
+    delete pieces_[piece_coordinates.line][piece_coordinates.column];
+
     pieces_[piece_coordinates.line][piece_coordinates.column] = piece;
 }
 

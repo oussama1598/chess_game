@@ -66,8 +66,6 @@ Player &Game::get_player_by_number(const size_t id) {
 void Game::make_move(const std::string &from, const std::string &to) {
     if (is_game_ended_) return;
 
-    // TODO: check if its the current's player piece
-
     if (from == to)
         throw std::runtime_error(Errors::SOURCE_SAME_AS_DESTINATION);
 
