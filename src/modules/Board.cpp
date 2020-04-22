@@ -281,13 +281,38 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
     if (!source_piece->is_valid_move(source_player, from, to))
         return false;
 
+    Piece::piece_coordinates from_coordinates = Piece::get_piece_coordinates_from_id(
+            from);
+    Piece::piece_coordinates to_coordinates = Piece::get_piece_coordinates_from_id(
+            to);
+
     // check if the current piece is a knight since
     // the next check is not applicable to it
     bool is_knight = dynamic_cast<const Knight *>(source_piece) != nullptr;
+    bool is_pawn = dynamic_cast<const Pawn *>(source_piece) != nullptr;
 
-    // TODO: check if its a pawn and moving diagnally means you can eat
+    if (is_knight) return true;
 
-    return !(!is_valid_move(from, to) && !is_knight);
+    if (!is_valid_move(from, to)) return false;
+
+    // checking if the movement was diagonally for pawn
+    if (is_pawn) {
+        Piece *destination_piece = get_piece_at(to_coordinates.line,
+                                                to_coordinates.column);
+        if (from_coordinates.column != to_coordinates.column) {
+            // moved to an empty piece diagonally (not allowed)
+            if (destination_piece->get_player_id() == -1) return false;
+            // move diagonally to spot where i the player owns the piece within it
+            if (destination_piece->get_player_id() ==
+                source_player.player_id)
+                return false;
+        } else {
+            // if the direct spot is not empty (not allowed)
+            if (destination_piece->get_player_id() != -1) return false;
+        }
+    }
+
+    return true;
 }
 
 Piece::piece_coordinates Board::find_king(Player &player) {

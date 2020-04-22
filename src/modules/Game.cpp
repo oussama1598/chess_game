@@ -28,8 +28,6 @@ void Game::initialize_game() {
         const std::string second_row_index_string =
                 std::to_string(second_row_index);
 
-        // TODO: delete the previous objects
-
         // add pieces manually this must be changed after
         game_board_.add_piece("A" + fist_row_index_string,
                               new Rook(player.player_id));
