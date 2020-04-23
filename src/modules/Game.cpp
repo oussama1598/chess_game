@@ -1,8 +1,8 @@
 #include "Game.h"
 
 Game::Game() : is_game_in_check_{false}, is_game_ended_{false} {
-    add_player(0, true, true);
-    add_player(1, false, false);
+    add_player(0, true, false);
+    add_player(1, false, true);
 
     initialize_game();
 }
@@ -13,6 +13,10 @@ std::vector<Player> &Game::get_players() {
 
 bool Game::is_game_in_check() const {
     return is_game_in_check_;
+}
+
+bool Game::is_game_ended() const {
+    return is_game_ended_;
 }
 
 Board::piecesType &Game::get_board_pieces() {
@@ -128,10 +132,11 @@ void Game::make_move(const std::string &from, const std::string &to) {
     is_game_in_check_ = !game_board_.is_king_safe(opponent_player);
 
     if (!game_board_.player_has_valid_move(opponent_player)) {
-        if (is_game_in_check_)
-            std::cout << "Check mate" << std::endl;
-        else
-            std::cout << "Stale mate" << std::endl;
+        // TODO: Make the console renderer print those messages
+//        if (is_game_in_check_)
+//            std::cout << "Check mate" << std::endl;
+//        else
+//            std::cout << "Stale mate" << std::endl;
 
         is_game_ended_ = true;
         return;

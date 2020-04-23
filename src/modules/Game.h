@@ -19,6 +19,8 @@ public:
 
     bool is_game_in_check() const;
 
+    bool is_game_ended() const;
+
     Board::piecesType &get_board_pieces();
 
     Player *get_current_player();
