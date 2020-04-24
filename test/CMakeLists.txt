@@ -7,3 +7,9 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/test/plays/
         ${CMAKE_BINARY_DIR}/bin/plays/)
+
+add_custom_command(
+        TARGET chess_test PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/test/plays/
+        ${CMAKE_CURRENT_BINARY_DIR}/plays/)
