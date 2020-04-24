@@ -8,7 +8,7 @@
 
 class Piece {
 protected:
-    std::map<std::string, std::string> graphics_;
+    char symbol_;
     int player_id_;
     bool is_first_move_;
 
@@ -25,9 +25,11 @@ public:
 
     Piece();
 
-    Piece(std::map<std::string, std::string>, int player_id);
+    Piece(char symbol, int player_id);
 
     virtual ~Piece();
+
+    inline char get_symbol() { return symbol_; }
 
     static piece_coordinates
     get_piece_coordinates_from_id(const std::string &id);
@@ -52,6 +54,4 @@ public:
 
     virtual bool is_valid_move(Player &player, const std::string &from,
                                const std::string &to);
-
-    std::string get_graphic(std::string &type);
 };

@@ -1,7 +1,6 @@
 #include "Bishop.h"
 
-Bishop::Bishop(int player_id) : Piece{{{"light", "♗"}, {"dark", "♝"}},
-                                      player_id} {}
+Bishop::Bishop(int player_id) : Piece{'B', player_id} {}
 
 std::vector<std::string>
 Bishop::get_possible_moves([[maybe_unused]] bool is_top,

@@ -1,11 +1,10 @@
 #include "Piece.h"
 
-Piece::Piece() : graphics_{{"light", " "},
-                           {"dark",  " "}}, player_id_{-1},
+Piece::Piece() : symbol_{' '}, player_id_{-1},
                  is_first_move_{true} {}
 
-Piece::Piece(std::map<std::string, std::string> graphics, int player_id)
-        : graphics_{graphics}, player_id_{player_id},
+Piece::Piece(char symbol, int player_id)
+        : symbol_{symbol}, player_id_{player_id},
           is_first_move_{true} {}
 
 
@@ -183,8 +182,4 @@ bool Piece::is_valid_move(Player &player,
 
     return find(possible_moves.begin(), possible_moves.end(), to) !=
            possible_moves.end();
-}
-
-std::string Piece::get_graphic(std::string &type) {
-    return graphics_.at(type);
 }

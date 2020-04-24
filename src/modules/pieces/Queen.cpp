@@ -1,7 +1,6 @@
 #include "Queen.h"
 
-Queen::Queen(int player_id) : Piece{{{"light", "♕"}, {"dark", "♛"}},
-                                    player_id} {}
+Queen::Queen(int player_id) : Piece{'Q', player_id} {}
 
 std::vector<std::string>
 Queen::get_possible_moves([[maybe_unused]] bool is_top,

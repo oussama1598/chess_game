@@ -1,7 +1,6 @@
 #include "Knight.h"
 
-Knight::Knight(int player_id) : Piece{{{"light", "♘"}, {"dark", "♞"}},
-                                      player_id} {}
+Knight::Knight(int player_id) : Piece{'k', player_id} {}
 
 std::vector<std::string>
 Knight::get_possible_moves([[maybe_unused]] bool is_top,

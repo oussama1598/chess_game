@@ -1,6 +1,6 @@
 #include "Rook.h"
 
-Rook::Rook(int player_id) : Piece{{{"light", "♖"}, {"dark", "♜"}}, player_id} {}
+Rook::Rook(int player_id) : Piece{'R', player_id} {}
 
 std::vector<std::string>
 Rook::get_possible_moves([[maybe_unused]] bool is_top,

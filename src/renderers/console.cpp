@@ -24,10 +24,10 @@ void ConsoleRenderer::render(Game &game) {
             std::string graphics_type = "dark";
 
             if (player_id != -1)
-                graphics_type = players.at(x->get_player_id()).is_dark ? "dark"
-                                                                       : "light";
+                [[maybe_unused]] graphics_type = players.at(x->get_player_id()).is_dark ? "dark"
+                                                                                        : "light";
 
-            std::cout << "| " << x->get_graphic(graphics_type) << " ";
+//            std::cout << "| " << x->get_graphic(graphics_type) << " ";
         }
 
         std::cout << "|" << std::endl

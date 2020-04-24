@@ -3,12 +3,16 @@
 //#include <boost/algorithm/string.hpp>
 
 //#include "renderers/console.h"
-//#include "modules/Game.h"
+#include "modules/Game.h"
 
-#include "renderers/renderer_2D.h"
+#include "src/renderers/2d/renderer_2D.h"
 
 int main() {
+    Game game;
+
     Renderer2D renderer("Title");
+
+    renderer.set_game(&game);
 
     while (renderer.is_running()) {
         renderer.render();

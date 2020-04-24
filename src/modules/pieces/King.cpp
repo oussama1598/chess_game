@@ -1,6 +1,6 @@
 #include "King.h"
 
-King::King(int player_id) : Piece{{{"light", "♔"}, {"dark", "♚"}}, player_id} {}
+King::King(int player_id) : Piece{'K', player_id} {}
 
 std::vector<std::string>
 King::get_possible_moves([[maybe_unused]] bool is_top,

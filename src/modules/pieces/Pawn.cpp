@@ -1,6 +1,6 @@
 #include "Pawn.h"
 
-Pawn::Pawn(int player_id) : Piece{{{"light", "♙"}, {"dark", "♟"}}, player_id} {}
+Pawn::Pawn(int player_id) : Piece{'P', player_id} {}
 
 std::vector<std::string>
 Pawn::get_possible_moves(const bool is_top, const std::string &from) {
