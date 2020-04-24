@@ -25,8 +25,8 @@ set(FILES
         modules/pieces/Knight.cpp
 
         modules/Player.h
-        modules/Errors.h modules/Errors.cpp renderers/Console.cpp renderers/Console.h)
+        modules/Errors.h modules/Errors.cpp renderers/console.cpp renderers/console.h renderers/renderer_2D.cpp renderers/renderer_2D.h)
 
 add_library(game ${FILES})
+target_link_libraries(game CONAN_PKG::sdl2)
 target_include_directories(game INTERFACE ..)
-add_executable(${PROJECT_NAME} main.cpp ${FILES})

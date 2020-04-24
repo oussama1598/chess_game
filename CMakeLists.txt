@@ -17,6 +17,9 @@ endif()
 
 include(${CONAN_SCRIPT_FILE})
 
+conan_add_remote(NAME bincrafters INDEX 1
+        URL https://api.bintray.com/conan/bincrafters/public-conan)
+
 conan_cmake_run(
     CONANFILE conanfile.txt
     BASIC_SETUP CMAKE_TARGETS BUILD missing
@@ -29,3 +32,6 @@ add_compile_options(-Wall -Werror -Wextra)
 
 add_subdirectory(test)
 add_subdirectory(src)
+
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} game)
