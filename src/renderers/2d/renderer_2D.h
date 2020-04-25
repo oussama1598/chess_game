@@ -38,6 +38,17 @@ private:
     int selected_i_{0};
     int selected_j_{0};
 
+    struct flash {
+        unsigned int start_time{0};
+        unsigned int duration{1000};
+        unsigned int flashes_per_second{8};
+        bool show{false};
+        Piece::piece_coordinates position{0, 0};
+        SDL_Color color{255, 0, 0, 255};
+    };
+
+    flash flash_message_;
+
     SDL_Window *window_{nullptr};
 
     SDL_Renderer *renderer_{nullptr};
@@ -114,6 +125,9 @@ private:
 
     void handle_events_();
 
+    void show_flash_message_(Piece::piece_coordinates position,
+                             SDL_Color color = {255, 0, 0, 255}, unsigned int duration = 1000);
+
     void render_fps_();
 
     void render_table_();
@@ -121,6 +135,8 @@ private:
     void render_game_();
 
     void render_cursor_();
+
+    void render_flash_message_();
 
 public:
 

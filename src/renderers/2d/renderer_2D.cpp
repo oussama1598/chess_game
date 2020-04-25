@@ -135,6 +135,8 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
 
         if (error.what() == Errors::ILLEGAL_MOVE) {
             sound_manager_.play_sound("illegal");
+
+            show_flash_message_(from_coordinates);
         }
     }
 }
@@ -183,6 +185,16 @@ void Renderer2D::handle_events_() {
             handle_mouse_press_up_(event.button);
             break;
     }
+}
+
+void
+Renderer2D::show_flash_message_(Piece::piece_coordinates position,
+                                SDL_Color color, unsigned int duration) {
+    flash_message_.start_time = SDL_GetTicks();
+    flash_message_.position = position;
+    flash_message_.color = color;
+    flash_message_.duration = duration;
+    flash_message_.show = true;
 }
 
 void Renderer2D::render_fps_() {
@@ -270,6 +282,42 @@ void Renderer2D::render_cursor_() {
     SDL_RenderFillRect(renderer_, &hover_rectangle);
 }
 
+void Renderer2D::render_flash_message_() {
+    if (!flash_message_.show)
+        return;
+
+    unsigned int current_time = SDL_GetTicks();
+    unsigned int duration = current_time - flash_message_.start_time;
+    unsigned int flash_duration = flash_message_.duration / flash_message_.flashes_per_second;
+
+    if (duration >= flash_message_.duration) {
+        flash_message_.show = false;
+
+        return;
+    }
+
+    if ((int) (duration / flash_duration) % 2 != 0)
+        return;
+
+    SDL_Rect flash_message_rect{
+            piece_width_ * flash_message_.position.column,
+            piece_height_ * flash_message_.position.line,
+            piece_width_,
+            piece_height_
+    };
+
+    SDL_SetRenderDrawColor(
+            renderer_,
+            flash_message_
+                    .color.r,
+            flash_message_.color.g,
+            flash_message_.color.b,
+            flash_message_.color.a
+    );
+    SDL_RenderFillRect(renderer_, &flash_message_rect
+    );
+}
+
 void Renderer2D::render() {
     // calculate the frame rate
     unsigned int current_time = SDL_GetTicks();
@@ -290,6 +338,7 @@ void Renderer2D::render() {
 
     render_table_();
     render_cursor_();
+    render_flash_message_();
     render_game_();
 
     // Render fps if we're in debug mode
