@@ -1,4 +1,4 @@
 #pragma once
 
 #include <catch2/catch.hpp>
-#include "src/modules/pieces/Queen.h"
+#include "game/pieces/Queen.h"

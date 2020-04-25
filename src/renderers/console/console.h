@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
 
-#include "../modules/Game.h"
+#include "game/Game.h"
 
 class ConsoleRenderer {
 public:

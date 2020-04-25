@@ -1,4 +1,4 @@
 #pragma once
 
 #include <catch2/catch.hpp>
-#include "src/modules/pieces/Pawn.h"
+#include "game/pieces/Pawn.h"

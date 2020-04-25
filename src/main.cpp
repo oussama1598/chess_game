@@ -3,9 +3,9 @@
 //#include <boost/algorithm/string.hpp>
 
 //#include "renderers/console.h"
-#include "modules/Game.h"
+#include "game/Game.h"
 
-#include "src/renderers/2d/renderer_2D.h"
+#include "renderers/2d/renderer_2D.h"
 
 int main() {
     Game game;

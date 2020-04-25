@@ -5,7 +5,7 @@
 #include <map>
 #include "SDL.h"
 #include "SDL_image.h"
-#include "../../modules/Game.h"
+#include "game/Game.h"
 
 class Renderer2D {
 private:
@@ -24,7 +24,7 @@ private:
 
     bool is_running_{false};
 
-    Game *game_;
+    Game *game_{};
 
     int mouse_x_{0};
     int mouse_y_{0};
