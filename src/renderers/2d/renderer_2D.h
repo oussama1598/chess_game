@@ -38,6 +38,7 @@ private:
 
     SDL_Window *window_{nullptr};
     SDL_Renderer *renderer_{nullptr};
+    SDL_Texture *table_texture_{nullptr};
     SDL_Texture *texture_{nullptr};
 
     SDL_Cursor *arrow_cursor_;
@@ -76,9 +77,6 @@ private:
                   }
             }    // pawn
     };
-
-    std::vector<SDL_Rect> dark_table_rectangles_{};
-    std::vector<SDL_Rect> light_table_rectangles_{};
 
     void load_texture_();
 

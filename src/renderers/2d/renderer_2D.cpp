@@ -61,29 +61,47 @@ void Renderer2D::load_texture_() {
 }
 
 void Renderer2D::init_table_() {
+    std::vector<SDL_Rect> dark_table_rectangles{};
+    std::vector<SDL_Rect> light_table_rectangles{};
+
     piece_width_ = (int) (width_ / cols_);
     piece_height_ = (int) (height_ / rows_);
+
+    table_texture_ = SDL_CreateTexture(renderer_, SDL_PIXELFORMAT_RGBA8888,
+                                       SDL_TEXTUREACCESS_TARGET,
+                                       width_, height_);
+
+    // to render to the texture instead of screen
+    SDL_SetRenderTarget(renderer_, table_texture_);
 
     for (int i = 0; i < rows_; ++i)
         for (int j = 0; j < cols_; ++j) {
             if (i % 2 == 0) {
                 if (j % 2 == 0)
-                    light_table_rectangles_.push_back(
+                    light_table_rectangles.push_back(
                             {piece_width_ * j, piece_height_ * i, piece_width_, piece_height_});
                 else {
-                    dark_table_rectangles_.push_back(
+                    dark_table_rectangles.push_back(
                             {piece_width_ * j, piece_height_ * i, piece_width_, piece_height_});
                 }
             } else {
                 if (j % 2 != 0)
-                    light_table_rectangles_.push_back(
+                    light_table_rectangles.push_back(
                             {piece_width_ * j, piece_height_ * i, piece_width_, piece_height_});
                 else {
-                    dark_table_rectangles_.push_back(
+                    dark_table_rectangles.push_back(
                             {piece_width_ * j, piece_height_ * i, piece_width_, piece_height_});
                 }
             }
         }
+
+    SDL_SetRenderDrawColor(renderer_, 222, 172, 93, 255);
+    SDL_RenderFillRects(renderer_, dark_table_rectangles.data(), dark_table_rectangles.size());
+
+    SDL_SetRenderDrawColor(renderer_, 249, 227, 192, 255);
+    SDL_RenderFillRects(renderer_, light_table_rectangles.data(), light_table_rectangles.size());
+
+    SDL_SetRenderTarget(renderer_, nullptr);
 }
 
 void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
@@ -145,12 +163,9 @@ void Renderer2D::handle_events_() {
 }
 
 void Renderer2D::render_table_() {
-    // TODO: remove the hard coded colors
-    SDL_SetRenderDrawColor(renderer_, 222, 172, 93, 255);
-    SDL_RenderFillRects(renderer_, dark_table_rectangles_.data(), dark_table_rectangles_.size());
+    SDL_Rect src = {0, 0, width_, height_};
 
-    SDL_SetRenderDrawColor(renderer_, 249, 227, 192, 255);
-    SDL_RenderFillRects(renderer_, light_table_rectangles_.data(), light_table_rectangles_.size());
+    SDL_RenderCopy(renderer_, table_texture_, &src, &src);
 }
 
 void Renderer2D::render_game_() {
