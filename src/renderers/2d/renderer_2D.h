@@ -40,6 +40,10 @@ private:
     SDL_Renderer *renderer_{nullptr};
     SDL_Texture *texture_{nullptr};
 
+    SDL_Cursor *arrow_cursor_;
+    SDL_Cursor *hand_cursor_;
+
+
     std::map<char, std::map<std::string, SDL_Rect>> pieces_texture_rectangles_{
             {'K', {
                           {"light", (SDL_Rect) {2, 5, 95, 95}},

@@ -26,6 +26,10 @@ Renderer2D::Renderer2D(const char *title) {
 
     is_running_ = true;
 
+    // set the cursors
+    arrow_cursor_ = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+    hand_cursor_ = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+
     load_texture_();
 
     // this function is responsible for doing the size's calculations for the pieces rectangles
@@ -96,9 +100,11 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
 
 void Renderer2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
     Board::piecesType pieces = game_->get_board_pieces();
+    Piece *piece = pieces[mouse_i_][mouse_j_];
 
     if (event.button == SDL_BUTTON_LEFT &&
-        pieces[mouse_i_][mouse_j_]->get_player_id() != -1) {
+        piece->get_player_id() != -1 &&
+        piece->get_player_id() == game_->get_current_player()->player_id) {
         selected_ = true;
 
         selected_i_ = mouse_i_;
@@ -182,6 +188,18 @@ void Renderer2D::render_game_() {
 }
 
 void Renderer2D::render_cursor_() {
+    Board::piecesType pieces = game_->get_board_pieces();
+    Piece *piece = pieces[mouse_i_][mouse_j_];
+
+    if (piece->get_player_id() == -1 ||
+        piece->get_player_id() != game_->get_current_player()->player_id) {
+        SDL_SetCursor(arrow_cursor_);
+
+        return;
+    }
+
+    SDL_SetCursor(hand_cursor_);
+
     SDL_Rect hover_rectangle = {
             piece_width_ * mouse_j_,
             piece_height_ * mouse_i_,
