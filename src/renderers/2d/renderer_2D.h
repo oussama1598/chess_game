@@ -5,6 +5,7 @@
 #include <map>
 #include "SDL.h"
 #include "SDL_image.h"
+#include "sound_manager.h"
 #include "game/Game.h"
 
 class Renderer2D {
@@ -37,9 +38,16 @@ private:
     int selected_j_{0};
 
     SDL_Window *window_{nullptr};
+
     SDL_Renderer *renderer_{nullptr};
     SDL_Texture *table_texture_{nullptr};
     SDL_Texture *texture_{nullptr};
+
+    Sound_Manager sound_manager_{};
+
+    std::map<std::string, std::string> sounds_{
+            {"move", "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/move.wav"}
+    };
 
     SDL_Cursor *arrow_cursor_;
     SDL_Cursor *hand_cursor_;
@@ -79,6 +87,8 @@ private:
     };
 
     void load_texture_();
+
+    void load_sounds_();
 
     void init_table_();
 

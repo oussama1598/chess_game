@@ -1,7 +1,7 @@
 #include "renderer_2D.h"
 
 Renderer2D::Renderer2D(const char *title) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
         throw std::runtime_error(SDL_GetError());
 
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
@@ -31,6 +31,7 @@ Renderer2D::Renderer2D(const char *title) {
     hand_cursor_ = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
 
     load_texture_();
+    load_sounds_();
 
     // this function is responsible for doing the size's calculations for the pieces rectangles
     init_table_();
@@ -58,6 +59,11 @@ void Renderer2D::load_texture_() {
         throw std::runtime_error(SDL_GetError());
 
     SDL_FreeSurface(sprite);
+}
+
+void Renderer2D::load_sounds_() {
+    for (auto &sound: sounds_)
+        sound_manager_.add_sound(sound.first, sound.second);
 }
 
 void Renderer2D::init_table_() {
@@ -111,6 +117,8 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
 
     try {
         game_->make_move(source, destination);
+
+        sound_manager_.play_sound("move");
     } catch (std::exception &error) {
         std::cout << error.what() << std::endl;
     }
