@@ -9,6 +9,10 @@
 
 class Renderer2D {
 private:
+    unsigned int last_time_{0};
+    int current_frames_count_{0};
+    int FPS_{0};
+
     int width_{800};
     int height_{800};
 

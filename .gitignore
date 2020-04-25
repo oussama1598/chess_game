@@ -32,4 +32,4 @@
 *.app
 
 .idea/*.xml
-/cmake-build-debug/
+/cmake-build-*/

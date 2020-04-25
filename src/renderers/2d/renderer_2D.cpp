@@ -194,6 +194,20 @@ void Renderer2D::render_cursor_() {
 }
 
 void Renderer2D::render() {
+    // calculate the frame rate
+    unsigned int current_time = SDL_GetTicks();
+
+    if (current_time - last_time_ >= 1000) {
+        FPS_ = current_frames_count_;
+        current_frames_count_ = 0;
+
+        std::cout << FPS_ << std::endl;
+
+        last_time_ = current_time;
+    }
+
+    current_frames_count_ += 1;
+
     // TODO: this has to change
     handle_events_();
 
