@@ -7,6 +7,9 @@ Renderer2D::Renderer2D(const char *title) {
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
         throw std::runtime_error(SDL_GetError());
 
+    if (TTF_Init() != 0)
+        throw std::runtime_error(SDL_GetError());
+
     window_ = SDL_CreateWindow(
             title,
             SDL_WINDOWPOS_CENTERED,
@@ -30,6 +33,7 @@ Renderer2D::Renderer2D(const char *title) {
     arrow_cursor_ = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     hand_cursor_ = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
 
+    load_fonts_();
     load_texture_();
     load_sounds_();
 
@@ -41,14 +45,21 @@ Renderer2D::~Renderer2D() {
     SDL_DestroyTexture(texture_);
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
+}
+
+void Renderer2D::load_fonts_() {
+    font_ = TTF_OpenFont(
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/fonts/OpenSans-Regular.ttf",
+            24);
 }
 
 void Renderer2D::load_texture_() {
     // TODO: remove the absolute path
     SDL_Surface *sprite = IMG_Load(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/chess_pieces_sprite.png");
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/chess_pieces.png");
 
     if (sprite == nullptr)
         throw std::runtime_error(SDL_GetError());
@@ -121,6 +132,10 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
         sound_manager_.play_sound("move");
     } catch (std::exception &error) {
         std::cout << error.what() << std::endl;
+
+        if (error.what() == Errors::ILLEGAL_MOVE) {
+            sound_manager_.play_sound("illegal");
+        }
     }
 }
 
@@ -170,6 +185,27 @@ void Renderer2D::handle_events_() {
     }
 }
 
+void Renderer2D::render_fps_() {
+    SDL_Rect fps_rect{0, 0, 0, 0};
+    SDL_Color fps_color{255, 0, 0, 255};
+    SDL_Surface *fps_text_surface = TTF_RenderText_Blended(
+            font_,
+            (std::to_string(FPS_) + " FPS").c_str(),
+            fps_color);
+    SDL_Texture *fps_texture = SDL_CreateTextureFromSurface(renderer_, fps_text_surface);
+
+    // get the text's width and height
+    SDL_QueryTexture(fps_texture, nullptr, nullptr, &fps_rect.w, &fps_rect.h);
+
+    // place the text to right
+    fps_rect.x = width_ - fps_rect.w - 10;
+
+    SDL_RenderCopy(renderer_, fps_texture, nullptr, &fps_rect);
+
+    SDL_FreeSurface(fps_text_surface);
+    SDL_DestroyTexture(fps_texture);
+}
+
 void Renderer2D::render_table_() {
     SDL_Rect src = {0, 0, width_, height_};
 
@@ -204,7 +240,7 @@ void Renderer2D::render_game_() {
             SDL_Rect *src_rectangle = &pieces_texture_rectangles_.at(piece->get_symbol()).at(
                     graphics_type);
 
-            SDL_Rect dist{x, y, piece_width_ - 5, piece_height_ - 5};
+            SDL_Rect dist{x, y, piece_width_, piece_height_};
             SDL_RenderCopy(renderer_, texture_, src_rectangle, &dist);
         }
     }
@@ -241,9 +277,6 @@ void Renderer2D::render() {
     if (current_time - last_time_ >= 1000) {
         FPS_ = current_frames_count_;
         current_frames_count_ = 0;
-
-        std::cout << FPS_ << std::endl;
-
         last_time_ = current_time;
     }
 
@@ -259,5 +292,9 @@ void Renderer2D::render() {
     render_cursor_();
     render_game_();
 
+    // Render fps if we're in debug mode
+#ifdef DEBUG
+    render_fps_();
+#endif
     SDL_RenderPresent(renderer_);
 }

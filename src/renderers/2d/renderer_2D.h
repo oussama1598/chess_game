@@ -5,6 +5,7 @@
 #include <map>
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 #include "sound_manager.h"
 #include "game/Game.h"
 
@@ -42,11 +43,14 @@ private:
     SDL_Renderer *renderer_{nullptr};
     SDL_Texture *table_texture_{nullptr};
     SDL_Texture *texture_{nullptr};
+    TTF_Font *font_{nullptr};
 
     Sound_Manager sound_manager_{};
 
     std::map<std::string, std::string> sounds_{
-            {"move", "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/move.wav"}
+            {"move",    "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/move.wav"},
+            {"capture", "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/move.wav"},
+            {"illegal", "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/illegal.wav"}
     };
 
     SDL_Cursor *arrow_cursor_;
@@ -54,37 +58,45 @@ private:
 
 
     std::map<char, std::map<std::string, SDL_Rect>> pieces_texture_rectangles_{
-            {'K', {
-                          {"light", (SDL_Rect) {2, 5, 95, 95}},
-                          {"dark", (SDL_Rect) {2, 110, 95, 95}}
+
+            {'P', {
+                          {"light", (SDL_Rect) {0, 0, 100, 100}},
+                          {"dark", (SDL_Rect) {0, 100, 100, 100}}
                   }
-            },     // king
-            {'Q', {
-                          {"light", (SDL_Rect) {110, 5, 95, 95}},
-                          {"dark", (SDL_Rect) {110, 110, 95, 95}}
-                  }
-            },   // queen
-            {'B', {
-                          {"light", (SDL_Rect) {215, 5, 95, 95}},
-                          {"dark", (SDL_Rect) {215, 110, 95, 95}}
+            },    // pawn
+            {
+             'B', {
+                          {"light", (SDL_Rect) {100, 0, 100, 100}},
+                          {"dark", (SDL_Rect) {100, 100, 100, 100}}
                   }
             },   // bishop
-            {'k', {
-                          {"light", (SDL_Rect) {322, 5, 95, 95}},
-                          {"dark", (SDL_Rect) {322, 110, 95, 95}}
+            {
+             'K', {
+                          {"light", (SDL_Rect) {200, 0, 100, 100}},
+                          {"dark", (SDL_Rect) {200, 100, 100, 100}}
+                  }
+            },     // king
+            {
+             'Q', {
+                          {"light", (SDL_Rect) {300, 0, 100, 100}},
+                          {"dark", (SDL_Rect) {300, 100, 100, 100}}
+                  }
+            },   // queen
+            {
+             'k', {
+                          {"light", (SDL_Rect) {400, 0, 100, 100}},
+                          {"dark", (SDL_Rect) {400, 100, 100, 100}}
                   }
             },   // knight
-            {'R', {
-                          {"light", (SDL_Rect) {430, 5, 95, 95}},
-                          {"dark", (SDL_Rect) {430, 110, 95, 95}}
+            {
+             'R', {
+                          {"light", (SDL_Rect) {500, 0, 100, 100}},
+                          {"dark", (SDL_Rect) {500, 100, 100, 100}}
                   }
-            },   // rook
-            {'P', {
-                          {"light", (SDL_Rect) {535, 5, 95, 95}},
-                          {"dark", (SDL_Rect) {535, 110, 95, 95}}
-                  }
-            }    // pawn
+            }   // rook
     };
+
+    void load_fonts_();
 
     void load_texture_();
 
@@ -101,6 +113,8 @@ private:
     void handle_mouse_press_up_(SDL_MouseButtonEvent event);
 
     void handle_events_();
+
+    void render_fps_();
 
     void render_table_();
 

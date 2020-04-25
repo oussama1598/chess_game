@@ -7,5 +7,5 @@ set(FILES
         2d/sound_manager.cpp 2d/sound_manager.h)
 
 add_library(renderers ${FILES})
-target_link_libraries(renderers CONAN_PKG::sdl2 CONAN_PKG::sdl2_image game)
+target_link_libraries(renderers CONAN_PKG::sdl2 CONAN_PKG::sdl2_image CONAN_PKG::sdl2_ttf game)
 target_include_directories(renderers INTERFACE ..)

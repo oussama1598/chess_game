@@ -28,10 +28,16 @@ conan_cmake_run(
 set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
+
 add_compile_options(-Wall -Werror -Wextra)
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    add_compile_options(-D DEBUG)
+endif()
 
 add_subdirectory(test)
 add_subdirectory(src)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} game renderers)
+
