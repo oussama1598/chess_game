@@ -10,7 +10,7 @@
 int main() {
     Game game;
 
-    Renderer2D renderer("Title");
+    Renderer2D renderer("Chess Game");
 
     renderer.set_game(&game);
 

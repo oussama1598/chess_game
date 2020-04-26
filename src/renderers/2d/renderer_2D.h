@@ -3,10 +3,12 @@
 #include <stdexcept>
 #include <vector>
 #include <map>
+#include <array>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 #include "sound_manager.h"
+#include "text_renderer.h"
 #include "game/Game.h"
 
 class Renderer2D {
@@ -57,7 +59,7 @@ private:
     SDL_Texture *table_texture_{nullptr};
     SDL_Texture *guide_circle_texture_{nullptr};
     SDL_Texture *texture_{nullptr};
-    TTF_Font *font_{nullptr};
+    Text_Renderer text_renderer{};
 
     Sound_Manager sound_manager_{};
 

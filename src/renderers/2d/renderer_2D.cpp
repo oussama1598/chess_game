@@ -51,9 +51,16 @@ Renderer2D::~Renderer2D() {
 }
 
 void Renderer2D::load_fonts_() {
-    font_ = TTF_OpenFont(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/fonts/OpenSans-Regular.ttf",
-            24);
+    text_renderer.add_font(
+            "open-sans-24",
+            24,
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/fonts/OpenSans-Regular.ttf"
+    );
+    text_renderer.add_font(
+            "open-sans-20",
+            20,
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/fonts/OpenSans-Regular.ttf"
+    );
 }
 
 void Renderer2D::load_texture_() {
@@ -84,6 +91,9 @@ void Renderer2D::load_sounds_() {
 void Renderer2D::init_table_() {
     std::vector<SDL_Rect> dark_table_rectangles{};
     std::vector<SDL_Rect> light_table_rectangles{};
+
+    SDL_Color dark_color{222, 172, 93, 255};
+    SDL_Color light_color{249, 227, 192, 255};
 
     piece_width_ = (int) (width_ / cols_);
     piece_height_ = (int) (height_ / rows_);
@@ -116,11 +126,25 @@ void Renderer2D::init_table_() {
             }
         }
 
-    SDL_SetRenderDrawColor(renderer_, 222, 172, 93, 255);
+    SDL_SetRenderDrawColor(renderer_, dark_color.r, dark_color.g, dark_color.b, dark_color.a);
     SDL_RenderFillRects(renderer_, dark_table_rectangles.data(), dark_table_rectangles.size());
 
-    SDL_SetRenderDrawColor(renderer_, 249, 227, 192, 255);
+    SDL_SetRenderDrawColor(renderer_, light_color.r, light_color.g, light_color.b, light_color.a);
     SDL_RenderFillRects(renderer_, light_table_rectangles.data(), light_table_rectangles.size());
+
+    std::array<std::string, 8> letters{"a", "b", "c", "d", "e", "f", "g", "h"};
+
+    for (int i = rows_; i > 0; --i) {
+        SDL_Color number_color = i % 2 ? light_color : dark_color;
+        SDL_Rect number_rect{15, piece_height_ * (rows_ - i), 0, 0};
+
+        SDL_Color letter_color = i % 2 ? dark_color : light_color;
+        SDL_Rect letter_rect{(piece_width_ - 5) + piece_width_ * (rows_ - i), piece_height_ * 8 - 30, 0, 0};
+
+        text_renderer.render_text(std::to_string(i), number_rect, renderer_, "open-sans-20", number_color);
+        text_renderer.render_text(letters[rows_ - i], letter_rect, renderer_, "open-sans-20",
+                                  letter_color);
+    }
 
     SDL_SetRenderTarget(renderer_, nullptr);
 }
@@ -237,24 +261,15 @@ Renderer2D::show_flash_message_(Piece::piece_coordinates position,
 }
 
 void Renderer2D::render_fps_() {
-    SDL_Rect fps_rect{0, 0, 0, 0};
-    SDL_Color fps_color{255, 0, 0, 255};
-    SDL_Surface *fps_text_surface = TTF_RenderText_Blended(
-            font_,
-            (std::to_string(FPS_) + " FPS").c_str(),
-            fps_color);
-    SDL_Texture *fps_texture = SDL_CreateTextureFromSurface(renderer_, fps_text_surface);
+    SDL_Rect fps_rect{width_ - 10, 0, 0, 0};
 
-    // get the text's width and height
-    SDL_QueryTexture(fps_texture, nullptr, nullptr, &fps_rect.w, &fps_rect.h);
-
-    // place the text to right
-    fps_rect.x = width_ - fps_rect.w - 10;
-
-    SDL_RenderCopy(renderer_, fps_texture, nullptr, &fps_rect);
-
-    SDL_FreeSurface(fps_text_surface);
-    SDL_DestroyTexture(fps_texture);
+    text_renderer.render_text(
+            std::to_string(FPS_),
+            fps_rect,
+            renderer_,
+            "open-sans-24",
+            {255, 0, 0, 255}
+    );
 }
 
 void Renderer2D::render_table_() {
