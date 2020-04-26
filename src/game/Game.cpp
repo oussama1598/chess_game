@@ -7,26 +7,6 @@ Game::Game() : is_game_in_check_{false}, is_game_ended_{false} {
     initialize_game();
 }
 
-std::vector<Player> &Game::get_players() {
-    return players_;
-}
-
-bool Game::is_game_in_check() const {
-    return is_game_in_check_;
-}
-
-bool Game::is_game_ended() const {
-    return is_game_ended_;
-}
-
-Board::piecesType &Game::get_board_pieces() {
-    return game_board_.get_pieces();
-}
-
-Player *Game::get_current_player() {
-    return current_player_;
-}
-
 void Game::add_player(const int player_id, const bool is_dark,
                       const bool is_top) {
     players_.push_back((Player) {player_id, is_dark, is_top, false});
@@ -69,14 +49,6 @@ void Game::initialize_game() {
     }
 }
 
-Player &Game::get_player_by_number(const size_t id) {
-    try {
-        return players_.at(id);
-    } catch (std::out_of_range &e) {
-        throw std::runtime_error(Errors::PLAYER_DOES_NOT_EXIST);
-    }
-}
-
 void Game::make_move(const std::string &from, const std::string &to) {
     if (is_game_ended_) return;
 
@@ -114,9 +86,6 @@ void Game::make_move(const std::string &from, const std::string &to) {
             to_piece_coordinates.column
     );
 
-    if (destination_piece->get_player_id() == source_piece->get_player_id())
-        throw std::runtime_error(Errors::ILLEGAL_MOVE);
-
     if (!game_board_.perform_move(source_player, from_piece_coordinates,
                                   source_piece,
                                   to_piece_coordinates, destination_piece))
@@ -132,12 +101,6 @@ void Game::make_move(const std::string &from, const std::string &to) {
     is_game_in_check_ = !game_board_.is_king_safe(opponent_player);
 
     if (!game_board_.player_has_valid_move(opponent_player)) {
-        // TODO: Make the console renderer print those messages
-//        if (is_game_in_check_)
-//            std::cout << "Check mate" << std::endl;
-//        else
-//            std::cout << "Stale mate" << std::endl;
-
         is_game_ended_ = true;
         return;
     }

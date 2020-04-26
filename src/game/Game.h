@@ -15,21 +15,21 @@ private:
 public:
     Game();
 
-    std::vector<Player> &get_players();
+    inline std::vector<Player> get_players() { return players_; }
 
-    bool is_game_in_check() const;
+    [[nodiscard]] inline bool is_game_in_check() const { return is_game_in_check_; }
 
-    bool is_game_ended() const;
+    [[nodiscard]] inline bool is_game_ended() const { return is_game_ended_; }
 
-    Board::piecesType &get_board_pieces();
+    inline Board::piecesType &get_board_pieces() { return game_board_.get_pieces(); }
 
-    Player *get_current_player();
+    inline Player *get_current_player() { return current_player_; }
+
+    inline Board &get_board() { return game_board_; }
 
     void add_player(int player_id, bool is_dark, bool is_top);
 
     void initialize_game();
-
-    Player &get_player_by_number(size_t id);
 
     void make_move(const std::string &from, const std::string &to);
 };

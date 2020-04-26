@@ -58,4 +58,6 @@ public:
                       Piece *destination_piece, bool reset = false);
 
     bool player_has_valid_move(Player &player);
+
+    std::vector<std::string> get_possible_moves_for(Player &player, const std::string &from);
 };

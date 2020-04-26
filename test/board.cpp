@@ -66,8 +66,8 @@ namespace {
             Player player{0, true, true, true};
 
             board_.add_piece("A1", new King(0));
-            board_.add_piece("A2", new Queen(1));
-            board_.add_piece("B1", new Rook(1));
+            board_.add_piece("A3", new Queen(1));
+            board_.add_piece("G1", new Rook(1));
 
             CHECK(!board_.player_has_valid_move(player));
 
@@ -77,6 +77,18 @@ namespace {
             board1_.add_piece("A1", new King(0));
 
             CHECK(board1_.player_has_valid_move(player1));
+        }
+
+        SECTION("Testing get possible moves for function") {
+            Board board_;
+            Player player{0, true, false, true};
+
+            board_.add_piece("A1", new King(0));
+            board_.add_piece("A2", new Queen(0));
+            board_.add_piece("B1", new Rook(1));
+
+            CHECK_THAT(board_.get_possible_moves_for(player, "A1"),
+                       Catch::UnorderedEquals(std::vector<std::string>{"B1"}));
         }
     }
 }

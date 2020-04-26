@@ -291,10 +291,16 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
     Piece::piece_coordinates to_coordinates = Piece::get_piece_coordinates_from_id(
             to);
 
+    Piece *destination_piece = get_piece_at(to_coordinates.line,
+                                            to_coordinates.column);
+
     // check if the current piece is a knight since
     // the next check is not applicable to it
     bool is_knight = dynamic_cast<const Knight *>(source_piece) != nullptr;
     bool is_pawn = dynamic_cast<const Pawn *>(source_piece) != nullptr;
+
+    if (destination_piece->get_player_id() == source_player.player_id)
+        return false;
 
     if (is_knight) return true;
 
@@ -302,20 +308,15 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
 
     // checking if the movement was diagonally for pawn
     if (is_pawn) {
-        Piece *destination_piece = get_piece_at(to_coordinates.line,
-                                                to_coordinates.column);
         if (from_coordinates.column != to_coordinates.column) {
             // moved to an empty piece diagonally (not allowed)
             if (destination_piece->get_player_id() == -1) return false;
-            // move diagonally to spot where i the player owns the piece within it
-            if (destination_piece->get_player_id() ==
-                source_player.player_id)
-                return false;
         } else {
             // if the direct spot is not empty (not allowed)
             if (destination_piece->get_player_id() != -1) return false;
         }
     }
+
 
     return true;
 }
@@ -337,7 +338,7 @@ Piece::piece_coordinates Board::find_king(Player &player) {
 bool Board::is_king_safe(Player &player) {
     Piece::piece_coordinates king_coordinates = find_king(player);
     std::string king_id = Piece::get_id_from_coordinates(king_coordinates);
-    [[maybe_unused]] King *king = (King *) pieces_[king_coordinates.line][king_coordinates.column];
+    King *king = (King *) pieces_[king_coordinates.line][king_coordinates.column];
 
     for (int i = 0; (size_t) i < pieces_.size(); ++i)
         for (int j = 0; (size_t) j < pieces_[i].size(); ++j) {
@@ -360,7 +361,7 @@ bool Board::perform_move(Player &source_player,
                          Piece *source_piece,
                          Piece::piece_coordinates to_piece_coordinates,
                          Piece *destination_piece, bool reset) {
-    Piece *new_piece = new Piece();
+    auto *new_piece = new Piece();
 
     // Change the current piece to the wanted place
     pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
@@ -402,7 +403,7 @@ bool Board::player_has_valid_move(Player &player) {
                         Piece *destination_piece = pieces_[k][l];
                         std::string to = Piece::get_id_from_coordinates({k, l});
 
-                        if (destination_piece->get_player_id() == -1) {
+                        if (destination_piece->get_player_id() != player.player_id) {
                             if (can_make_move(source_piece, player, from, to)) {
                                 if (perform_move(player,
                                                  {i, j},
@@ -418,4 +419,49 @@ bool Board::player_has_valid_move(Player &player) {
         }
 
     return false;
+}
+
+std::vector<std::string> Board::get_possible_moves_for(Player &player, const std::string &from) {
+    Piece::piece_coordinates coordinates = Piece::get_piece_coordinates_from_id(from);
+    Piece *piece = get_piece_at(coordinates.line, coordinates.column);
+
+    std::vector <std::string> piece_possible_spots = piece->get_possible_moves(player.is_top, from);
+    std::vector <std::string> board_empty_spots = get_all_empty_spots(from);
+
+    bool is_knight = dynamic_cast<const Knight *>(piece) != nullptr;
+
+    std::vector <std::string> spots_matching;
+    std::vector <std::string> possible_moves;
+
+    // if it's knight, the possible moves follow the rules applied by the board
+    if (!is_knight) {
+        for (auto &spot: piece_possible_spots) {
+            if (find(board_empty_spots.begin(), board_empty_spots.end(), spot) !=
+                board_empty_spots.end()) {
+                spots_matching.push_back(spot);
+            }
+        }
+    }else{
+        // the moves are only the one provided by the piece it self
+        spots_matching = piece_possible_spots;
+    }
+
+    for (auto &spot: spots_matching) {
+        if (can_make_move(piece, player, from, spot)) {
+            Piece::piece_coordinates destination_coordinates = Piece::get_piece_coordinates_from_id(
+                    spot);
+            Piece *destination_piece = get_piece_at(destination_coordinates.line,
+                                                    destination_coordinates.column);
+
+            if (perform_move(player,
+                             coordinates,
+                             piece,
+                             destination_coordinates,
+                             destination_piece, true)) {
+                possible_moves.push_back(spot);
+            }
+        }
+    }
+
+    return possible_moves;
 }

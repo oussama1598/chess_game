@@ -2,10 +2,10 @@
 //#include <bits/stdc++.h>
 //#include <boost/algorithm/string.hpp>
 
-//#include "renderers/console.h"
 #include "game/Game.h"
 
 #include "renderers/2d/renderer_2D.h"
+#include "renderers/console/console.h"
 
 int main() {
     Game game;
@@ -16,6 +16,8 @@ int main() {
 
     while (renderer.is_running()) {
         renderer.render();
+//        ConsoleRenderer::clear();
+//        ConsoleRenderer::render(game);
     }
 
 //    Game game;

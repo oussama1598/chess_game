@@ -49,10 +49,13 @@ private:
 
     flash flash_message_;
 
+    std::vector<std::string> guides_{};
+
     SDL_Window *window_{nullptr};
 
     SDL_Renderer *renderer_{nullptr};
     SDL_Texture *table_texture_{nullptr};
+    SDL_Texture *guide_circle_texture_{nullptr};
     SDL_Texture *texture_{nullptr};
     TTF_Font *font_{nullptr};
 
@@ -67,9 +70,7 @@ private:
     SDL_Cursor *arrow_cursor_;
     SDL_Cursor *hand_cursor_;
 
-
     std::map<char, std::map<std::string, SDL_Rect>> pieces_texture_rectangles_{
-
             {'P', {
                           {"light", (SDL_Rect) {0, 0, 100, 100}},
                           {"dark", (SDL_Rect) {0, 100, 100, 100}}
@@ -132,11 +133,13 @@ private:
 
     void render_table_();
 
-    void render_game_();
-
     void render_cursor_();
 
     void render_flash_message_();
+
+    void render_guides_();
+
+    void render_game_();
 
 public:
 

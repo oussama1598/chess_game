@@ -22,7 +22,7 @@ Renderer2D::Renderer2D(const char *title) {
     if (window_ == nullptr)
         throw std::runtime_error("Could not create a window_");
 
-    renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED);
+    renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_PRESENTVSYNC);
 
     if (renderer_ == nullptr)
         throw std::runtime_error("Could not create a renderer");
@@ -58,18 +58,22 @@ void Renderer2D::load_fonts_() {
 
 void Renderer2D::load_texture_() {
     // TODO: remove the absolute path
-    SDL_Surface *sprite = IMG_Load(
+    SDL_Surface *pieces_sprite = IMG_Load(
             "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/chess_pieces.png");
+    SDL_Surface *guide_circle_sprite = IMG_Load(
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/circle.png");
 
-    if (sprite == nullptr)
+    if (pieces_sprite == nullptr || guide_circle_sprite == nullptr)
         throw std::runtime_error(SDL_GetError());
 
-    texture_ = SDL_CreateTextureFromSurface(renderer_, sprite);
+    texture_ = SDL_CreateTextureFromSurface(renderer_, pieces_sprite);
+    guide_circle_texture_ = SDL_CreateTextureFromSurface(renderer_, guide_circle_sprite);
 
-    if (texture_ == nullptr)
+    if (texture_ == nullptr || guide_circle_texture_ == nullptr)
         throw std::runtime_error(SDL_GetError());
 
-    SDL_FreeSurface(sprite);
+    SDL_FreeSurface(pieces_sprite);
+    SDL_FreeSurface(guide_circle_sprite);
 }
 
 void Renderer2D::load_sounds_() {
@@ -126,6 +130,12 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
     std::string source = Piece::get_id_from_coordinates(from_coordinates);
     std::string destination = Piece::get_id_from_coordinates(to_coordinates);
 
+    Player *current_player = game_->get_current_player();
+
+    if (from_coordinates.line == to_coordinates.line &&
+        from_coordinates.column == to_coordinates.column)
+        return;
+
     try {
         game_->make_move(source, destination);
 
@@ -138,7 +148,21 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
 
             show_flash_message_(from_coordinates);
         }
+
+        if (error.what() == Errors::KING_IS_NOT_SAFE) {
+            sound_manager_.play_sound("illegal");
+
+            Piece::piece_coordinates king_coordinates = game_->get_board().find_king(
+                    *current_player);
+
+            show_flash_message_(king_coordinates);
+        }
     }
+
+    if (game_->is_game_ended())
+        std::cout << "Game Over" << std::endl;
+    else if (game_->is_game_in_check())
+        std::cout << "Game is in check" << std::endl;
 }
 
 void Renderer2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
@@ -147,11 +171,16 @@ void Renderer2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
 
     if (event.button == SDL_BUTTON_LEFT &&
         piece->get_player_id() != -1 &&
-        piece->get_player_id() == game_->get_current_player()->player_id) {
+        piece->get_player_id() == game_->get_current_player()->player_id &&
+        !game_->is_game_ended()) {
         selected_ = true;
 
         selected_i_ = mouse_i_;
         selected_j_ = mouse_j_;
+
+        guides_ = game_->get_board().get_possible_moves_for(
+                *game_->get_current_player(),
+                Piece::get_id_from_coordinates({mouse_i_, mouse_j_}));
     }
 }
 
@@ -168,6 +197,9 @@ void Renderer2D::handle_events_() {
 
     SDL_PollEvent(&event);
 
+    int current_mouse_i_;
+    int current_mouse_j_;
+
     switch (event.type) {
         case SDL_QUIT:
             is_running_ = false;
@@ -175,8 +207,15 @@ void Renderer2D::handle_events_() {
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&mouse_x_, &mouse_y_);
 
-            mouse_i_ = mouse_y_ / piece_height_;
-            mouse_j_ = mouse_x_ / piece_width_;
+            current_mouse_i_ = (height_ - mouse_y_) / piece_height_;
+            current_mouse_j_ = mouse_x_ / piece_width_;
+
+            if (current_mouse_i_ >= rows_ || current_mouse_j_ >= cols_)
+                break;
+
+            mouse_i_ = current_mouse_i_;
+            mouse_j_ = current_mouse_j_;
+
             break;
         case SDL_MOUSEBUTTONDOWN:
             handle_mouse_press_down_(event.button);
@@ -224,40 +263,6 @@ void Renderer2D::render_table_() {
     SDL_RenderCopy(renderer_, table_texture_, &src, &src);
 }
 
-void Renderer2D::render_game_() {
-    if (game_->is_game_in_check())
-        std::cout << "Game is in check" << std::endl;
-
-    std::vector<Player> players = game_->get_players();
-    Board::piecesType pieces = game_->get_board_pieces();
-
-    for (int i = pieces.size() - 1; i >= 0; --i) {
-        for (int j = 0; j < (int) pieces.at(i).size(); j++) {
-            Piece *piece = pieces[i][j];
-
-            if (piece->get_player_id() == -1) {
-                continue;
-            }
-
-            int x = piece_width_ * j;
-            int y = piece_height_ * i;
-
-            if (selected_ && i == selected_i_ && j == selected_j_) {
-                x = mouse_x_ - (piece_width_ / 2);
-                y = mouse_y_ - (piece_height_ / 2);
-            }
-
-            std::string graphics_type = players.at(piece->get_player_id()).is_dark ? "dark"
-                                                                                   : "light";
-            SDL_Rect *src_rectangle = &pieces_texture_rectangles_.at(piece->get_symbol()).at(
-                    graphics_type);
-
-            SDL_Rect dist{x, y, piece_width_, piece_height_};
-            SDL_RenderCopy(renderer_, texture_, src_rectangle, &dist);
-        }
-    }
-}
-
 void Renderer2D::render_cursor_() {
     Board::piecesType pieces = game_->get_board_pieces();
     Piece *piece = pieces[mouse_i_][mouse_j_];
@@ -273,7 +278,7 @@ void Renderer2D::render_cursor_() {
 
     SDL_Rect hover_rectangle = {
             piece_width_ * mouse_j_,
-            piece_height_ * mouse_i_,
+            piece_height_ * (rows_ - 1 - mouse_i_),
             piece_width_, piece_height_
     };
 
@@ -301,7 +306,7 @@ void Renderer2D::render_flash_message_() {
 
     SDL_Rect flash_message_rect{
             piece_width_ * flash_message_.position.column,
-            piece_height_ * flash_message_.position.line,
+            piece_height_ * (rows_ - 1 - flash_message_.position.line),
             piece_width_,
             piece_height_
     };
@@ -314,8 +319,58 @@ void Renderer2D::render_flash_message_() {
             flash_message_.color.b,
             flash_message_.color.a
     );
-    SDL_RenderFillRect(renderer_, &flash_message_rect
-    );
+    SDL_RenderFillRect(renderer_, &flash_message_rect);
+}
+
+void Renderer2D::render_guides_() {
+    if (!selected_)
+        return;
+
+    for (auto &spot: guides_) {
+        Piece::piece_coordinates coordinates = Piece::get_piece_coordinates_from_id(spot);
+
+        SDL_Rect rect
+                {
+                        coordinates.column * piece_width_,
+                        (rows_ - 1 - coordinates.line) * piece_height_,
+                        piece_width_,
+                        piece_height_
+                };
+
+        SDL_RenderCopy(renderer_, guide_circle_texture_, nullptr, &rect);
+    }
+
+}
+
+void Renderer2D::render_game_() {
+    std::vector<Player> players = game_->get_players();
+    Board::piecesType pieces = game_->get_board_pieces();
+
+    for (int i = 0; i < (int) pieces.size(); ++i) {
+        for (int j = 0; j < (int) pieces.at(i).size(); ++j) {
+            Piece *piece = pieces[i][j];
+
+            if (piece->get_player_id() == -1) {
+                continue;
+            }
+
+            int x = piece_width_ * j;
+            int y = piece_height_ * (rows_ - 1 - i);
+
+            if (selected_ && i == selected_i_ && j == selected_j_) {
+                x = mouse_x_ - (piece_width_ / 2);
+                y = mouse_y_ - (piece_height_ / 2);
+            }
+
+            std::string graphics_type = players.at(piece->get_player_id()).is_dark ? "dark"
+                                                                                   : "light";
+            SDL_Rect *src_rectangle = &pieces_texture_rectangles_.at(piece->get_symbol()).at(
+                    graphics_type);
+
+            SDL_Rect dist{x, y, piece_width_, piece_height_};
+            SDL_RenderCopy(renderer_, texture_, src_rectangle, &dist);
+        }
+    }
 }
 
 void Renderer2D::render() {
@@ -330,7 +385,6 @@ void Renderer2D::render() {
 
     current_frames_count_ += 1;
 
-    // TODO: this has to change
     handle_events_();
 
     SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
@@ -339,11 +393,13 @@ void Renderer2D::render() {
     render_table_();
     render_cursor_();
     render_flash_message_();
+    render_guides_();
     render_game_();
 
     // Render fps if we're in debug mode
 #ifdef DEBUG
     render_fps_();
 #endif
+
     SDL_RenderPresent(renderer_);
 }
