@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>brain.png</file>
+  </qresource>
+</RCC>

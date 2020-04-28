@@ -1,0 +1,23 @@
+QMainWindow {
+    background-color: #2e3034;
+}
+
+QTableWidget {
+    background-color: white;
+}
+
+.player-panel {
+    background-color: #f1f1f1;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.player-panel .icon {
+    background-color: #dbd9d7;
+}
+
+.player-panel QLabel{
+    margin-left: 5px;
+    font-weight: 700;
+    color: #005e94;
+}

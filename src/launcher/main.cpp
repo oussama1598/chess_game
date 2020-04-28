@@ -1,47 +1,25 @@
-//#include <iostream>
-//#include <bits/stdc++.h>
-//#include <boost/algorithm/string.hpp>
+#include <iostream>
+#include <QtWidgets>
+#include "pages/game/game_window.h"
 
 #include "game/Game.h"
-
 #include "renderers/2d/renderer_2D.h"
-#include "renderers/console/console.h"
 
-int main() {
-    Game game;
+int main(int argc, char **argv) {
+    QApplication app(argc, argv);
 
-    Renderer2D renderer("Chess Game");
+    // add stylesheet to the app
+    QFile File(
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/launcher/styles/main.css");
+    File.open(QFile::ReadOnly);
 
-    renderer.set_game(&game);
+    QString StyleSheet = QLatin1String(File.readAll());
 
-    while (renderer.is_running()) {
-        renderer.render();
-//        ConsoleRenderer::clear();
-//        ConsoleRenderer::render(game);
-    }
+    app.setStyleSheet(StyleSheet);
 
-//    Game game;
-//
-//    while (true) {
-//        ConsoleRenderer::render(game);
-//
-//        std::string input;
-//        std::vector<std::string> inputs;
-//
-//        std::cout << "Player: " << game.get_current_player()->player_id
-//                  << " Make a move: ";
-//        std::getline(std::cin, input);
-//
-//        boost::split(inputs, input, boost::is_any_of(" "));
-//
-//        ConsoleRenderer::clear();
-//
-//        try {
-//            game.make_move(inputs[0], inputs[1]);
-//        } catch (std::exception &error) {
-//            std::cout << error.what() << std::endl;
-//        }
-//    }
+    Game_Window game_window;
 
-    return 0;
+    game_window.show();
+
+    return app.exec();
 }

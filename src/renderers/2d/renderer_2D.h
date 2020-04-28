@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <array>
+#include <functional>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
@@ -27,6 +28,12 @@ private:
     int piece_height_{0};
 
     bool is_running_{false};
+
+    typedef std::function<void(int x, int y)> window_move_callback;
+    typedef std::function<void(const std::string &from, const std::string &to)> move_callback;
+
+    window_move_callback on_window_move_callback_;
+    move_callback on_move_callback_;
 
     Game *game_{};
 
@@ -152,6 +159,10 @@ public:
     [[nodiscard]] inline bool is_running() const { return is_running_; }
 
     inline void set_game(Game *game) { game_ = game; }
+
+    void on_window_move(window_move_callback callback);
+
+    void on_move(move_callback callback);
 
     void render();
 };

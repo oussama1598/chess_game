@@ -50,6 +50,14 @@ Renderer2D::~Renderer2D() {
     SDL_Quit();
 }
 
+void Renderer2D::on_window_move(window_move_callback callback) {
+    on_window_move_callback_ = callback;
+}
+
+void Renderer2D::on_move(move_callback callback) {
+    on_move_callback_ = callback;
+}
+
 void Renderer2D::load_fonts_() {
     text_renderer.add_font(
             "open-sans-24",
@@ -139,9 +147,11 @@ void Renderer2D::init_table_() {
         SDL_Rect number_rect{15, piece_height_ * (rows_ - i), 0, 0};
 
         SDL_Color letter_color = i % 2 ? dark_color : light_color;
-        SDL_Rect letter_rect{(piece_width_ - 5) + piece_width_ * (rows_ - i), piece_height_ * 8 - 30, 0, 0};
+        SDL_Rect letter_rect{(piece_width_ - 5) + piece_width_ * (rows_ - i),
+                             piece_height_ * 8 - 30, 0, 0};
 
-        text_renderer.render_text(std::to_string(i), number_rect, renderer_, "open-sans-20", number_color);
+        text_renderer.render_text(std::to_string(i), number_rect, renderer_, "open-sans-20",
+                                  number_color);
         text_renderer.render_text(letters[rows_ - i], letter_rect, renderer_, "open-sans-20",
                                   letter_color);
     }
@@ -164,6 +174,8 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
         game_->make_move(source, destination);
 
         sound_manager_.play_sound("move");
+
+        on_move_callback_(source, destination);
     } catch (std::exception &error) {
         std::cout << error.what() << std::endl;
 
@@ -246,6 +258,11 @@ void Renderer2D::handle_events_() {
             break;
         case SDL_MOUSEBUTTONUP:
             handle_mouse_press_up_(event.button);
+            break;
+        case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_MOVED) {
+                on_window_move_callback_(event.window.data1, event.window.data2);
+            }
             break;
     }
 }
