@@ -16,6 +16,11 @@ Q_OBJECT
 private:
     Ui::States_Window *ui;
     Game *game_;
+    QTimer *timer_;
+
+private slots:
+
+    void Render();
 
 public:
     explicit States_Window(Game *game, QWidget *parent = nullptr);

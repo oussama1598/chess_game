@@ -14,14 +14,18 @@ private:
     Main_Window *main_window_{nullptr};
     New_Game_Window *new_game_window_{nullptr};
     About_Window *about_window_{nullptr};
+    Game_Window *game_window_{nullptr};
 
     void open_main_window_();
 
     void open_new_game_window_();
 
+    void open_game_window_();
+
     void open_about_window_();
 
     void on_quit_clicked_();
+
 public:
 
     Launcher(int &argc, char **argv);

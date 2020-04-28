@@ -8,6 +8,8 @@ Launcher::Launcher(int &argc, char **argv) : QApplication(argc, argv) {
     QString StyleSheet = QLatin1String(File.readAll());
     setStyleSheet(StyleSheet);
 
+    setQuitOnLastWindowClosed(false);
+
     // show the main window
     open_main_window_();
 }
@@ -21,13 +23,13 @@ void Launcher::open_main_window_() {
         });
 
         main_window_->set_on_about_clicked([this]() {
-            main_window_->close();
+            main_window_->hide();
 
             open_about_window_();
         });
 
         main_window_->set_on_new_game_clicked([this]() {
-            main_window_->close();
+            main_window_->hide();
 
             open_new_game_window_();
         });
@@ -39,9 +41,40 @@ void Launcher::open_main_window_() {
 void Launcher::open_new_game_window_() {
     if (new_game_window_ == nullptr) {
         new_game_window_ = new New_Game_Window();
+
+        new_game_window_->set_close_callback([this]() {
+            new_game_window_->hide();
+
+            open_main_window_();
+        });
+
+        new_game_window_->set_play_button_callback([this](int opponent_type, int renderer_type) {
+            std::cout << opponent_type << " " << renderer_type << std::endl;
+
+            new_game_window_->hide();
+
+            open_game_window_();
+        });
     }
 
     new_game_window_->show();
+}
+
+void Launcher::open_game_window_() {
+    if (game_window_ == nullptr) {
+        game_window_ = new Game_Window();
+
+        game_window_->set_close_callback([this]() {
+            game_window_->hide();
+
+            delete game_window_;
+            game_window_ = nullptr;
+
+            open_main_window_();
+        });
+    }
+
+    game_window_->show();
 }
 
 void Launcher::open_about_window_() {

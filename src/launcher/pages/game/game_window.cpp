@@ -25,13 +25,40 @@ Game_Window::Game_Window(QWidget *parent) : QWidget(parent) {
 Game_Window::~Game_Window() {
     delete timer_;
     delete game_;
+    delete dialog_box_;
     delete renderer_;
 }
 
 void Game_Window::Render() {
     setVisible(false);
 
-    if (renderer_->is_running()) {
-        renderer_->render();
+    if (renderer_ != nullptr) {
+        if (game_->is_game_ended() && dialog_box_ == nullptr) {
+            dialog_box_ = new QMessageBox();
+            dialog_box_->setWindowTitle("Game Over");
+
+            std::string message =
+                    "Player " + std::to_string(game_->get_current_player()->player_id) + " has won  ";
+
+            dialog_box_->setText(QString(message.c_str()));
+            dialog_box_->exec();
+
+            states_window_->hide();
+            on_close_callback_();
+        }
+
+        if (!renderer_->is_running()) {
+            states_window_->hide();
+
+            on_close_callback_();
+        }
+
+        if (renderer_->is_running() && !game_->is_game_ended()) {
+            renderer_->render();
+        }
     }
+}
+
+void Game_Window::set_close_callback(std::function<void()> callback) {
+    on_close_callback_ = callback;
 }

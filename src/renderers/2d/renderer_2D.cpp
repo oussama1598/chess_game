@@ -296,6 +296,9 @@ void Renderer2D::render_table_() {
 }
 
 void Renderer2D::render_cursor_() {
+    if (game_->is_game_ended())
+        return;
+
     Board::piecesType pieces = game_->get_board_pieces();
     Piece *piece = pieces[mouse_i_][mouse_j_];
 
@@ -427,6 +430,14 @@ void Renderer2D::render() {
     render_flash_message_();
     render_guides_();
     render_game_();
+
+    if (game_->is_game_ended()) {
+        SDL_Rect rect{0, 0, width_, height_};
+
+        SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
+        SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 100);
+        SDL_RenderFillRect(renderer_, &rect);
+    }
 
     // Render fps if we're in debug mode
 #ifdef DEBUG

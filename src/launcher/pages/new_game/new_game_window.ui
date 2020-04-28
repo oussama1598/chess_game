@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>300</height>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,6 +53,98 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="spacing">
+        <number>40</number>
+       </property>
+       <item>
+        <widget class="QFrame" name="verticalFrame_3">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="class" stdset="0">
+          <string>option-frame</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Opponent : </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="opponent_type">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="currentText">
+             <string>Human</string>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Human</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Computer</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="horizontalFrame">
+         <property name="class" stdset="0">
+          <string>option-frame</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Renderer :</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="renderer_type">
+            <item>
+             <property name="text">
+              <string>2D</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>3D</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="play_button">
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>Play</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

@@ -37,3 +37,8 @@ void Main_Window::onQuitClicked() {
     on_quit_clicked_callback_();
 }
 
+void Main_Window::closeEvent(QCloseEvent *event) {
+    event->ignore();
+
+    on_quit_clicked_callback_();
+}

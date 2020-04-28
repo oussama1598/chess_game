@@ -47,4 +47,21 @@ QTableWidget {
     margin-left: 5px;
     font-weight: 700;
     color: #005e94;
+    background-color: transparent;
+}
+
+.option-frame {
+    border: 1px solid white;
+}
+
+QComboBox {
+    padding: 5px;
+    color: white;
+    background-color: #2e3034;
+    border: 1px solid white;
+}
+
+QComboBox:item {
+    background-color: #2e3034;
+    color: white;
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include "QMainWindow"
+#include "QCloseEvent"
 
 namespace Ui {
     class Main_Window;
@@ -36,4 +37,6 @@ public:
     void set_on_about_clicked(std::function<void()> callback);
 
     void set_on_quit_clicked(std::function<void()> callback);
+
+    void closeEvent(QCloseEvent *event);
 };
