@@ -1,5 +1,32 @@
-QMainWindow {
+QMainWindow, QWidget {
     background-color: #2e3034;
+    font-family: monospace;
+}
+
+QLabel {
+    color: white;
+    font-size: 13px;
+}
+
+QPushButton {
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    text-transform: uppercase;
+    background-color: rgba(68, 68, 68, 0.3);
+}
+
+QPushButton:hover {
+    background-color: rgba(68, 68, 68, 0.7);
+}
+
+.logo {
+    border: 1px solid white;
+    color: white;
+    text-transform: uppercase;
+    font-size: 15px;
+    padding: 15px;
+    font-weight: bold;
 }
 
 QTableWidget {
@@ -16,7 +43,7 @@ QTableWidget {
     background-color: #dbd9d7;
 }
 
-.player-panel QLabel{
+.player-panel QLabel {
     margin-left: 5px;
     font-weight: 700;
     color: #005e94;
