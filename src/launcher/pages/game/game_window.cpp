@@ -61,7 +61,7 @@ void Game_Window::Render() {
 
             // TODO: check if we're playing against an AI, if so do this
             if (game_->get_current_player()->player_id == AI_PLAYER_ID_) {
-                AI_Player::make_a_move(game_, 1);
+                AI_Player::make_a_move(game_, 2);
             }
         }
     }

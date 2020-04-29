@@ -15,6 +15,8 @@ private:
 public:
     Game();
 
+    explicit Game(Game *game);
+
     inline std::vector<Player> get_players() { return players_; }
 
     [[nodiscard]] inline bool is_game_in_check() const { return is_game_in_check_; }

@@ -7,6 +7,18 @@ Game::Game() : is_game_in_check_{false}, is_game_ended_{false} {
     initialize_game();
 }
 
+Game::Game(Game *game) : Game() {
+    is_game_in_check_ = game->is_game_in_check();
+    is_game_ended_ = game->is_game_ended();
+
+    current_player_ = &players_.at(game->current_player_->player_id);
+
+    for (int i = 0; i < Piece::rows; ++i)
+        for (int j = 0; j < Piece::cols; ++j) {
+            game_board_.pieces_[i][j] = game->get_board_pieces()[i][j];
+        }
+}
+
 void Game::add_player(const int player_id, const bool is_dark,
                       const bool is_top) {
     players_.push_back((Player) {player_id, is_dark, is_top, false});
