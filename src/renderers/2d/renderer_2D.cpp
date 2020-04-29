@@ -192,11 +192,6 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
             show_flash_message_(king_coordinates);
         }
     }
-
-    if (game_->is_game_ended())
-        std::cout << "Game Over" << std::endl;
-    else if (game_->is_game_in_check())
-        std::cout << "Game is in check" << std::endl;
 }
 
 void Renderer2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {

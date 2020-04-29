@@ -38,13 +38,16 @@ void Game_Window::Render() {
             dialog_box_->setWindowTitle("Game Over");
 
             std::string message =
-                    "Player " + std::to_string(game_->get_current_player()->player_id) + " has won  ";
+                    "Player " + std::to_string(game_->get_current_player()->player_id) +
+                    " has won  ";
 
             dialog_box_->setText(QString(message.c_str()));
             dialog_box_->exec();
 
             states_window_->hide();
             on_close_callback_();
+
+            return;
         }
 
         if (!renderer_->is_running()) {
@@ -55,6 +58,11 @@ void Game_Window::Render() {
 
         if (renderer_->is_running() && !game_->is_game_ended()) {
             renderer_->render();
+
+            // TODO: check if we're playing against an AI, if so do this
+            if (game_->get_current_player()->player_id == AI_PLAYER_ID_) {
+                AI_Player::make_a_move(game_, 1);
+            }
         }
     }
 }

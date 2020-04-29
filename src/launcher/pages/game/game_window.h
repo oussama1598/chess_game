@@ -6,6 +6,7 @@
 #include "QMessageBox"
 #include "game/Game.h"
 #include "renderers/2d/renderer_2D.h"
+#include "ai/ai_player.h"
 #include "../states/states_window.h"
 
 class Game_Window : public QWidget {
@@ -18,6 +19,8 @@ private:
     QMessageBox *dialog_box_{nullptr};
 
     std::function<void()> on_close_callback_;
+
+    int AI_PLAYER_ID_{1};
 
 private slots:
 

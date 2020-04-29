@@ -320,7 +320,7 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
         }
     }
 
-    return !(is_king && !can_castle(source_player, source_piece, to));
+    return !(is_king && !can_castle(source_player, source_piece, from, to));
 
 }
 
@@ -366,10 +366,11 @@ bool Board::perform_move(Player &source_player,
                          Piece *destination_piece, bool reset) {
     auto *new_piece = new Piece();
 
+    std::string from = Piece::get_id_from_coordinates(from_piece_coordinates);
     std::string to = Piece::get_id_from_coordinates(to_piece_coordinates);
 
     bool is_king = dynamic_cast<const King *>(source_piece) != nullptr;
-    bool did_castle = is_king && can_castle(source_player, source_piece, to);
+    bool did_castle = is_king && can_castle(source_player, source_piece, from, to);
 
     // Change the current piece to the wanted place
     pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
@@ -413,23 +414,10 @@ bool Board::player_has_valid_move(Player &player) {
             std::string from = Piece::get_id_from_coordinates({i, j});
 
             if (source_piece->get_player_id() == player.player_id) {
-                for (int k = 0; (size_t) k < pieces_.size(); ++k)
-                    for (int l = 0; (size_t) l < pieces_[k].size(); ++l) {
-                        Piece *destination_piece = pieces_[k][l];
-                        std::string to = Piece::get_id_from_coordinates({k, l});
+                std::vector<std::string> possible_moves = get_possible_moves_for(player, from);
 
-                        if (destination_piece->get_player_id() != player.player_id) {
-                            if (can_make_move(source_piece, player, from, to)) {
-                                if (perform_move(player,
-                                                 {i, j},
-                                                 source_piece,
-                                                 {k, l},
-                                                 destination_piece, true)) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+                if (!possible_moves.empty())
+                    return true;
             }
         }
 
@@ -481,7 +469,8 @@ std::vector<std::string> Board::get_possible_moves_for(Player &player, const std
     return possible_moves;
 }
 
-bool Board::can_castle(Player &player, Piece *source_piece, const std::string &to) {
+bool Board::can_castle(Player &player, Piece *source_piece, const std::string &from,
+                       const std::string &to) {
     // TODO: check if the top player
     if (!source_piece->is_first_move()) return true;
 
@@ -505,11 +494,13 @@ bool Board::can_castle(Player &player, Piece *source_piece, const std::string &t
     bool is_left_rook = dynamic_cast<const Rook *>(left_rook) != nullptr;
     bool is_right_rook = dynamic_cast<const Rook *>(right_rook) != nullptr;
 
-    if (to == to_right_id && is_right_rook && right_rook->is_first_move())
-        return true;
 
-    if (to == to_left_id && is_left_rook && left_rook->is_first_move())
-        return true;
+    if (to == to_left_id && is_left_rook && left_rook->is_first_move()) {
+        return is_valid_move(from, Piece::get_id_from_coordinates(left_rook_coordinates));
+    }
+
+    if (to == to_right_id && is_right_rook && right_rook->is_first_move())
+        return is_valid_move(from, Piece::get_id_from_coordinates(right_rook_coordinates));
 
     return false;
 }
@@ -556,4 +547,24 @@ void Board::swap_castle(Player &source_player, std::string &to) {
     // create a new empty piece
     pieces_[castle_coordinates[1].line][castle_coordinates[1].column]
             = rook;
+}
+
+std::vector<std::pair<std::string, std::vector<std::string>>>
+Board::get_all_valid_moves_for(Player &player) {
+    std::vector<std::pair<std::string, std::vector<std::string>>> all_possible_moves;
+
+    for (int i = 0; (size_t) i < pieces_.size(); ++i)
+        for (int j = 0; (size_t) j < pieces_[i].size(); ++j) {
+            Piece *source_piece = pieces_[i][j];
+            std::string from = Piece::get_id_from_coordinates({i, j});
+
+            if (source_piece->get_player_id() == player.player_id) {
+                std::vector<std::string> possible_moves = get_possible_moves_for(player, from);
+
+                if (!possible_moves.empty())
+                    all_possible_moves.emplace_back(from, possible_moves);
+            }
+        }
+
+    return all_possible_moves;
 }

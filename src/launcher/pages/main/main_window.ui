@@ -96,21 +96,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="settings_button">
-          <property name="font">
-           <font>
-            <family>Monospace</family>
-           </font>
-          </property>
-          <property name="cursor">
-           <cursorShape>PointingHandCursor</cursorShape>
-          </property>
-          <property name="text">
-           <string>Settings</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="about_button">
           <property name="font">
            <font>

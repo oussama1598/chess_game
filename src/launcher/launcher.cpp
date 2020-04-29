@@ -11,7 +11,8 @@ Launcher::Launcher(int &argc, char **argv) : QApplication(argc, argv) {
     setQuitOnLastWindowClosed(false);
 
     // show the main window
-    open_main_window_();
+//    open_main_window_();
+    open_game_window_();
 }
 
 void Launcher::open_main_window_() {

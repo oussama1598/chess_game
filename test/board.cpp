@@ -103,8 +103,8 @@ namespace {
             board_.add_piece("H1", new Rook(0));
             board_.add_piece("B1", new Rook(0));
 
-            CHECK(board_.can_castle(player, piece_bottom, "G1"));
-            CHECK(!board_.can_castle(player, piece_bottom, "C1"));
+            CHECK(board_.can_castle(player, piece_bottom, "E1", "G1"));
+            CHECK(!board_.can_castle(player, piece_bottom, "E1", "C1"));
 
             std::vector<Piece::piece_coordinates> to_castle_coords = board.where_to_castle(player,
                                                                                            "G1");
@@ -122,8 +122,8 @@ namespace {
             board_.add_piece("H8", new Rook(1));
             board_.add_piece("B8", new Rook(1));
 
-            CHECK(board_.can_castle(player_top, piece_bottom, "G8"));
-            CHECK(!board_.can_castle(player_top, piece_bottom, "C8"));
+            CHECK(board_.can_castle(player_top, piece_bottom, "E8", "G8"));
+            CHECK(!board_.can_castle(player_top, piece_bottom, "E8", "C8"));
 
         }
     }

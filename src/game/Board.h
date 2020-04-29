@@ -61,10 +61,12 @@ public:
 
     std::vector<std::string> get_possible_moves_for(Player &player, const std::string &from);
 
-    bool can_castle(Player &player, Piece *source_piece, const std::string &to);
+    bool can_castle(Player &player, Piece *source_piece, const std::string &from, const std::string &to);
 
     std::vector<Piece::piece_coordinates>
     where_to_castle(Player &player, const std::string &to);
 
     void swap_castle(Player &source_player, std::string &to);
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> get_all_valid_moves_for(Player &player);
 };
