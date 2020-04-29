@@ -90,5 +90,41 @@ namespace {
             CHECK_THAT(board_.get_possible_moves_for(player, "A1"),
                        Catch::UnorderedEquals(std::vector<std::string>{"B1"}));
         }
+
+        SECTION("Test castling") {
+            Board board_;
+            Piece *piece_bottom = new King(0);
+            Player player{0, true, false, true};
+
+            Piece *piece_top = new King(1);
+            Player player_top{0, true, true, true};
+
+            board_.add_piece("E1", piece_bottom);
+            board_.add_piece("H1", new Rook(0));
+            board_.add_piece("B1", new Rook(0));
+
+            CHECK(board_.can_castle(player, piece_bottom, "G1"));
+            CHECK(!board_.can_castle(player, piece_bottom, "C1"));
+
+            std::vector<Piece::piece_coordinates> to_castle_coords = board.where_to_castle(player,
+                                                                                           "G1");
+
+            std::string rook_id = Piece::get_id_from_coordinates(to_castle_coords[0]);
+            std::string empty_spot = Piece::get_id_from_coordinates(to_castle_coords[1]);
+
+            CHECK_THAT((std::vector<std::string>{rook_id, empty_spot}),
+                       Catch::UnorderedEquals(
+                               std::vector<std::string>{"H1",
+                                                        "F1"}
+                       ));
+
+            board_.add_piece("E8", piece_top);
+            board_.add_piece("H8", new Rook(1));
+            board_.add_piece("B8", new Rook(1));
+
+            CHECK(board_.can_castle(player_top, piece_bottom, "G8"));
+            CHECK(!board_.can_castle(player_top, piece_bottom, "C8"));
+
+        }
     }
 }

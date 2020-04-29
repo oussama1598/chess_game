@@ -60,4 +60,11 @@ public:
     bool player_has_valid_move(Player &player);
 
     std::vector<std::string> get_possible_moves_for(Player &player, const std::string &from);
+
+    bool can_castle(Player &player, Piece *source_piece, const std::string &to);
+
+    std::vector<Piece::piece_coordinates>
+    where_to_castle(Player &player, const std::string &to);
+
+    void swap_castle(Player &source_player, std::string &to);
 };

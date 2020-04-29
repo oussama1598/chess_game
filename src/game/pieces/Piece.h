@@ -29,6 +29,8 @@ public:
 
     virtual ~Piece();
 
+    void did_move();
+
     inline char get_symbol() { return symbol_; }
 
     static piece_coordinates

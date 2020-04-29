@@ -5,6 +5,8 @@ namespace {
         Player top_player{0, true, true, false};
         King king(top_player.player_id);
 
+        king.did_move();
+
         std::map<std::string, std::vector<std::string>> testing_cases{
                 {"F5", {"E6", "F6", "G6", "E5", "G5", "E4", "F4", "G4"}},
                 {"A1", {"A2", "B2", "B1"}},

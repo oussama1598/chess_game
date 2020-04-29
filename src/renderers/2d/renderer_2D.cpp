@@ -177,8 +177,6 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
 
         on_move_callback_(source, destination);
     } catch (std::exception &error) {
-        std::cout << error.what() << std::endl;
-
         if (error.what() == Errors::ILLEGAL_MOVE) {
             sound_manager_.play_sound("illegal");
 

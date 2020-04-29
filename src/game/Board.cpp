@@ -283,8 +283,10 @@ bool Board::is_valid_move(const std::string &from, const std::string &to) {
 bool Board::can_make_move(Piece *source_piece, Player &source_player,
                           const std::string &from,
                           const std::string &to) {
-    if (!source_piece->is_valid_move(source_player, from, to))
+
+    if (!source_piece->is_valid_move(source_player, from, to)) {
         return false;
+    }
 
     Piece::piece_coordinates from_coordinates = Piece::get_piece_coordinates_from_id(
             from);
@@ -298,6 +300,7 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
     // the next check is not applicable to it
     bool is_knight = dynamic_cast<const Knight *>(source_piece) != nullptr;
     bool is_pawn = dynamic_cast<const Pawn *>(source_piece) != nullptr;
+    bool is_king = dynamic_cast<const King *>(source_piece) != nullptr;
 
     if (destination_piece->get_player_id() == source_player.player_id)
         return false;
@@ -317,8 +320,8 @@ bool Board::can_make_move(Piece *source_piece, Player &source_player,
         }
     }
 
+    return !(is_king && !can_castle(source_player, source_piece, to));
 
-    return true;
 }
 
 Piece::piece_coordinates Board::find_king(Player &player) {
@@ -363,12 +366,20 @@ bool Board::perform_move(Player &source_player,
                          Piece *destination_piece, bool reset) {
     auto *new_piece = new Piece();
 
+    std::string to = Piece::get_id_from_coordinates(to_piece_coordinates);
+
+    bool is_king = dynamic_cast<const King *>(source_piece) != nullptr;
+    bool did_castle = is_king && can_castle(source_player, source_piece, to);
+
     // Change the current piece to the wanted place
     pieces_[to_piece_coordinates.line][to_piece_coordinates.column]
             = source_piece;
     // create a new empty piece
     pieces_[from_piece_coordinates.line][from_piece_coordinates.column]
             = new_piece;
+
+    if (did_castle) swap_castle(source_player, to);
+
 
     if (!is_king_safe(source_player)) {
         // revert back the actions
@@ -378,6 +389,8 @@ bool Board::perform_move(Player &source_player,
 
         delete new_piece;
 
+        if (did_castle) swap_castle(source_player, to);
+
         return false;
     } else if (reset) {
         // revert back the actions
@@ -386,6 +399,8 @@ bool Board::perform_move(Player &source_player,
                 = destination_piece;
 
         delete new_piece;
+
+        if (did_castle) swap_castle(source_player, to);
     }
 
     return true;
@@ -425,13 +440,13 @@ std::vector<std::string> Board::get_possible_moves_for(Player &player, const std
     Piece::piece_coordinates coordinates = Piece::get_piece_coordinates_from_id(from);
     Piece *piece = get_piece_at(coordinates.line, coordinates.column);
 
-    std::vector <std::string> piece_possible_spots = piece->get_possible_moves(player.is_top, from);
-    std::vector <std::string> board_empty_spots = get_all_empty_spots(from);
+    std::vector<std::string> piece_possible_spots = piece->get_possible_moves(player.is_top, from);
+    std::vector<std::string> board_empty_spots = get_all_empty_spots(from);
 
     bool is_knight = dynamic_cast<const Knight *>(piece) != nullptr;
 
-    std::vector <std::string> spots_matching;
-    std::vector <std::string> possible_moves;
+    std::vector<std::string> spots_matching;
+    std::vector<std::string> possible_moves;
 
     // if it's knight, the possible moves follow the rules applied by the board
     if (!is_knight) {
@@ -441,7 +456,7 @@ std::vector<std::string> Board::get_possible_moves_for(Player &player, const std
                 spots_matching.push_back(spot);
             }
         }
-    }else{
+    } else {
         // the moves are only the one provided by the piece it self
         spots_matching = piece_possible_spots;
     }
@@ -464,4 +479,81 @@ std::vector<std::string> Board::get_possible_moves_for(Player &player, const std
     }
 
     return possible_moves;
+}
+
+bool Board::can_castle(Player &player, Piece *source_piece, const std::string &to) {
+    // TODO: check if the top player
+    if (!source_piece->is_first_move()) return true;
+
+    Piece::piece_coordinates left_rook_coordinates{0, 0};
+    Piece::piece_coordinates right_rook_coordinates{0, Piece::cols - 1};
+
+    if (player.is_top) {
+        left_rook_coordinates.line = Piece::rows - 1;
+        right_rook_coordinates.line = Piece::rows - 1;
+    }
+
+    std::string to_left_id = Piece::get_id_from_coordinates({left_rook_coordinates.line, 2});
+    std::string to_right_id = Piece::get_id_from_coordinates(
+            {right_rook_coordinates.line, Piece::cols - 2});
+
+    if (to != to_left_id && to != to_right_id) return true;
+
+    Piece *left_rook = pieces_[left_rook_coordinates.line][left_rook_coordinates.column];
+    Piece *right_rook = pieces_[right_rook_coordinates.line][right_rook_coordinates.column];
+
+    bool is_left_rook = dynamic_cast<const Rook *>(left_rook) != nullptr;
+    bool is_right_rook = dynamic_cast<const Rook *>(right_rook) != nullptr;
+
+    if (to == to_right_id && is_right_rook && right_rook->is_first_move())
+        return true;
+
+    if (to == to_left_id && is_left_rook && left_rook->is_first_move())
+        return true;
+
+    return false;
+}
+
+std::vector<Piece::piece_coordinates>
+Board::where_to_castle(Player &player, const std::string &to) {
+    Piece::piece_coordinates left_rook_coordinates{0, 0};
+    Piece::piece_coordinates right_rook_coordinates{0, Piece::cols - 1};
+
+    if (player.is_top) {
+        left_rook_coordinates.line = Piece::rows - 1;
+        right_rook_coordinates.line = Piece::rows - 1;
+    }
+
+    std::string to_left_id = Piece::get_id_from_coordinates({left_rook_coordinates.line, 2});
+    std::string to_right_id = Piece::get_id_from_coordinates(
+            {right_rook_coordinates.line, Piece::cols - 2});
+
+    if (to == to_left_id) {
+        return {left_rook_coordinates,
+                {left_rook_coordinates.line, left_rook_coordinates.column + 3}};
+    }
+
+    if (to == to_right_id) {
+        return {right_rook_coordinates,
+                {right_rook_coordinates.line, right_rook_coordinates.column - 2}};
+    }
+
+    return {{-1, -1},
+            {-1, -1}};
+}
+
+void Board::swap_castle(Player &source_player, std::string &to) {
+    std::vector<Piece::piece_coordinates> castle_coordinates = where_to_castle(
+            source_player,
+            to
+    );
+
+    Piece *rook = pieces_[castle_coordinates[0].line][castle_coordinates[0].column];
+    Piece *empty_spot = pieces_[castle_coordinates[1].line][castle_coordinates[1].column];
+
+    pieces_[castle_coordinates[0].line][castle_coordinates[0].column]
+            = empty_spot;
+    // create a new empty piece
+    pieces_[castle_coordinates[1].line][castle_coordinates[1].column]
+            = rook;
 }

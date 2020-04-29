@@ -19,6 +19,10 @@ const std::map<char, size_t> Piece::cols_map_{{'A', 0},
                                               {'G', 6},
                                               {'H', 7}};
 
+void Piece::did_move() {
+    is_first_move_ = false;
+}
+
 Piece::piece_coordinates
 Piece::get_piece_coordinates_from_id(const std::string &id) {
     int line = (int) boost::lexical_cast<size_t>(id[1]) - 1;

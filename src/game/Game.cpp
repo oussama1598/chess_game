@@ -105,5 +105,7 @@ void Game::make_move(const std::string &from, const std::string &to) {
         return;
     }
 
+    source_piece->did_move();
+
     current_player_ = &players_.at(opponent_player.player_id);
 }
