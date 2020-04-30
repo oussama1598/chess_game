@@ -288,6 +288,40 @@ void Renderer2D::render_table_() {
     SDL_RenderCopy(renderer_, table_texture_, &src, &src);
 }
 
+void Renderer2D::render_latest_move_() {
+    std::pair<std::string, std::string> latest_move = game_->get_latest_move();
+
+    if (latest_move.first.empty() || latest_move.second.empty())
+        return;
+
+    Piece::piece_coordinates latest_from_coordinates = Piece::get_piece_coordinates_from_id(
+            latest_move.first);
+    Piece::piece_coordinates latest_to_coordinates = Piece::get_piece_coordinates_from_id(
+            latest_move.second);
+
+    std::array<SDL_Rect, 2> rectangles{
+            {
+                    {
+                            piece_width_ * latest_from_coordinates.column,
+                            piece_height_ * (rows_ - 1 - latest_from_coordinates.line),
+                            piece_width_,
+                            piece_height_
+                    },
+                    {
+                            piece_width_ * latest_to_coordinates.column,
+                            piece_height_ * (rows_ - 1 - latest_to_coordinates.line),
+                            piece_width_,
+                            piece_height_
+                    }
+            }
+    };
+
+
+    SDL_SetRenderDrawColor(renderer_, 246, 231, 116, 255);
+    SDL_RenderFillRects(renderer_, &rectangles.front(), rectangles.size());
+}
+
+
 void Renderer2D::render_cursor_() {
     if (game_->is_game_ended())
         return;
@@ -419,6 +453,7 @@ void Renderer2D::render() {
     SDL_RenderClear(renderer_);
 
     render_table_();
+    render_latest_move_();
     render_cursor_();
     render_flash_message_();
     render_guides_();

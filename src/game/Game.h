@@ -12,6 +12,9 @@ private:
     bool is_game_ended_;
     Player *current_player_{};
 
+    std::string latest_from_{};
+    std::string latest_to_{};
+
 public:
     Game();
 
@@ -36,4 +39,6 @@ public:
     void switch_players();
 
     void make_move(const std::string &from, const std::string &to);
+
+    std::pair<std::string, std::string> get_latest_move();
 };

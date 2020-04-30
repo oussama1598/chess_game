@@ -61,7 +61,6 @@ void Game_Window::Render() {
         if (renderer_->is_running() && !game_->is_game_ended()) {
             renderer_->render();
 
-            // TODO: check if we're playing against an AI, if so do this
             if (game_->get_current_player()->player_id == ai_player_id_ &&
                 !AI_Player::is_thinking()) {
                 AI_Player::make_a_move(game_, ai_level_);

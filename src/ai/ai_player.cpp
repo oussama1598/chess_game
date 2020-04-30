@@ -81,8 +81,7 @@ eval_array AI_Player::king_eval_player_2 = {
         }
 };
 
-// TODO: random seed
-std::default_random_engine AI_Player::generator_{0};
+std::default_random_engine AI_Player::generator_{std::random_device{}()};
 
 int AI_Player::get_random_index_(int size) {
     std::uniform_int_distribution<int> distribution(0, size - 1);

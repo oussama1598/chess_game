@@ -113,6 +113,10 @@ void Game::make_move(const std::string &from, const std::string &to) {
     // if it was previously in check reset it
     is_game_in_check_ = false;
 
+    // set the latest moves
+    latest_from_ = from;
+    latest_to_ = to;
+
     // check if the other player king's safe
     Player opponent_player = players_.at(
             (source_player.player_id + 1) % players_.size());
@@ -127,4 +131,8 @@ void Game::make_move(const std::string &from, const std::string &to) {
     source_piece->did_move();
 
     switch_players();
+}
+
+std::pair<std::string, std::string> Game::get_latest_move() {
+    return {latest_from_, latest_to_};
 }

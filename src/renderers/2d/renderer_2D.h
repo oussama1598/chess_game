@@ -142,6 +142,8 @@ private:
 
     void render_table_();
 
+    void render_latest_move_();
+
     void render_cursor_();
 
     void render_flash_message_();
