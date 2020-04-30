@@ -235,22 +235,43 @@ void AI_Player::mini_max_algorithm(Game *game, int depth) {
     std::string best_from_move;
     std::string best_to_move;
 
-    for (auto &move: all_possible_moves)
-        for (auto &to: move.second) {
-            Game temp_game(game);
+    auto start = std::chrono::system_clock::now();
 
-            temp_game.make_move(move.first, to);
+#pragma omp parallel
+    {
+#pragma omp single
+        {
+            for (auto &move: all_possible_moves) {
+#pragma omp task
+                {
+                    for (auto &to: move.second) {
+                        Game temp_game(game);
 
-            float board_value = mini_max(ai_player, depth - 1, &temp_game, false, -MAXFLOAT,
-                                         MAXFLOAT);
+                        temp_game.make_move(move.first, to);
 
-            if (board_value > best_value) {
-                best_from_move = move.first;
-                best_to_move = to;
+                        float board_value = mini_max(ai_player, depth - 1, &temp_game, false,
+                                                     -MAXFLOAT,
+                                                     MAXFLOAT);
 
-                best_value = board_value;
+                        if (board_value > best_value) {
+                            best_from_move = move.first;
+                            best_to_move = to;
+
+                            best_value = board_value;
+                        }
+                    }
+                }
             }
         }
+    }
+
+    auto end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "finished computation at " << std::ctime(&end_time)
+              << "elapsed time: " << elapsed_seconds.count() << "s\n";
 
     try {
         game->make_move(best_from_move, best_to_move);

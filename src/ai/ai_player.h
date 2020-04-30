@@ -3,6 +3,8 @@
 #include <random>
 #include <cmath>
 #include <array>
+#include <chrono>
+#include <ctime>
 #include "game/Game.h"
 
 typedef std::array<std::array<float, Piece::cols>, 8> eval_array;
