@@ -1,5 +1,86 @@
 #include "ai_player.h"
 
+bool AI_Player::thinking_ = false;
+
+eval_array AI_Player::pawn_eval_player_2 = {
+        {
+                {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                {5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0},
+                {1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0},
+                {0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5},
+                {0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0},
+                {0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5},
+                {0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5},
+                {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}
+        }
+};
+
+eval_array AI_Player::knight_eval_player_2 = {
+        {
+                {-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0},
+                {-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0},
+                {-3.0, 0.0, 1.0, 1.5, 1.5, 1.0, 0.0, -3.0},
+                {-3.0, 0.5, 1.5, 2.0, 2.0, 1.5, 0.5, -3.0},
+                {-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0},
+                {-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0},
+                {-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0},
+                {-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0}
+        }
+};
+
+eval_array AI_Player::bishop_eval_player_2 = {
+        {
+                {-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0},
+                {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+                {-1.0, 0.0, 0.5, 1.0, 1.0, 0.5, 0.0, -1.0},
+                {-1.0, 0.5, 0.5, 1.0, 1.0, 0.5, 0.5, -1.0},
+                {-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0},
+                {-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0},
+                {-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0},
+                {-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0}
+        }
+};
+
+eval_array AI_Player::rook_eval_player_2 = {
+        {
+                {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+                {0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5},
+                {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+                {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+                {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+                {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+                {-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5},
+                {0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0}
+        }
+};
+
+eval_array AI_Player::queen_eval_player_2 = {
+        {
+                {-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0},
+                {-1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0},
+                {-1.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0},
+                {-0.5, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5},
+                {0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, -0.5},
+                {-1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.0, -1.0},
+                {-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0},
+                {-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0}
+        }
+};
+
+eval_array AI_Player::king_eval_player_2 = {
+        {
+
+                {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+                {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+                {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+                {-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0},
+                {-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0},
+                {-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0},
+                {2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0},
+                {2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0}
+        }
+};
+
 // TODO: random seed
 std::default_random_engine AI_Player::generator_{0};
 
@@ -10,6 +91,8 @@ int AI_Player::get_random_index_(int size) {
 }
 
 void AI_Player::make_a_move(Game *game, int level) {
+    thinking_ = true;
+
     switch (level) {
         case 1:
             random_move(game);
@@ -17,12 +100,22 @@ void AI_Player::make_a_move(Game *game, int level) {
         case 2:
             high_value_move(game);
             break;
+        default:
+            try {
+                mini_max_algorithm(game, level - 1);
+            } catch (std::exception &error) {
+                high_value_move(game);
+            }
+            break;
     }
+
+    thinking_ = false;
 }
 
 void AI_Player::random_move(Game *game) {
     Player *ai_player = game->get_current_player();
-    std::vector<std::pair<std::string, std::vector<std::string>>> all_possible_moves = game->get_board().get_all_valid_moves_for(
+    std::vector<std::pair<std::string, std::vector<std::string >>>
+            all_possible_moves = game->get_board().get_all_valid_moves_for(
             *ai_player);
 
 
@@ -42,11 +135,11 @@ void AI_Player::random_move(Game *game) {
 
 void AI_Player::high_value_move(Game *game) {
     Player *ai_player = game->get_current_player();
-    std::vector < std::pair < std::string, std::vector < std::string >> >
-                                           all_possible_moves = game->get_board().get_all_valid_moves_for(
+    std::vector<std::pair<std::string, std::vector<std::string >>>
+            all_possible_moves = game->get_board().get_all_valid_moves_for(
             *ai_player);
 
-    int best_value = INT_MIN;
+    float best_value = INT_MIN;
     std::string best_from_move;
     std::string best_to_move;
 
@@ -56,7 +149,7 @@ void AI_Player::high_value_move(Game *game) {
 
             temp_game.make_move(move.first, to);
 
-            int board_value = evaluate_board(ai_player->player_id, temp_game);
+            float board_value = evaluate_board(ai_player->player_id, temp_game);
 
             if (board_value > best_value) {
                 best_from_move = move.first;
@@ -69,43 +162,151 @@ void AI_Player::high_value_move(Game *game) {
     game->make_move(best_from_move, best_to_move);
 }
 
-int AI_Player::evaluate_board(int player_id, Game &game) {
-    int value{0};
+float AI_Player::evaluate_board(int player_id, Game &game) {
+    float value{0};
 
     for (int i = 0; i < Piece::rows; ++i)
         for (int j = 0; j < Piece::cols; ++j) {
-            value += get_piece_value(player_id, game.get_board_pieces()[i][j]);
+            value += get_piece_value(player_id, game.get_board_pieces()[i][j], i, j);
         }
 
     return value;
 }
 
-int AI_Player::get_piece_value(int player_id, Piece *piece) {
-    int piece_value = 0;
+float AI_Player::get_piece_value(int player_id, Piece *piece, int i, int j) {
+    float piece_value = 0;
+    char symbol = piece->get_symbol();
 
-    switch (piece->get_symbol()) {
-        case 'P':
-            piece_value = 10;
-            break;
-        case 'k':
-            piece_value = 30;
-            break;
-        case 'B':
-            piece_value = 30;
-            break;
-        case 'R':
-            piece_value = 50;
-            break;
-        case 'Q':
-            piece_value = 90;
-            break;
-        case 'K':
-            piece_value = 900;
-            break;
-        default:
-            piece_value = 0;
-            break;
+    if (symbol == 'P') {
+        eval_array eval(pawn_eval_player_2);
+
+        if (player_id != 1)
+            std::reverse(std::begin(eval), std::end(eval));
+
+        piece_value = 10 + eval[i][j];
+    } else if (symbol == 'k') {
+        eval_array eval(knight_eval_player_2);
+
+        if (player_id != 1)
+            std::reverse(std::begin(eval), std::end(eval));
+
+        piece_value = 30 + eval[i][j];
+    } else if (symbol == 'B') {
+        eval_array eval(bishop_eval_player_2);
+
+        if (player_id != 1)
+            std::reverse(std::begin(eval), std::end(eval));
+
+        piece_value = 30 + eval[i][j];
+    } else if (symbol == 'R') {
+        eval_array eval(rook_eval_player_2);
+
+        if (player_id != 1)
+            std::reverse(std::begin(eval), std::end(eval));
+
+        piece_value = 50 + eval[i][j];
+    } else if (symbol == 'Q') {
+        eval_array eval(queen_eval_player_2);
+
+        if (player_id != 1)
+            std::reverse(std::begin(eval), std::end(eval));
+
+        piece_value = 90 + eval[i][j];
+    } else if (symbol == 'K') {
+        eval_array eval(king_eval_player_2);
+
+        if (player_id != 1)
+            std::reverse(std::begin(eval), std::end(eval));
+
+        piece_value = 900 + eval[i][j];
     }
 
+
     return (piece->get_player_id() == player_id) ? piece_value : -piece_value;
+}
+
+void AI_Player::mini_max_algorithm(Game *game, int depth) {
+    Player *ai_player = game->get_current_player();
+    std::vector<std::pair<std::string, std::vector<std::string >>>
+            all_possible_moves = game->get_board().get_all_valid_moves_for(
+            *ai_player);
+
+    float best_value = -MAXFLOAT;
+    std::string best_from_move;
+    std::string best_to_move;
+
+    for (auto &move: all_possible_moves)
+        for (auto &to: move.second) {
+            Game temp_game(game);
+
+            temp_game.make_move(move.first, to);
+
+            float board_value = mini_max(ai_player, depth - 1, &temp_game, false, -MAXFLOAT,
+                                         MAXFLOAT);
+
+            if (board_value > best_value) {
+                best_from_move = move.first;
+                best_to_move = to;
+
+                best_value = board_value;
+            }
+        }
+
+    game->make_move(best_from_move, best_to_move);
+}
+
+float AI_Player::mini_max(Player *ai_player, int depth, Game *game, bool is_max, float alpha,
+                          float beta) {
+    Player *player = game->get_current_player();
+
+    if (depth == 0) {
+        return evaluate_board(ai_player->player_id, *game);
+    }
+
+    std::vector<std::pair<std::string, std::vector<std::string >>>
+            all_possible_moves = game->get_board().get_all_valid_moves_for(
+            *player);
+
+    if (is_max) {
+        float best_move = -MAXFLOAT;
+
+        for (auto &move: all_possible_moves)
+            for (auto &to: move.second) {
+                Game temp_game{game};
+                temp_game.make_move(move.first, to);
+
+                best_move = std::max(best_move,
+                                     mini_max(ai_player, depth - 1, &temp_game, !is_max, alpha,
+                                              beta));
+
+                alpha = std::max(alpha, best_move);
+
+                if (beta <= alpha) {
+                    return best_move;
+                }
+            }
+
+        return best_move;
+    } else {
+        float best_move = MAXFLOAT;
+
+        for (auto &move: all_possible_moves)
+            for (auto &to: move.second) {
+                Game temp_game{game};
+                temp_game.make_move(move.first, to);
+
+                best_move = std::min(best_move,
+                                     mini_max(ai_player, depth - 1, &temp_game, !is_max, alpha,
+                                              beta));
+
+                beta = std::min(beta, best_move);
+
+                if (beta <= alpha) {
+                    return best_move;
+                }
+
+            }
+
+        return best_move;
+    }
 }

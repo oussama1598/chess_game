@@ -60,8 +60,9 @@ void Game_Window::Render() {
             renderer_->render();
 
             // TODO: check if we're playing against an AI, if so do this
-            if (game_->get_current_player()->player_id == AI_PLAYER_ID_) {
-                AI_Player::make_a_move(game_, 2);
+            if (game_->get_current_player()->player_id == AI_PLAYER_ID_ &&
+                !AI_Player::is_thinking()) {
+                AI_Player::make_a_move(game_, 4);
             }
         }
     }

@@ -33,5 +33,7 @@ public:
 
     void initialize_game();
 
+    void switch_players();
+
     void make_move(const std::string &from, const std::string &to);
 };

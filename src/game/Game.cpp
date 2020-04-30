@@ -61,6 +61,13 @@ void Game::initialize_game() {
     }
 }
 
+void Game::switch_players() {
+    Player opponent_player = players_.at(
+            (current_player_->player_id + 1) % players_.size());
+
+    current_player_ = &players_.at(opponent_player.player_id);
+}
+
 void Game::make_move(const std::string &from, const std::string &to) {
     if (is_game_ended_) return;
 
@@ -114,10 +121,11 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     if (!game_board_.player_has_valid_move(opponent_player)) {
         is_game_ended_ = true;
+        switch_players();
         return;
     }
 
     source_piece->did_move();
 
-    current_player_ = &players_.at(opponent_player.player_id);
+    switch_players();
 }
