@@ -20,7 +20,7 @@ private:
 
     void open_new_game_window_();
 
-    void open_game_window_();
+    void open_game_window_(int opponent_type, int ai_difficulty);
 
     void open_about_window_();
 

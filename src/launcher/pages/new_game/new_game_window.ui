@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>473</height>
+    <height>537</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,6 +97,49 @@
             <item>
              <property name="text">
               <string>Computer</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="ai_difficulty_frame">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="class" stdset="0">
+          <string>option-frame</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>AI difficulty</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="ai_difficulty">
+            <item>
+             <property name="text">
+              <string>Level 1 (Random)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Level 2 (depth 0)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Level 3 (depth 1)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Level 4 (depth 2)</string>
              </property>
             </item>
            </widget>

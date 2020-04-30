@@ -471,7 +471,6 @@ std::vector<std::string> Board::get_possible_moves_for(Player &player, const std
 
 bool Board::can_castle(Player &player, Piece *source_piece, const std::string &from,
                        const std::string &to) {
-    // TODO: check if the top player
     if (!source_piece->is_first_move()) return true;
 
     Piece::piece_coordinates left_rook_coordinates{0, 0};

@@ -11,8 +11,7 @@ Launcher::Launcher(int &argc, char **argv) : QApplication(argc, argv) {
     setQuitOnLastWindowClosed(false);
 
     // show the main window
-//    open_main_window_();
-    open_game_window_();
+    open_main_window_();
 }
 
 void Launcher::open_main_window_() {
@@ -49,21 +48,24 @@ void Launcher::open_new_game_window_() {
             open_main_window_();
         });
 
-        new_game_window_->set_play_button_callback([this](int opponent_type, int renderer_type) {
-            std::cout << opponent_type << " " << renderer_type << std::endl;
+        new_game_window_->set_play_button_callback(
+                [this](int opponent_type, int ai_difficulty, int renderer_type) {
+                    std::cout << renderer_type << std::endl;
 
-            new_game_window_->hide();
+                    new_game_window_->hide();
 
-            open_game_window_();
-        });
+                    open_game_window_(opponent_type, ai_difficulty);
+                });
     }
 
     new_game_window_->show();
 }
 
-void Launcher::open_game_window_() {
+void Launcher::open_game_window_(int opponent_type, int ai_difficulty) {
     if (game_window_ == nullptr) {
-        game_window_ = new Game_Window();
+        int ai = opponent_type == 0 ? -1 : 1;
+
+        game_window_ = new Game_Window(ai, ai_difficulty);
 
         game_window_->set_close_callback([this]() {
             game_window_->hide();

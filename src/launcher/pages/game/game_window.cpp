@@ -1,10 +1,13 @@
 #include "game_window.h"
 
-Game_Window::Game_Window(QWidget *parent) : QWidget(parent) {
+Game_Window::Game_Window(int ai_player_id, int ai_level, QWidget *parent)
+        : QWidget(parent),
+          ai_player_id_{ai_player_id},
+          ai_level_{ai_level} {
     timer_ = new QTimer();
     game_ = new Game();
     renderer_ = new Renderer2D("Chess Game");
-    states_window_ = new States_Window(game_, this);
+    states_window_ = new States_Window(ai_player_id, ai_level, game_, this);
 
     connect(timer_, SIGNAL(timeout()), this, SLOT(Render()));
     timer_->start(1000 / 60); // 60 fps
@@ -17,7 +20,6 @@ Game_Window::Game_Window(QWidget *parent) : QWidget(parent) {
             [this](const std::string &from, const std::string &to) {
                 states_window_->add_move(from, to);
             });
-
 
     states_window_->show();
 }
@@ -38,7 +40,7 @@ void Game_Window::Render() {
             dialog_box_->setWindowTitle("Game Over");
 
             std::string message =
-                    "Player " + std::to_string(game_->get_current_player()->player_id) +
+                    "Player " + std::to_string(game_->get_current_player()->player_id + 1) +
                     " has won  ";
 
             dialog_box_->setText(QString(message.c_str()));
@@ -60,9 +62,11 @@ void Game_Window::Render() {
             renderer_->render();
 
             // TODO: check if we're playing against an AI, if so do this
-            if (game_->get_current_player()->player_id == AI_PLAYER_ID_ &&
+            if (game_->get_current_player()->player_id == ai_player_id_ &&
                 !AI_Player::is_thinking()) {
-                AI_Player::make_a_move(game_, 4);
+                AI_Player::make_a_move(game_, ai_level_);
+
+                renderer_->render();
             }
         }
     }

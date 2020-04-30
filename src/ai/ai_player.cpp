@@ -252,7 +252,11 @@ void AI_Player::mini_max_algorithm(Game *game, int depth) {
             }
         }
 
-    game->make_move(best_from_move, best_to_move);
+    try {
+        game->make_move(best_from_move, best_to_move);
+    } catch (std::exception &error) {
+        mini_max_algorithm(game, depth - 1);
+    }
 }
 
 float AI_Player::mini_max(Player *ai_player, int depth, Game *game, bool is_max, float alpha,

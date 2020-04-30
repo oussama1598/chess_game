@@ -121,7 +121,6 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     if (!game_board_.player_has_valid_move(opponent_player)) {
         is_game_ended_ = true;
-        switch_players();
         return;
     }
 

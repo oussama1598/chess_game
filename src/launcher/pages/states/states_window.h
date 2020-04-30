@@ -18,12 +18,15 @@ private:
     Game *game_;
     QTimer *timer_;
 
+    int ai_player_id_;
+    int ai_level_;
+
 private slots:
 
     void Render();
 
 public:
-    explicit States_Window(Game *game, QWidget *parent = nullptr);
+    States_Window(int ai_player_id, int ai_level, Game *game, QWidget *parent = nullptr);
 
     ~States_Window() override;
 

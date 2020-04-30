@@ -6,14 +6,17 @@ New_Game_Window::New_Game_Window(QWidget *parent) : QWidget(parent), ui(new Ui::
 
     setFixedSize(width(), height());
 
-    connect(ui->play_button, SIGNAL(clicked()), this, SLOT(onPlayButtonClicked()));
+    connect(ui->play_button, SIGNAL(clicked()), SLOT(onPlayButtonClicked()));
+    connect(ui->opponent_type, SIGNAL(currentIndexChanged(int)), SLOT(opponentChanged()));
+
+    ui->ai_difficulty_frame->hide();
 }
 
 New_Game_Window::~New_Game_Window() {
     delete ui;
 }
 
-void New_Game_Window::set_play_button_callback(std::function<void(int, int)> callback) {
+void New_Game_Window::set_play_button_callback(std::function<void(int, int, int)> callback) {
     on_play_button_clicked_callback_ = callback;
 }
 
@@ -30,6 +33,17 @@ void New_Game_Window::closeEvent(QCloseEvent *event) {
 void New_Game_Window::onPlayButtonClicked() {
     on_play_button_clicked_callback_(
             ui->opponent_type->currentIndex(),
+            ui->ai_difficulty->currentIndex() + 1,
             ui->renderer_type->currentIndex()
     );
+}
+
+void New_Game_Window::opponentChanged() {
+    if (ui->opponent_type->currentIndex() == 1) {
+        ui->ai_difficulty_frame->show();
+
+        return;
+    }
+
+    ui->ai_difficulty_frame->hide();
 }

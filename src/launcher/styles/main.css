@@ -65,3 +65,8 @@ QComboBox:item {
     background-color: #2e3034;
     color: white;
 }
+
+.turn {
+    font-size: 12px !important;
+    color: white !important;
+}

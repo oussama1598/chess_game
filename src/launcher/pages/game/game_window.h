@@ -21,14 +21,15 @@ private:
 
     std::function<void()> on_close_callback_;
 
-    int AI_PLAYER_ID_{1};
+    int ai_player_id_;
+    int ai_level_;
 
 private slots:
 
     void Render();
 
 public:
-    explicit Game_Window(QWidget *parent = nullptr);
+    Game_Window(int ai_player_id, int ai_level, QWidget *parent = nullptr);
 
     ~Game_Window();
 
