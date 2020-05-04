@@ -4,6 +4,7 @@
 
 #include "engine/window.h"
 #include "engine/scene.h"
+#include "engine/sky_box.h"
 #include "engine/camera.h"
 #include "engine/directional_light.h"
 #include "engine/point_light.h"

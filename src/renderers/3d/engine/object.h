@@ -14,7 +14,7 @@
 #include "obj_loader.h"
 
 class Object {
-private:
+protected:
     Mesh *mesh_{nullptr};
     Shader *shader_{nullptr};
     Texture *texture_diffuse_{nullptr};
@@ -23,7 +23,7 @@ private:
 
     glm::mat4 model_matrix_{1.f};
 
-private:
+protected:
 
     void calculate_model_matrix_();
 
@@ -37,17 +37,17 @@ public:
 
     inline Shader *get_shader() const { return shader_; }
 
-    void set_mesh(Mesh *mesh);
+    virtual void set_mesh(Mesh *mesh);
 
-    void set_shader(Shader *shader);
+    virtual void set_shader(Shader *shader);
 
-    void set_diffuse_texture(Texture *texture);
+    virtual void set_diffuse_texture(Texture *texture);
 
-    void set_specular_texture(Texture *texture);
+    virtual void set_specular_texture(Texture *texture);
 
-    void set_material(Material *material);
+    virtual void set_material(Material *material);
 
-    void draw();
+    virtual void draw();
 
-    void translate(glm::vec3 translate_vector);
+    virtual void translate(glm::vec3 translate_vector);
 };

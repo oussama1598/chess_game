@@ -34,6 +34,7 @@ struct DirLight {
 
 in vec3 vs_position;
 in vec2 vs_text_coord;
+in vec3 vs_color;
 in vec3 vs_normal;
 
 
@@ -42,6 +43,9 @@ uniform PointLight point_light;
 uniform DirLight dir_light;
 
 uniform vec3 camera_position;
+
+uniform int sky_box;
+uniform samplerCube sky_cube_texture;
 
 vec3 CalcDirLight()
 {
@@ -93,11 +97,15 @@ vec3 CalcPointLight()
 
 void main()
 {
+    if (sky_box == 1)
+    {
+        FragColor = texture(sky_cube_texture, vs_position);
+    } else {
+        vec3 color = CalcDirLight() + CalcPointLight();
 
-    vec3 color = CalcDirLight() + CalcPointLight();
+        vec4 text = material.use_texture * texture(material.diffuse_texture, vs_text_coord);
+        vec4 no_texture_color = ((material.use_texture + 1) % 2) * vec4(1.f);
 
-    vec4 text = material.use_texture * texture(material.diffuse_texture, vs_text_coord);
-    vec4 no_texture_color = ((material.use_texture + 1) % 2) * vec4(1.f);
-
-    FragColor = (text + no_texture_color) * vec4(color, 1.f);
+        FragColor = (text + no_texture_color) * vec4(color, 1.f);
+    }
 }

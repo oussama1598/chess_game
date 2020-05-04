@@ -23,7 +23,7 @@ set(FILES
         engine/obj_loader.h
 
         engine/light.cpp
-        engine/light.h engine/window.cpp engine/window.h engine/scene.cpp engine/scene.h engine/point_light.cpp engine/point_light.h engine/directional_light.cpp engine/directional_light.h engine/vertex.h)
+        engine/light.h engine/window.cpp engine/window.h engine/scene.cpp engine/scene.h engine/point_light.cpp engine/point_light.h engine/directional_light.cpp engine/directional_light.h engine/vertex.h engine/sky_box.cpp engine/sky_box.h)
 
 add_library(3d_engine ${FILES})
 target_link_libraries(3d_engine CONAN_PKG::glew CONAN_PKG::glfw CONAN_PKG::soil2 game)

@@ -11,8 +11,8 @@ void Renderer_3D::gl_setup_() const {
     // enable z axe
     glEnable(GL_DEPTH_TEST);
 
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+   // glEnable(GL_CULL_FACE);
+   // glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
     // fill shape with color, GL_LINES will only draw the wireframe
@@ -136,6 +136,14 @@ void Renderer_3D::init_() {
                     glm::vec3{0.135159, 3.11625, 6.1011}
             )
     );
+
+    // add skybox
+
+    // TODO: delete this at destructuring
+    SkyBox *sky_box = new SkyBox();
+    sky_box->set_shader(shaders_.at("main_shader"));
+
+    main_scene_->add_object(sky_box);
 
     // init game scene
     init_game_scene_();
