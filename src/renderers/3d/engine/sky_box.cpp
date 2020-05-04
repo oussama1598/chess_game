@@ -51,6 +51,13 @@ void SkyBox::unbind_texture_() {
     glActiveTexture(0);
 }
 
+void SkyBox::attach_to_shader(Shader *shader) {
+    bind_texture_();
+
+    shader->bind();
+    shader_->set_uniform_1_i("sky_cube_texture", 5);
+}
+
 void SkyBox::draw() {
     bind_texture_();
 

@@ -1,7 +1,8 @@
 #include "directional_light.h"
 
-Directional_Light::Directional_Light(glm::vec3 direction) : Light(
-        glm::vec3{0.f}), direction_{direction} {}
+Directional_Light::Directional_Light(glm::vec3 direction, glm::vec3 ambient, glm::vec3 diffuse,
+                                     glm::vec3 specular) : Light(
+        glm::vec3{0.f}, ambient, diffuse, specular), direction_{direction} {}
 
 void Directional_Light::attach_to_shader(Shader *shader) {
     shader->bind();

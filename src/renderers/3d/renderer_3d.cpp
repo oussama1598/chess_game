@@ -11,8 +11,8 @@ void Renderer_3D::gl_setup_() const {
     // enable z axe
     glEnable(GL_DEPTH_TEST);
 
-   // glEnable(GL_CULL_FACE);
-   // glCullFace(GL_BACK);
+    // glEnable(GL_CULL_FACE);
+    // glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
     // fill shape with color, GL_LINES will only draw the wireframe
@@ -64,7 +64,7 @@ void Renderer_3D::init_() {
                     "dark_material",
                     new Material(
                             glm::vec3(0.f),
-                            glm::vec3(0.01f),
+                            glm::vec3(0.1f),
                             glm::vec3(1.f),
                             50.f,
                             0,
@@ -127,13 +127,22 @@ void Renderer_3D::init_() {
 
     main_scene_->add_light(
             new Directional_Light(
-                    {0.497147, 3.22812, 6.42233}
+                    glm::vec3{-0.2f, -1.0f, -0.3f},
+                    glm::vec3{0.05},
+                    glm::vec3{0.8f},
+                    glm::vec3{0.5f}
             )
     );
 
     main_scene_->add_light(
             new Point_Light(
-                    glm::vec3{0.135159, 3.11625, 6.1011}
+                    glm::vec3{0.135159, 3.11625, 6.1011},
+                    glm::vec3{0.05},
+                    glm::vec3{0.8f},
+                    glm::vec3{1.f},
+                    1.0f,
+                    0.09f,
+                    0.032f
             )
     );
 
@@ -143,7 +152,16 @@ void Renderer_3D::init_() {
     SkyBox *sky_box = new SkyBox();
     sky_box->set_shader(shaders_.at("main_shader"));
 
-    main_scene_->add_object(sky_box);
+//    Object *obj = new Object();
+//
+//    obj->set_mesh(new Mesh(
+//            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/models/cube.obj"));
+//
+//    obj->set_shader(shaders_.at("main_shader"));
+//    obj->set_material(materials_.at("dark_material"));
+
+    main_scene_->set_sky_box(sky_box);
+//    main_scene_->add_object(obj);
 
     // init game scene
     init_game_scene_();

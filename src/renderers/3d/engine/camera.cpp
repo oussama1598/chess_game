@@ -68,7 +68,7 @@ void Camera::rotate(float dt, double offset_x, double offset_y, float sensitivit
 void Camera::attach_to_shader(Shader *shader) {
     shader->bind();
 
-    shader->set_uniform_matrix_4_fv("inverse_view_matrix", glm::inverse(get_view_matrix()));
     shader->set_uniform_matrix_4_fv("view_matrix", get_view_matrix());
     shader->set_uniform_matrix_4_fv("projection_matrix", get_projection_matrix());
+    shader->set_uniform_3_fv("camera_position", position_ + front_);
 }

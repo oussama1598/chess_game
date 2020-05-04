@@ -3,6 +3,7 @@
 #include "object.h"
 #include "light.h"
 #include "camera.h"
+#include "sky_box.h"
 
 class Scene {
 private:
@@ -11,6 +12,8 @@ private:
     std::vector<Object *> objects_;
 
     Camera *selected_camera_;
+
+    SkyBox *sky_box_;
 
 public:
 
@@ -23,6 +26,8 @@ public:
     void add_light(Light *light);
 
     void add_object(Object *object);
+
+    void set_sky_box(SkyBox *sky_box);
 
 //    void use_camera(int camera_index);
 

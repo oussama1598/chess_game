@@ -14,7 +14,7 @@ protected:
 public:
 
     Light(glm::vec3 position, glm::vec3 ambient = glm::vec3(1.f),
-          glm::vec3 diffuse = glm::vec3(.2f), glm::vec3 specular = glm::vec3(1.f));
+          glm::vec3 diffuse = glm::vec3(.5f), glm::vec3 specular = glm::vec3(1.f));
 
     virtual void set_direction(glm::vec3);
 

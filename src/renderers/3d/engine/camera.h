@@ -33,7 +33,7 @@ public:
 public:
     Camera(const glm::vec3 &position, const glm::vec2 &size);
 
-    [[nodiscard]] inline glm::vec3 get_position() const { return position_; }
+    [[nodiscard]] inline glm::vec3 get_position() const { return position_ + front_; }
 
     inline glm::vec3 get_rotation() const { return rotation_; }
 

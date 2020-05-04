@@ -47,55 +47,57 @@ uniform vec3 camera_position;
 uniform int sky_box;
 uniform samplerCube sky_cube_texture;
 
-vec3 CalcDirLight()
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(-dir_light.direction);
+    vec3 lightDir = normalize(-light.direction);
 
-    // ambient
-    vec3 ambient = point_light.ambient * material.ambient;
+    // Diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
 
-    // diffuse shading
-    float diffuse_rate = max(dot(lightDir, normalize(vs_normal)), 0.0);
-    vec3 diffuse = material.diffuse * diffuse_rate * point_light.diffuse;
+    // Specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    // specular shading
-    vec3 reflect_direction_vector = normalize(reflect(-lightDir, normalize(vs_normal)));
-    vec3 position_to_view_direction_vector = normalize(camera_position - vs_position);
-    float specular_rate = pow(max(dot(position_to_view_direction_vector, reflect_direction_vector), 0), material.shininess);
+    vec3 texture_diffuse_color = material.use_texture * texture(material.diffuse_texture, vs_text_coord).rgb;
+    vec3 no_texture_diffuse_color = ((material.use_texture + 1) % 2) * material.diffuse;
 
-    vec3 text_specular = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
-    vec3 no_texture_specular = ((material.use_texture + 1) % 2) * material.specular;
+    vec3 texture_specular_color = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
+    vec3 no_texture_specular_color = ((material.use_texture + 1) % 2) * material.specular;
 
-    vec3 specular = point_light.specular * ((text_specular + no_texture_specular) * specular_rate);
-
+    // Combine results
+    vec3 ambient = light.ambient * material.ambient * (texture_diffuse_color + no_texture_diffuse_color);
+    vec3 diffuse = light.diffuse * diff * (texture_diffuse_color + no_texture_diffuse_color);
+    vec3 specular = light.specular * spec * (texture_specular_color + no_texture_specular_color);
 
     return (ambient + diffuse + specular);
 }
 
-vec3 CalcPointLight()
+// Calculates the color when using a point light.
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    // ambient
-    vec3 ambient = point_light.ambient * material.ambient;
+    vec3 lightDir = normalize(light.position - fragPos);
 
-    // diffuse
-    vec3 position_to_light_direction_vector = normalize(point_light.position - vs_position);
-    float diffuse_rate = clamp(dot(position_to_light_direction_vector, normalize(vs_normal)), 0, 1);
-    vec3 diffuse = material.diffuse * diffuse_rate * point_light.diffuse;
+    // Diffuse shading
+    float diff = max(dot(normal, lightDir), 0.0);
 
-    // specular
-    vec3 light_to_position_direction_vector = normalize(point_light.position - vs_position);
-    vec3 reflect_direction_vector = normalize(reflect(-light_to_position_direction_vector, normalize(vs_normal)));
-    vec3 position_to_view_direction_vector = normalize(camera_position - vs_position);
-    float specular_rate = pow(max(dot(position_to_view_direction_vector, reflect_direction_vector), 0), material.shininess);
+    // Specular shading
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    vec3 text_specular = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
-    vec3 no_texture_specular = ((material.use_texture + 1) % 2) * material.specular;
+    // Attenuation
+    float distance = length(light.position - fragPos);
+    float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 
-    vec3 specular = point_light.specular * ((text_specular + no_texture_specular) * specular_rate);
+    vec3 texture_diffuse_color = material.use_texture * texture(material.diffuse_texture, vs_text_coord).rgb;
+    vec3 no_texture_diffuse_color = ((material.use_texture + 1) % 2) * material.diffuse;
 
-    // attenuation
-    float distance = length(point_light.position - vs_position);
-    float attenuation = 1.0 / (point_light.constant + point_light.linear * distance + point_light.quadratic * (distance * distance));
+    vec3 texture_specular_color = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
+    vec3 no_texture_specular_color = ((material.use_texture + 1) % 2) * material.specular;
+
+    // Combine results
+    vec3 ambient = light.ambient * material.ambient * (texture_diffuse_color + no_texture_diffuse_color);
+    vec3 diffuse = light.diffuse * diff * (texture_diffuse_color + no_texture_diffuse_color);
+    vec3 specular = light.specular * spec * (texture_specular_color + no_texture_specular_color);
 
     ambient *= attenuation;
     diffuse *= attenuation;
@@ -110,11 +112,25 @@ void main()
     {
         FragColor = texture(sky_cube_texture, vs_position);
     } else {
-        vec3 color = CalcDirLight() + CalcPointLight();
+        vec3 norm = normalize(vs_normal);
+        vec3 viewDir = normalize(camera_position - vs_position);
 
-        vec4 text = material.use_texture * texture(material.diffuse_texture, vs_text_coord);
-        vec4 no_texture_color = ((material.use_texture + 1) % 2) * vec4(1.f);
+        // Directional lighting
+        vec3 result = CalcDirLight(dir_light, norm, viewDir);
 
-        FragColor = (text + no_texture_color) * vec4(color, 1.f);
+        // Point lights
+        result += CalcPointLight(point_light, norm, vs_position, viewDir);
+
+        FragColor = vec4(result, 1.f);
+
+        vec3 view_vector = normalize(vs_position - camera_position);
+        vec3 reflected_vector = reflect(view_vector, normalize(vs_normal));
+
+        vec4 reflected_color = texture(sky_cube_texture, reflected_vector);
+
+        vec3 text_specular = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
+        vec3 no_texture_specular = ((material.use_texture + 1) % 2) * vec3(0.1f);
+
+        FragColor = mix(FragColor, reflected_color, (text_specular + no_texture_specular).x);
     }
 }

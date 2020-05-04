@@ -1,7 +1,9 @@
 #include "point_light.h"
 
-Point_Light::Point_Light(glm::vec3 position, float constant, float linear, float quadratic) : Light(
-        position), constant_{constant}, linear_{linear}, quadratic_{quadratic} {}
+Point_Light::Point_Light(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffuse,
+                         glm::vec3 specular, float constant, float linear, float quadratic) : Light(
+        position, ambient, diffuse, specular), constant_{constant}, linear_{linear}, quadratic_{
+        quadratic} {}
 
 void Point_Light::attach_to_shader(Shader *shader) {
     shader->bind();
