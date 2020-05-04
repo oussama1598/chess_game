@@ -66,3 +66,10 @@ void Camera::rotate(float dt, double offset_x, double offset_y, float sensitivit
 
     recalculate_view_matrix_();
 }
+
+void Camera::attach_to_shader(Shader *shader) {
+    shader->bind();
+
+    shader->set_uniform_matrix_4_fv("view_matrix", get_view_matrix());
+    shader->set_uniform_matrix_4_fv("projection_matrix", get_projection_matrix());
+}

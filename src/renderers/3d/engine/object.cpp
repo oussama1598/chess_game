@@ -1,29 +1,7 @@
 #include "object.h"
 
-Object::Object(const std::vector<Mesh::Vertex> &vertices, const std::vector<GLuint> &indices) {
-    mesh_ = new Mesh(vertices, indices);
-    texture_diffuse_ = new Texture(
-            "/home/red-scule/Desktop/projects/cpp_projects/opengl_tuto/src/images/container.png");
-    texture_specular_ = new Texture(
-            "/home/red-scule/Desktop/projects/cpp_projects/opengl_tuto/src/images/container_specular.png");
-    material_ = new Material(
-            glm::vec3(0.1f),
-            glm::vec3(1.f),
-            glm::vec3(2.f),
-            0,
-            1
-    );
-
+Object::Object() {
     calculate_model_matrix_();
-}
-
-Object::Object(const std::string &file_path) : Object(Obj_Loader::load_obj(file_path), {}) {}
-
-Object::~Object() {
-    delete texture_diffuse_;
-    delete texture_specular_;
-    delete material_;
-    delete mesh_;
 }
 
 void Object::calculate_model_matrix_() {
@@ -39,14 +17,46 @@ void Object::calculate_model_matrix_() {
 
 }
 
-void Object::draw(Shader &shader) {
+void Object::set_mesh(Mesh *mesh) {
+    mesh_ = mesh;
+}
+
+void Object::set_shader(Shader *shader) {
+    shader_ = shader;
+}
+
+void Object::set_diffuse_texture(Texture *texture) {
+    texture_diffuse_ = texture;
+}
+
+void Object::set_specular_texture(Texture *texture) {
+    texture_specular_ = texture;
+}
+
+void Object::set_material(Material *material) {
+    material_ = material;
+}
+
+void Object::translate(glm::vec3 translate_vector) {
+    position_ += translate_vector;
+}
+
+void Object::draw() {
     calculate_model_matrix_();
 
-    texture_diffuse_->bind(0);
-    texture_specular_->bind(1);
-    material_->assign_to_shader(shader);
+    shader_->set_uniform_1_i("material.use_texture", 0);
 
-    shader.set_uniform_matrix_4_fv("model_matrix", model_matrix_);
+    if (texture_diffuse_ != nullptr) {
+        texture_diffuse_->bind(0);
+
+        shader_->set_uniform_1_i("material.use_texture", 1);
+    }
+
+    if (texture_specular_ != nullptr) texture_specular_->bind(1);
+
+    material_->assign_to_shader(*shader_);
+
+    shader_->set_uniform_matrix_4_fv("model_matrix", model_matrix_);
 
     mesh_->render();
 }

@@ -1,18 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <GL/glew.h>
-#include <glm/glm.hpp>
+
+#include "obj_loader.h"
 
 class Mesh {
-
-public:
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec3 color;
-        glm::vec2 text_coord;
-        glm::vec3 normal;
-    };
 
 private:
     std::vector<Vertex> vertices_;
@@ -24,6 +18,8 @@ private:
 
 public:
     Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indices);
+
+    Mesh(const std::string &file_path);
 
     ~Mesh();
 

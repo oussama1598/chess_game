@@ -7,7 +7,7 @@
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
 
-#include "mesh.h"
+#include "vertex.h"
 
 class Obj_Loader {
 private:
@@ -21,5 +21,5 @@ private:
     static Obj_Data load_file_(const std::string &file_path);
 
 public:
-    static std::vector<Mesh::Vertex> load_obj(const std::string &file_path);
+    static std::vector<Vertex> load_obj(const std::string &file_path);
 };

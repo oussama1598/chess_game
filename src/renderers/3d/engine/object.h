@@ -15,10 +15,12 @@
 
 class Object {
 private:
-    Mesh *mesh_;
-    Texture *texture_diffuse_;
-    Texture *texture_specular_;
-    Material *material_;
+    Mesh *mesh_{nullptr};
+    Shader *shader_{nullptr};
+    Texture *texture_diffuse_{nullptr};
+    Texture *texture_specular_{nullptr};
+    Material *material_{nullptr};
+
     glm::mat4 model_matrix_{1.f};
 
 private:
@@ -31,11 +33,21 @@ public:
     glm::vec3 scale_{1.f};
 
 public:
-    Object(const std::vector<Mesh::Vertex> &vertices, const std::vector<GLuint> &indices);
+    Object();
 
-    Object(const std::string &file_path);
+    inline Shader *get_shader() const { return shader_; }
 
-    ~Object();
+    void set_mesh(Mesh *mesh);
 
-    void draw(Shader &shader);
+    void set_shader(Shader *shader);
+
+    void set_diffuse_texture(Texture *texture);
+
+    void set_specular_texture(Texture *texture);
+
+    void set_material(Material *material);
+
+    void draw();
+
+    void translate(glm::vec3 translate_vector);
 };

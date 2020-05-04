@@ -1,16 +1,16 @@
 #include "shader.h"
 
-Shader::Shader() {
+Shader::Shader(const std::string &vertex_file_path, const std::string &fragment_file_path) {
     program_id_ = glCreateProgram();
 
     GLuint vertex_shader = compiler_shader_(
             GL_VERTEX_SHADER,
-            "/home/red-scule/Desktop/projects/cpp_projects/opengl_tuto/src/shaders/vertex_core.glsl"
+            vertex_file_path
     );
 
     GLuint fragment_shader = compiler_shader_(
             GL_FRAGMENT_SHADER,
-            "/home/red-scule/Desktop/projects/cpp_projects/opengl_tuto/src/shaders/fragment_core.glsl"
+            fragment_file_path
     );
 
     glAttachShader(program_id_, vertex_shader);

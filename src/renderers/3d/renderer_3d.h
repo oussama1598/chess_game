@@ -1,37 +1,27 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "engine/shader.h"
+#include <map>
+
+#include "engine/window.h"
+#include "engine/scene.h"
 #include "engine/camera.h"
-#include "engine/light.h"
-#include "primitives/triangle.h"
-#include "primitives/plane.h"
-#include "primitives/pyramid.h"
+#include "engine/directional_light.h"
+#include "engine/point_light.h"
+#include "engine/shader.h"
 
-class GL_Window {
+#include "game/Game.h"
+
+class Renderer_3D {
 private:
-    int width_{800};
-    int height_{800};
-
-    GLFWwindow *window_;
-
-    Camera *camera;
-    Light *light;
-    Shader *main_shader_;
-
-    Object *object_;
+    Window window_;
 
     float dt_{0};
-    float current_time_{0};
     float last_time_{0};
+    float current_time_;
+
+    int fps_{0};
+    int count_fps_{0};
+    int last_fps_time_{0};
 
     double last_mouse_x_{0};
     double last_mouse_y_{0};
@@ -41,24 +31,47 @@ private:
     double mouse_offset_y_{0};
     bool first_move_{true};
 
+
+    std::map<std::string, Mesh *> meshes_;
+    std::map<std::string, Shader *> shaders_;
+    std::map<std::string, Material *> materials_;
+    std::map<std::string, Texture *> textures_;
+
+    Scene *main_scene_;
+
+    Game *game_;
+
+    std::map<char, std::string> pieces_meshes_{
+            {'P', "pawn_mesh"},    // pawn
+            {'B', "bishop_mesh"},   // bishop
+            {'K', "king_mesh"},     // king
+            {'Q', "queen_mesh"},   // queen
+            {'k', "knight_mesh"},   // knight
+            {'R', "rook_mesh"}   // rook
+    };
+
 private:
-    static void handle_errors_(int error, const char *description);
+    void gl_setup_() const;
 
-    void init_gl_();
+    void init_pices_meshes_();
 
-    void update_dt_();
+    void init_();
 
-    void update_shaders_();
+    void init_game_scene_();
+
+    void update_dt_fps_();
+
+    void handle_mouse_input_();
+
+    void handle_keyboard_input_();
+
+    void handle_inputs_();
 
 public:
 
-    GL_Window();
+    Renderer_3D(Game *game);
 
-    ~GL_Window();
-
-    void update_mouse_input();
-
-    void update_keyboard_input();
+    inline bool is_running() { return window_.is_running(); }
 
     void render();
 };

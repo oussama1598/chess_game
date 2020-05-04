@@ -10,6 +10,8 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<GLuint> &indic
     glBindVertexArray(0);
 }
 
+Mesh::Mesh(const std::string &file_path) : Mesh(Obj_Loader::load_obj(file_path), {}) {}
+
 Mesh::~Mesh() {
     glDeleteVertexArrays(1, &VAO_);
     glDeleteBuffers(1, &VBO_);

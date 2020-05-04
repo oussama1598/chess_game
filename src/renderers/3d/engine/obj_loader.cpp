@@ -57,9 +57,9 @@ Obj_Loader::Obj_Data Obj_Loader::load_file_(const std::string &file_path) {
     return {positions, text_coordinates, normals, faces};
 }
 
-std::vector<Mesh::Vertex> Obj_Loader::load_obj(const std::string &file_path) {
+std::vector<Vertex> Obj_Loader::load_obj(const std::string &file_path) {
     Obj_Data object_data = load_file_(file_path);
-    std::vector<Mesh::Vertex> vertices;
+    std::vector<Vertex> vertices;
 
     for (auto &face: object_data.faces) {
         std::vector<std::string> face_vertices;

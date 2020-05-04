@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "shader.h"
+
 class Camera {
 private:
     glm::vec3 position_;
@@ -43,4 +45,6 @@ public:
     void move(const float &dt, Movement_Direction direction, GLfloat amount);
 
     void rotate(float dt, double offset_x, double offset_y, float sensitivity);
+
+    void attach_to_shader(Shader *shader);
 };
