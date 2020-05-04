@@ -12,7 +12,6 @@ private:
     glm::vec3 rotation_;
 
     glm::vec3 front_;
-    glm::vec3 up_;
     glm::vec3 right_;
 
     glm::vec3 world_up_;

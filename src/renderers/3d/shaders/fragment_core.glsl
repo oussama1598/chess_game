@@ -49,20 +49,25 @@ uniform samplerCube sky_cube_texture;
 
 vec3 CalcDirLight()
 {
-    vec3 lightDir = normalize(dir_light.direction);
+    vec3 lightDir = normalize(-dir_light.direction);
 
     // ambient
     vec3 ambient = point_light.ambient * material.ambient;
 
     // diffuse shading
-    float diffuse_rate = clamp(dot(lightDir, normalize(vs_normal)), 0, 1);
+    float diffuse_rate = max(dot(lightDir, normalize(vs_normal)), 0.0);
     vec3 diffuse = material.diffuse * diffuse_rate * point_light.diffuse;
 
     // specular shading
     vec3 reflect_direction_vector = normalize(reflect(-lightDir, normalize(vs_normal)));
     vec3 position_to_view_direction_vector = normalize(camera_position - vs_position);
     float specular_rate = pow(max(dot(position_to_view_direction_vector, reflect_direction_vector), 0), material.shininess);
-    vec3 specular = point_light.specular * (material.specular * specular_rate);
+
+    vec3 text_specular = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
+    vec3 no_texture_specular = ((material.use_texture + 1) % 2) * material.specular;
+
+    vec3 specular = point_light.specular * ((text_specular + no_texture_specular) * specular_rate);
+
 
     return (ambient + diffuse + specular);
 }
@@ -78,11 +83,15 @@ vec3 CalcPointLight()
     vec3 diffuse = material.diffuse * diffuse_rate * point_light.diffuse;
 
     // specular
-    vec3 light_to_position_direction_vector = normalize(vs_position - point_light.position);
-    vec3 reflect_direction_vector = normalize(reflect(light_to_position_direction_vector, normalize(vs_normal)));
+    vec3 light_to_position_direction_vector = normalize(point_light.position - vs_position);
+    vec3 reflect_direction_vector = normalize(reflect(-light_to_position_direction_vector, normalize(vs_normal)));
     vec3 position_to_view_direction_vector = normalize(camera_position - vs_position);
     float specular_rate = pow(max(dot(position_to_view_direction_vector, reflect_direction_vector), 0), material.shininess);
-    vec3 specular = point_light.specular * (material.specular * specular_rate);
+
+    vec3 text_specular = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
+    vec3 no_texture_specular = ((material.use_texture + 1) % 2) * material.specular;
+
+    vec3 specular = point_light.specular * ((text_specular + no_texture_specular) * specular_rate);
 
     // attenuation
     float distance = length(point_light.position - vs_position);

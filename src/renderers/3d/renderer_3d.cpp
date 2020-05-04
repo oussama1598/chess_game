@@ -52,8 +52,8 @@ void Renderer_3D::init_() {
                     new Material(
                             glm::vec3(.2f),
                             glm::vec3(1.0f),
-                            glm::vec3(.5f),
-                            32.f,
+                            glm::vec3(1.f),
+                            10.f,
                             0,
                             1
                     )
@@ -100,7 +100,7 @@ void Renderer_3D::init_() {
             {
                     "main_specular_texture",
                     new Texture(
-                            "/home/red-scule/Desktop/projects/cpp_projects/opengl_tuto/src/images/container_specular.png")
+                            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/table_specular.png")
             }
     );
 
@@ -224,7 +224,7 @@ void Renderer_3D::init_game_scene_() {
     table->set_mesh(meshes_.at("table_mesh"));
     table->set_shader(shaders_.at("main_shader"));
     table->set_diffuse_texture(textures_.at("main_diffuse_texture"));
-//    obj->set_specular_texture(textures_.at("main_specular_texture"));
+    table->set_specular_texture(textures_.at("main_specular_texture"));
     table->set_material(materials_.at("main_material"));
 
     main_scene_->add_object(table);

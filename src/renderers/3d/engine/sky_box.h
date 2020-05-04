@@ -27,5 +27,7 @@ public:
 
     SkyBox();
 
+    void attach_to_shader(Shader *shader);
+
     void draw() override;
 };
