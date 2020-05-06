@@ -3,7 +3,7 @@
 void Scene::add_camera(Camera *camera) {
     cameras_.push_back(camera);
 
-    selected_camera_ = camera;
+    selected_camera_index_ = (int)cameras_.size() - 1;
 }
 
 void Scene::add_light(Light *light) {
@@ -32,7 +32,7 @@ void Scene::render() {
             light->attach_to_shader(object->get_shader());
         }
 
-        cameras_[0]->attach_to_shader(object->get_shader());
+        get_camera()->attach_to_shader(object->get_shader());
 
         sky_box_->attach_to_shader(object->get_shader());
 
@@ -50,7 +50,7 @@ void Scene::render() {
         object->set_material(objects_material);
     }
 
-    cameras_[0]->attach_to_shader(sky_box_->get_shader());
+    get_camera()->attach_to_shader(sky_box_->get_shader());
 
     sky_box_->draw();
 }
@@ -61,7 +61,7 @@ void Scene::render_for_selection() {
 
         selection_shader_->set_uniform_1_f("object_index", i);
 
-        cameras_[0]->attach_to_shader(selection_shader_);
+        get_camera()->attach_to_shader(selection_shader_);
 
         Shader *objects_shader = object->get_shader();
 
@@ -90,4 +90,11 @@ Object *Scene::get_object(int index) {
         return nullptr;
 
     return objects_.at(index);
+}
+
+void Scene::use_camera(int camera_index) {
+    if (camera_index > (int) cameras_.size())
+        return;
+
+    selected_camera_index_ = camera_index;
 }

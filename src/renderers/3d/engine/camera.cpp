@@ -50,7 +50,7 @@ void Camera::move(const float &dt, Movement_Direction direction, GLfloat amount)
     recalculate_view_matrix_();
 }
 
-void Camera::rotate(float dt, double offset_x, double offset_y, float sensitivity) {
+void Camera::rotate_with_mouse(float dt, double offset_x, double offset_y, float sensitivity) {
     rotation_.x -= static_cast<GLfloat>(offset_y) * sensitivity * dt;
     rotation_.y += static_cast<GLfloat>(offset_x) * sensitivity * dt;
 
@@ -61,6 +61,25 @@ void Camera::rotate(float dt, double offset_x, double offset_y, float sensitivit
 
     if (rotation_.y > 360.f || rotation_.y < -360.f)
         rotation_.y = 0.f;
+
+    recalculate_view_matrix_();
+}
+
+void Camera::rotate_around_origin(glm::vec3 rotation, bool overrite) {
+    if (overrite) {
+        rotation_ = rotation;
+
+        return;
+    }
+
+    rotation_ += rotation;
+}
+
+void Camera::rotate(float angle) {
+    glm::mat4 rotationMat(1);
+
+    rotationMat = glm::rotate(rotationMat, glm::radians(angle), world_up_);
+    position_ = glm::vec3(rotationMat * glm::vec4(position_, 1.0));
 
     recalculate_view_matrix_();
 }

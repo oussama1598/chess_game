@@ -9,12 +9,15 @@
 #include "engine/directional_light.h"
 #include "engine/point_light.h"
 #include "engine/shader.h"
+#include "engine/animation_handler.h"
 
 #include "game/Game.h"
 
 class Renderer_3D {
 private:
     Window window_;
+
+    Animation_Handler animation_handler;
 
     float dt_{0};
     float last_time_{0};
@@ -46,6 +49,12 @@ private:
     Scene *main_scene_;
 
     Game *game_;
+    int last_player_id_{0};
+
+    std::array<glm::vec3, 2> default_camera_postions{
+            glm::vec3{0.135159, 3.11625, 6.1011},
+            glm::vec3{-0.135159, 3.11625, -6.1011}
+    };
 
     std::map<char, std::string> pieces_meshes_{
             {'P', "pawn_mesh"},    // pawn

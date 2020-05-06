@@ -7,11 +7,11 @@ Object::Object() {
 void Object::calculate_model_matrix_() {
     model_matrix_ = glm::mat4{1.f};
     model_matrix_ = glm::translate(model_matrix_, position_);
-    // rotate along x
+    // rotate_with_mouse along x
     model_matrix_ = glm::rotate(model_matrix_, glm::radians(rotation_.x), glm::vec3(1.f, 0.f, 0.f));
-    // rotate along y
+    // rotate_with_mouse along y
     model_matrix_ = glm::rotate(model_matrix_, glm::radians(rotation_.y), glm::vec3(0.f, 1.f, 0.f));
-    // rotate along z
+    // rotate_with_mouse along z
     model_matrix_ = glm::rotate(model_matrix_, glm::radians(rotation_.z), glm::vec3(0.f, 0.f, 1.f));
     model_matrix_ = glm::scale(model_matrix_, scale_);
 
@@ -37,13 +37,16 @@ void Object::set_material(Material *material) {
     material_ = material;
 }
 
+void Object::move_to(glm::vec3 position) {
+    position_ = position;
+}
+
 void Object::translate(glm::vec3 translate_vector) {
     position_ += translate_vector;
 }
 
-void Object::move_to(glm::vec3 position)
-{
-    position_ = position;
+void Object::rotate(glm::vec3 rotation_vector) {
+    rotation_ = rotation_vector;
 }
 
 void Object::draw() {

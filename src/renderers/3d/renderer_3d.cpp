@@ -145,6 +145,7 @@ void Renderer_3D::init_() {
             )
     );
 
+    // lights
     main_scene_->add_light(
             new Directional_Light(
                     glm::vec3{-0.2f, -1.0f, -0.3f},
@@ -213,7 +214,7 @@ void Renderer_3D::handle_mouse_input_() {
     last_mouse_y_ = mouse_y_;
 
     if (glfwGetMouseButton(window_.get_window(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-        main_scene_->get_camera()->rotate(dt_, mouse_offset_x_, mouse_offset_y_, 5.f);
+        main_scene_->get_camera()->rotate_with_mouse(dt_, mouse_offset_x_, mouse_offset_y_, 5.f);
     }
 
     // mouse buttons
@@ -365,7 +366,8 @@ void Renderer_3D::process_object_selection_(double x, double y) {
 
         if (piece->get_player_id() != game_->get_current_player()->player_id) {
             if (main_scene_->get_selected_object() != nullptr) {
-                Piece::piece_coordinates from_coordinates = get_object_coordinates_(main_scene_->get_selected_object());
+                Piece::piece_coordinates from_coordinates = get_object_coordinates_(
+                        main_scene_->get_selected_object());
                 std::string from = Piece::get_id_from_coordinates(from_coordinates);
                 std::string to = Piece::get_id_from_coordinates(object_coordinates);
 
@@ -473,6 +475,21 @@ void Renderer_3D::handle_move_(std::string &from, std::string &to) {
 }
 
 void Renderer_3D::render() {
+    animation_handler.update();
+
+    if (game_->get_current_player()->player_id != last_player_id_) {
+        // TODO: move the camera to a known location
+        main_scene_->get_camera()->set_position(default_camera_postions.at(last_player_id_));
+        main_scene_->get_camera()->rotate_around_origin({0, -90 + last_player_id_ * 180, 0}, true);
+
+        animation_handler.add_animation(180.0 / 6.0, 1, [this](float step) {
+            main_scene_->get_camera()->rotate_around_origin({0, -step * 6, 0});
+            main_scene_->get_camera()->rotate(step * 6);
+        });
+
+        last_player_id_ = game_->get_current_player()->player_id;
+    }
+
     update_dt_fps_();
     handle_inputs_();
 

@@ -11,7 +11,7 @@ private:
     std::vector<Light *> lights_;
     std::vector<Object *> objects_;
 
-    Camera *selected_camera_;
+    int selected_camera_index_;
 
     SkyBox *sky_box_;
 
@@ -24,11 +24,15 @@ private:
 
 public:
 
-    inline Camera *get_camera() const { return selected_camera_; }
+    inline Camera *get_camera() const { return cameras_[selected_camera_index_]; }
 
     inline Light *get_light(int index) { return lights_.at(index); }
 
     void add_camera(Camera *camera);
+
+    void use_camera(int camera_index);
+
+    int get_selected_camera_index() { return selected_camera_index_; }
 
     void add_light(Light *light);
 
@@ -52,13 +56,12 @@ public:
 
     inline void set_hover_index(int index) { hovered_index_ = index; }
 
-    inline int get_hover_index() { return hovered_index_; }
+    inline int get_hover_index() const { return hovered_index_; }
 
     Object *get_hovered_object();
 
     Object *get_object(int index);
 
-//    void use_camera(int camera_index);
 
     void render();
 

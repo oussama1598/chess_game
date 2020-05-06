@@ -51,7 +51,9 @@ public:
 
     virtual void draw();
 
+    virtual void move_to(glm::vec3 position);
+
     virtual void translate(glm::vec3 translate_vector);
 
-    virtual void move_to(glm::vec3 position);
+    virtual void rotate(glm::vec3 rotation_vector);
 };

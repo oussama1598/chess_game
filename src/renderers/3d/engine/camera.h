@@ -35,6 +35,8 @@ public:
 
     [[nodiscard]] inline glm::vec3 get_position() const { return position_ + front_; }
 
+    inline void set_position(glm::vec3 position) { position_ = position; }
+
     inline glm::vec3 get_rotation() const { return rotation_; }
 
     [[nodiscard]] inline glm::mat4 get_view_matrix() const { return view_matrix_; }
@@ -43,7 +45,11 @@ public:
 
     void move(const float &dt, Movement_Direction direction, GLfloat amount);
 
-    void rotate(float dt, double offset_x, double offset_y, float sensitivity);
+    void rotate_with_mouse(float dt, double offset_x, double offset_y, float sensitivity);
+
+    void rotate_around_origin(glm::vec3 rotation, bool overrite = false);
+
+    void rotate(float angle);
 
     void attach_to_shader(Shader *shader);
 };
