@@ -19,6 +19,8 @@ SkyBox::SkyBox() : Object() {
 
     Object::scale_ = glm::vec3(400.f);
     calculate_model_matrix_();
+
+    glActiveTexture(0);
 }
 
 void SkyBox::set_texture_face_(GLuint type, const std::string &file_path) {
@@ -65,7 +67,9 @@ void SkyBox::draw() {
     shader_->set_uniform_1_i("sky_cube_texture", 5);
     shader_->set_uniform_matrix_4_fv("model_matrix", model_matrix_);
 
+    shader_->bind();
     mesh_->render();
+    shader_->unbind();
 
     shader_->set_uniform_1_i("sky_box", 0);
     unbind_texture_();

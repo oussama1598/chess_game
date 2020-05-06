@@ -45,6 +45,11 @@ void Renderer_3D::init_() {
             "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/fragment_core.glsl"
     )});
 
+    shaders_.insert({"selection_shader", new Shader(
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/vertex_core.glsl",
+            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/fragment_selection.glsl"
+    )});
+
     // add materials
     materials_.insert(
             {
@@ -86,6 +91,21 @@ void Renderer_3D::init_() {
                     )
             }
     );
+
+    materials_.insert(
+            {
+                    "selection_material",
+                    new Material(
+                            glm::vec3(0.2f, 0.f, 0.f),
+                            glm::vec3(0.26f, 0.52f, 0.95f),
+                            glm::vec3(1.f),
+                            50.f,
+                            0,
+                            1
+                    )
+            }
+    );
+
 
     // add textures
     textures_.insert(
@@ -151,17 +171,12 @@ void Renderer_3D::init_() {
     // TODO: delete this at destructuring
     SkyBox *sky_box = new SkyBox();
     sky_box->set_shader(shaders_.at("main_shader"));
-
-//    Object *obj = new Object();
-//
-//    obj->set_mesh(new Mesh(
-//            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/models/cube.obj"));
-//
-//    obj->set_shader(shaders_.at("main_shader"));
-//    obj->set_material(materials_.at("dark_material"));
-
     main_scene_->set_sky_box(sky_box);
-//    main_scene_->add_object(obj);
+
+    // setting selection/hover shader, and material
+    main_scene_->set_selection_shader(shaders_.at("selection_shader"));
+    main_scene_->set_selection_material(materials_.at("selection_material"));
+    main_scene_->set_hover_material(materials_.at("selection_material"));
 
     // init game scene
     init_game_scene_();
@@ -197,7 +212,24 @@ void Renderer_3D::handle_mouse_input_() {
     last_mouse_x_ = mouse_x_;
     last_mouse_y_ = mouse_y_;
 
-    main_scene_->get_camera()->rotate(dt_, mouse_offset_x_, mouse_offset_y_, 5.f);
+    if (glfwGetMouseButton(window_.get_window(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        main_scene_->get_camera()->rotate(dt_, mouse_offset_x_, mouse_offset_y_, 5.f);
+    }
+
+    // mouse buttons
+    if (glfwGetMouseButton(window_.get_window(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS &&
+        !mouse_buttons_.at("left")) {
+        process_object_selection_(mouse_x_, mouse_y_);
+
+        mouse_buttons_.at("left") = true;
+    }
+
+    if (glfwGetMouseButton(window_.get_window(), GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
+        mouse_buttons_.at("left") = false;
+    }
+
+    // mouse hover
+    process_object_hover_(mouse_x_, mouse_y_);
 }
 
 void Renderer_3D::handle_keyboard_input_() {
@@ -263,17 +295,180 @@ void Renderer_3D::init_game_scene_() {
             std::string material = players.at(piece->get_player_id()).is_dark ? "dark_material"
                                                                               : "light_material";
 
-            Object *king = new Object();
+            Object *piece_obj = new Object();
 
-            king->set_mesh(meshes_.at(pieces_meshes_.at(piece->get_symbol())));
-            king->set_shader(shaders_.at("main_shader"));
-            king->set_material(materials_.at(material));
+            game_pieces_objects_.insert({piece, piece_obj});
 
-            main_scene_->add_object(king);
+            piece_obj->set_mesh(meshes_.at(pieces_meshes_.at(piece->get_symbol())));
+            piece_obj->set_shader(shaders_.at("main_shader"));
+            piece_obj->set_material(materials_.at(material));
 
-            king->translate({-2.63 + (step * j), 0, 2.63 - (step * i)});
+            main_scene_->add_object(piece_obj);
 
+            piece_obj->translate({-2.63 + (step * j), 0, 2.63 - (step * i)});
         }
+    }
+}
+
+Piece::piece_coordinates Renderer_3D::get_object_coordinates_(Object *object) {
+    Board::piecesType pieces = game_->get_board_pieces();
+
+    for (int i = 0; i < (int) pieces.size(); ++i) {
+        for (int j = 0; j < (int) pieces.at(i).size(); ++j) {
+            Piece *piece = pieces[i][j];
+
+            if (piece->get_player_id() == -1) {
+                continue;
+            }
+
+            if (game_pieces_objects_.at(piece) == object) return {i, j};
+        }
+    }
+
+    return {-1, -1};
+}
+
+void Renderer_3D::render_selection_() {
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    main_scene_->render_for_selection();
+
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glActiveTexture(0);
+}
+
+void Renderer_3D::process_object_selection_(double x, double y) {
+    render_selection_();
+
+    unsigned char color[4];
+    GLint viewport[4];
+
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &color);
+
+    int r = color[0];
+    int g = color[1];
+    int b = color[2];
+
+    if (b == 0) { // b == 0 piece selection
+        Object *object = main_scene_->get_object(r);
+
+        if (object == nullptr) return;
+
+        Piece::piece_coordinates object_coordinates = get_object_coordinates_(object);
+
+        Piece *piece = game_->get_board().get_piece_at(object_coordinates.line,
+                                                       object_coordinates.column);
+
+        if (piece->get_player_id() != game_->get_current_player()->player_id) {
+            if (main_scene_->get_selected_object() != nullptr) {
+                Piece::piece_coordinates from_coordinates = get_object_coordinates_(main_scene_->get_selected_object());
+                std::string from = Piece::get_id_from_coordinates(from_coordinates);
+                std::string to = Piece::get_id_from_coordinates(object_coordinates);
+
+                handle_move_(from, to);
+            }
+
+            return;
+        }
+
+        if (main_scene_->get_selected_index() == r)
+            main_scene_->set_selected_index(-1);
+        else
+            main_scene_->set_selected_index(r);
+    } else {  // b == 1 cell selection
+        Object *object = main_scene_->get_selected_object();
+
+        if (object != nullptr) {
+            Piece::piece_coordinates from_coordinates = get_object_coordinates_(object);
+            std::string from = Piece::get_id_from_coordinates(from_coordinates);
+            std::string to = Piece::get_id_from_coordinates({g, r});
+
+            handle_move_(from, to);
+        }
+    }
+}
+
+void Renderer_3D::process_object_hover_(double x, double y) {
+    render_selection_();
+
+    unsigned char color[4];
+    GLint viewport[4];
+
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &color);
+
+    int r = color[0];
+    int b = color[2];
+
+    if (b != 0 or (r > 32 or r <= 0)) {
+        main_scene_->set_hover_index(-1);
+
+        return;
+    }
+
+    Object *object = main_scene_->get_object(r);
+
+    if (object == nullptr) return;
+
+    Piece::piece_coordinates object_coordinates = get_object_coordinates_(object);
+    Piece *piece = game_->get_board().get_piece_at(object_coordinates.line,
+                                                   object_coordinates.column);
+
+    if (piece->get_player_id() == game_->get_current_player()->player_id) {
+        main_scene_->set_hover_index(r);
+    }
+}
+
+bool Renderer_3D::piece_exists_(Piece *piece) {
+    Board::piecesType pieces = game_->get_board_pieces();
+
+    for (int i = 0; i < (int) pieces.size(); ++i) {
+        for (int j = 0; j < (int) pieces.at(i).size(); ++j) {
+            if (pieces[i][j] == piece) return true;
+        }
+    }
+
+    return false;
+}
+
+void Renderer_3D::check_for_board_changes_() {
+    Board::piecesType pieces = game_->get_board_pieces();
+
+    float step = 0.753176;
+
+    for (int i = 0; i < (int) pieces.size(); ++i) {
+        for (int j = 0; j < (int) pieces.at(i).size(); ++j) {
+            Piece *piece = pieces[i][j];
+
+            if (piece->get_player_id() == -1) {
+                continue;
+            }
+
+            Object *piece_obj = game_pieces_objects_.at(piece);
+            piece_obj->move_to({-2.63 + (step * j), 0, 2.63 - (step * i)});
+        }
+    }
+
+    for (auto &piece_object: game_pieces_objects_) {
+        if (piece_exists_(piece_object.first)) continue;
+
+        main_scene_->remove_object(piece_object.second);
+    }
+}
+
+void Renderer_3D::handle_move_(std::string &from, std::string &to) {
+    try {
+        game_->make_move(from, to);
+
+        check_for_board_changes_();
+
+        main_scene_->set_selected_index(-1);
+    } catch (std::exception &error) {
+        std::cout << error.what() << std::endl;
     }
 }
 
@@ -294,7 +489,6 @@ void Renderer_3D::render() {
     glBindVertexArray(0);
     glUseProgram(0);
     glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
 
     window_.set_title("Chess Game - FPS: " + std::to_string(fps_));
 }

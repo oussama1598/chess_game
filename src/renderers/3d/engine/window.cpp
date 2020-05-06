@@ -27,7 +27,7 @@ Window::Window() {
         std::runtime_error("Couldn't initialize glew.");
     }
 
-    std::cout << "OpenGL version supported by this platform: " << glGetString(GL_VERSION)
+    std::cout << "OpenGL version supported by this platform: " << glGetString(GL_VERSION) << " " << glGetString(GL_VENDOR)
               << std::endl;
 }
 

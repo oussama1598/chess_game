@@ -35,11 +35,11 @@ public:
 public:
     Object();
 
-    inline Shader *get_shader() const { return shader_; }
-
     virtual void set_mesh(Mesh *mesh);
 
     virtual void set_shader(Shader *shader);
+
+    inline Shader *get_shader() const { return shader_; }
 
     virtual void set_diffuse_texture(Texture *texture);
 
@@ -47,7 +47,11 @@ public:
 
     virtual void set_material(Material *material);
 
+    virtual Material *get_material() const { return material_; }
+
     virtual void draw();
 
     virtual void translate(glm::vec3 translate_vector);
+
+    virtual void move_to(glm::vec3 position);
 };

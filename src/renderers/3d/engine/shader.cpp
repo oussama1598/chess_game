@@ -94,32 +94,40 @@ void Shader::unbind() const {
 }
 
 void Shader::set_uniform_matrix_4_fv(const std::string &name, const glm::mat4 &matrix) const {
+    bind();
     glUniformMatrix4fv(
             glGetUniformLocation(program_id_, name.c_str()),
             1,
             GL_FALSE,
             glm::value_ptr(matrix)
     );
+    unbind();
 }
 
 void Shader::set_uniform_1_i(const std::string &name, const GLint value) const {
+    bind();
     glUniform1i(
             glGetUniformLocation(program_id_, name.c_str()),
             value
     );
+    unbind();
 }
 
 void Shader::set_uniform_1_f(const std::string &name, const GLfloat value) const {
+    bind();
     glUniform1f(
             glGetUniformLocation(program_id_, name.c_str()),
             value
     );
+    unbind();
 }
 
 void Shader::set_uniform_3_fv(const std::string &name, const glm::vec3 &vector) const {
+    bind();
     glUniform3fv(
             glGetUniformLocation(program_id_, name.c_str()),
             1,
             glm::value_ptr(vector)
     );
+    unbind();
 }

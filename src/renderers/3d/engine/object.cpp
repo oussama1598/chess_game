@@ -41,6 +41,11 @@ void Object::translate(glm::vec3 translate_vector) {
     position_ += translate_vector;
 }
 
+void Object::move_to(glm::vec3 position)
+{
+    position_ = position;
+}
+
 void Object::draw() {
     calculate_model_matrix_();
 
@@ -58,5 +63,7 @@ void Object::draw() {
 
     shader_->set_uniform_matrix_4_fv("model_matrix", model_matrix_);
 
+    shader_->bind();
     mesh_->render();
+    shader_->unbind();
 }

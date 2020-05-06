@@ -32,6 +32,11 @@ private:
     double mouse_offset_y_{0};
     bool first_move_{true};
 
+    std::map<std::string, bool> mouse_buttons_{
+            {"left",  false},
+            {"right", false}
+    };
+
 
     std::map<std::string, Mesh *> meshes_;
     std::map<std::string, Shader *> shaders_;
@@ -51,6 +56,8 @@ private:
             {'R', "rook_mesh"}   // rook
     };
 
+    std::map<Piece *, Object *> game_pieces_objects_;
+
 private:
     void gl_setup_() const;
 
@@ -67,6 +74,20 @@ private:
     void handle_keyboard_input_();
 
     void handle_inputs_();
+
+    Piece::piece_coordinates get_object_coordinates_(Object *object);
+
+    void process_object_selection_(double x, double y);
+
+    void process_object_hover_(double x, double y);
+
+    bool piece_exists_(Piece *piece);
+
+    void render_selection_();
+
+    void check_for_board_changes_();
+
+    void handle_move_(std::string &from, std::string &to);
 
 public:
 
