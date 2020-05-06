@@ -8,14 +8,16 @@ Point_Light::Point_Light(glm::vec3 position, glm::vec3 ambient, glm::vec3 diffus
 void Point_Light::attach_to_shader(Shader *shader) {
     shader->bind();
 
-    shader->set_uniform_3_fv("point_light.position", position_);
-    shader->set_uniform_3_fv("point_light.ambient", ambient_);
-    shader->set_uniform_3_fv("point_light.diffuse", diffuse_);
-    shader->set_uniform_3_fv("point_light.specular", specular_);
+    std::string light_uniform = "point_light[" + std::to_string(light_index) + "].";
 
-    shader->set_uniform_1_f("point_light.constant", constant_);
-    shader->set_uniform_1_f("point_light.linear", linear_);
-    shader->set_uniform_1_f("point_light.quadratic", quadratic_);
+    shader->set_uniform_3_fv(light_uniform + "position", position_);
+    shader->set_uniform_3_fv(light_uniform + "ambient", ambient_);
+    shader->set_uniform_3_fv(light_uniform + "diffuse", diffuse_);
+    shader->set_uniform_3_fv(light_uniform + "specular", specular_);
+
+    shader->set_uniform_1_f(light_uniform + "constant", constant_);
+    shader->set_uniform_1_f(light_uniform + "linear", linear_);
+    shader->set_uniform_1_f(light_uniform + "quadratic", quadratic_);
 
     shader->unbind();
 }

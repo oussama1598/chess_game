@@ -1,4 +1,6 @@
 #version 440
+#define MAX_POINT_LIGHTS 4
+
 out vec4 FragColor;
 
 struct Material {
@@ -39,13 +41,18 @@ in vec3 vs_normal;
 
 
 uniform Material material;
-uniform PointLight point_light;
+uniform PointLight point_light[MAX_POINT_LIGHTS];
 uniform DirLight dir_light;
 
 uniform vec3 camera_position;
 
 uniform int sky_box;
 uniform samplerCube sky_cube_texture;
+
+// options
+uniform int reflection_enabled;
+uniform int enabled_directional_lighting;
+uniform int enabled_points_lights[MAX_POINT_LIGHTS];
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
@@ -116,10 +123,13 @@ void main()
         vec3 viewDir = normalize(camera_position - vs_position);
 
         // Directional lighting
-        vec3 result = CalcDirLight(dir_light, norm, viewDir);
+        vec3 result = enabled_directional_lighting * CalcDirLight(dir_light, norm, viewDir);
 
         // Point lights
-        result += CalcPointLight(point_light, norm, vs_position, viewDir);
+        for (int i = 0; i < MAX_POINT_LIGHTS; ++i)
+        {
+            result += enabled_points_lights[i] * CalcPointLight(point_light[i], norm, vs_position, viewDir);
+        }
 
         FragColor = vec4(result, 1.f);
 
@@ -128,8 +138,8 @@ void main()
 
         vec4 reflected_color = texture(sky_cube_texture, reflected_vector);
 
-        vec3 text_specular = material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
-        vec3 no_texture_specular = ((material.use_texture + 1) % 2) * vec3(0.1f);
+        vec3 text_specular = reflection_enabled * material.use_texture * texture(material.specular_texture, vs_text_coord).rgb;
+        vec3 no_texture_specular = reflection_enabled * ((material.use_texture + 1) % 2) * vec3(0.1f);
 
         FragColor = mix(FragColor, reflected_color, (text_specular + no_texture_specular).x);
     }

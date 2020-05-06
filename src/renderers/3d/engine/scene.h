@@ -2,6 +2,7 @@
 
 #include "object.h"
 #include "light.h"
+#include "point_light.h"
 #include "camera.h"
 #include "sky_box.h"
 
@@ -21,6 +22,15 @@ private:
 
     Material *hover_material_;
     int hovered_index_{-1};
+
+    int points_lights_count{0};
+
+public:
+    // options
+    bool sky_box_enabled{true};
+    bool reflection_enabled{true};
+    bool enabled_directional_lighting{true};
+    bool enabled_points_lights[4]{true};
 
 public:
 
@@ -61,7 +71,6 @@ public:
     Object *get_hovered_object();
 
     Object *get_object(int index);
-
 
     void render();
 

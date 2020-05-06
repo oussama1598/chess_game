@@ -21,6 +21,19 @@ void Renderer_3D::gl_setup_() const {
     // for the alpha
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void) io;
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(window_.get_window(), true);
+    ImGui_ImplOpenGL3_Init("#version 440");
 }
 
 void Renderer_3D::init_pices_meshes_() {
@@ -157,7 +170,43 @@ void Renderer_3D::init_() {
 
     main_scene_->add_light(
             new Point_Light(
-                    glm::vec3{0.135159, 3.11625, 6.1011},
+                    glm::vec3{-2.45823, 3.11625, 2.82323},
+                    glm::vec3{0.05},
+                    glm::vec3{0.8f},
+                    glm::vec3{1.f},
+                    1.0f,
+                    0.09f,
+                    0.032f
+            )
+    );
+
+    main_scene_->add_light(
+            new Point_Light(
+                    glm::vec3{2.45823, 3.11625, 2.82323},
+                    glm::vec3{0.05},
+                    glm::vec3{0.8f},
+                    glm::vec3{1.f},
+                    1.0f,
+                    0.09f,
+                    0.032f
+            )
+    );
+
+    main_scene_->add_light(
+            new Point_Light(
+                    glm::vec3{2.45823, 3.11625, -2.82323},
+                    glm::vec3{0.05},
+                    glm::vec3{0.8f},
+                    glm::vec3{1.f},
+                    1.0f,
+                    0.09f,
+                    0.032f
+            )
+    );
+
+    main_scene_->add_light(
+            new Point_Light(
+                    glm::vec3{-2.45823, 3.11625, -2.82323},
                     glm::vec3{0.05},
                     glm::vec3{0.8f},
                     glm::vec3{1.f},
@@ -250,16 +299,12 @@ void Renderer_3D::handle_keyboard_input_() {
         main_scene_->get_camera()->move(dt_, Camera::Movement_Direction::LEFT, 1);
     }
 
-    if (glfwGetKey(window_.get_window(), GLFW_KEY_L) == GLFW_PRESS) {
-        glm::vec3 pos = main_scene_->get_camera()->get_position();
+    if (glfwGetKey(window_.get_window(), GLFW_KEY_P) == GLFW_PRESS) {
 
-        main_scene_->get_light(0)->set_direction(main_scene_->get_camera()->get_position());
+        glm::vec3 pos = main_scene_->get_camera()->get_position();
+        main_scene_->get_light(1)->set_position(main_scene_->get_camera()->get_position());
 
         std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
-    }
-
-    if (glfwGetKey(window_.get_window(), GLFW_KEY_P) == GLFW_PRESS) {
-        main_scene_->get_light(1)->set_position(main_scene_->get_camera()->get_position());
     }
 }
 
@@ -355,6 +400,8 @@ void Renderer_3D::process_object_selection_(double x, double y) {
     int b = color[2];
 
     if (b == 0) { // b == 0 piece selection
+        if (r == 0) return;
+
         Object *object = main_scene_->get_object(r);
 
         if (object == nullptr) return;
@@ -474,6 +521,35 @@ void Renderer_3D::handle_move_(std::string &from, std::string &to) {
     }
 }
 
+void Renderer_3D::render_imgui_() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    {
+        ImGui::Begin(
+                "Render options");
+
+        ImGui::Checkbox("Enable Skybox", &main_scene_->sky_box_enabled);
+        ImGui::Checkbox("Enable Reflections", &main_scene_->reflection_enabled);
+        ImGui::Checkbox("Enable Directional Lighting", &main_scene_->enabled_directional_lighting);
+        ImGui::Checkbox("Enable Point Light #1", &main_scene_->enabled_points_lights[0]);
+        ImGui::Checkbox("Enable Point Light #2", &main_scene_->enabled_points_lights[1]);
+        ImGui::Checkbox("Enable Point Light #3", &main_scene_->enabled_points_lights[2]);
+        ImGui::Checkbox("Enable Point Light #4", &main_scene_->enabled_points_lights[3]);
+        ImGui::Checkbox("Selection Rendering", &selection_rendring_);
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+                    1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("OpenGL version supported by this platform: %s, %s",
+                    glGetString(GL_VERSION), glGetString(GL_VENDOR));
+        ImGui::End();
+    }
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 void Renderer_3D::render() {
     animation_handler.update();
 
@@ -498,7 +574,13 @@ void Renderer_3D::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    main_scene_->render();
+
+    if (selection_rendring_)
+        main_scene_->render_for_selection();
+    else
+        main_scene_->render();
+
+    render_imgui_();
 
     glfwSwapBuffers(window_.get_window());
     glFlush();

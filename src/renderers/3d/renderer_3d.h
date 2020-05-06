@@ -2,6 +2,11 @@
 
 #include <map>
 
+#include <imgui.h>
+
+#include "vendor/imgui_impl_glfw.h"
+#include "vendor/imgui_impl_opengl3.h"
+
 #include "engine/window.h"
 #include "engine/scene.h"
 #include "engine/sky_box.h"
@@ -67,6 +72,9 @@ private:
 
     std::map<Piece *, Object *> game_pieces_objects_;
 
+    // options
+    bool selection_rendring_{false};
+
 private:
     void gl_setup_() const;
 
@@ -103,6 +111,8 @@ public:
     Renderer_3D(Game *game);
 
     inline bool is_running() { return window_.is_running(); }
+
+    void render_imgui_();
 
     void render();
 };

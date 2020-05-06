@@ -3,11 +3,19 @@
 void Scene::add_camera(Camera *camera) {
     cameras_.push_back(camera);
 
-    selected_camera_index_ = (int)cameras_.size() - 1;
+    selected_camera_index_ = (int) cameras_.size() - 1;
 }
 
 void Scene::add_light(Light *light) {
     lights_.push_back(light);
+
+    bool is_point_light = dynamic_cast<const Point_Light *>(light) != nullptr;
+
+    if (is_point_light) {
+        light->light_index = points_lights_count;
+
+        points_lights_count += 1;
+    }
 }
 
 void Scene::add_object(Object *object) {
@@ -27,14 +35,26 @@ void Scene::remove_object(Object *object) {
 void Scene::render() {
     for (size_t i = 0; i < objects_.size(); ++i) {
         Object *object = objects_[i];
+        Shader *shader = object->get_shader();
 
         for (auto &light: lights_) {
-            light->attach_to_shader(object->get_shader());
+            light->attach_to_shader(shader);
         }
 
-        get_camera()->attach_to_shader(object->get_shader());
+        get_camera()->attach_to_shader(shader);
 
-        sky_box_->attach_to_shader(object->get_shader());
+        if (sky_box_enabled) {
+            sky_box_->attach_to_shader(shader);
+        }
+
+        shader->set_uniform_1_i("reflection_enabled", (int) reflection_enabled);
+        shader->set_uniform_1_i("enabled_directional_lighting",
+                                (int) enabled_directional_lighting);
+
+        for (int j = 0; j < 4; ++j) {
+            shader->set_uniform_1_i(
+                    "enabled_points_lights[" + std::to_string(i) + "]", enabled_points_lights[i]);
+        }
 
         Material *objects_material = object->get_material();
 
@@ -50,9 +70,11 @@ void Scene::render() {
         object->set_material(objects_material);
     }
 
-    get_camera()->attach_to_shader(sky_box_->get_shader());
+    if (sky_box_enabled) {
+        get_camera()->attach_to_shader(sky_box_->get_shader());
 
-    sky_box_->draw();
+        sky_box_->draw();
+    }
 }
 
 void Scene::render_for_selection() {
