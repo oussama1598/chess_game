@@ -12,6 +12,12 @@ target_include_directories(renderers INTERFACE ..)
 
 add_custom_command(
         TARGET renderers PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory
+        ${CMAKE_BINARY_DIR}/bin/assets/)
+
+
+add_custom_command(
+        TARGET renderers PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/assets/
         ${CMAKE_BINARY_DIR}/bin/assets/)

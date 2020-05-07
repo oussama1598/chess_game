@@ -39,3 +39,4 @@ add_compile_options(-DQT_NO_OPENGL)
 
 add_subdirectory(test)
 add_subdirectory(src)
+

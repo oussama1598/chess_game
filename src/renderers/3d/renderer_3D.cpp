@@ -254,6 +254,9 @@ void Renderer_3D::init_() {
                                                  glm::vec3(246.f / 255.f, 231.f / 255.f,
                                                            116.f / 255.f));
 
+    shaders_.at("main_shader")->set_uniform_3_fv("error_color",
+                                                 glm::vec3(1.f, 0.f, 0.f));
+
     // init game scene
     init_game_scene_();
 }
@@ -535,7 +538,20 @@ void Renderer_3D::check_for_board_changes_() {
     }
 }
 
+void Renderer_3D::show_flash_message_(Piece::piece_coordinates coordinates) {
+    flash_message_.start_time = (float) glfwGetTime();
+    flash_message_.show = true;
+    flash_message_.position = coordinates;
+}
+
 void Renderer_3D::handle_move_(std::string &from, std::string &to) {
+    Player *current_player = game_->get_current_player();
+
+    Piece::piece_coordinates from_coordinates = Piece::get_piece_coordinates_from_id(from);
+
+    if (from == to)
+        return;
+
     try {
         game_->make_move(from, to);
 
@@ -543,7 +559,16 @@ void Renderer_3D::handle_move_(std::string &from, std::string &to) {
 
         main_scene_->set_selected_index(-1);
     } catch (std::exception &error) {
-        std::cout << error.what() << std::endl;
+        if (error.what() == Errors::ILLEGAL_MOVE) {
+            show_flash_message_(from_coordinates);
+        }
+
+        if (error.what() == Errors::KING_IS_NOT_SAFE) {
+            Piece::piece_coordinates king_coordinates = game_->get_board().find_king(
+                    *current_player);
+
+            show_flash_message_(king_coordinates);
+        }
     }
 }
 
@@ -575,6 +600,36 @@ void Renderer_3D::render_imgui_() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
+void Renderer_3D::render_flash_message_() {
+    if (!flash_message_.show) {
+        shaders_.at("main_shader")->set_uniform_1_i("flash_message.i", -1);
+        shaders_.at("main_shader")->set_uniform_1_i("flash_message.j", -1);
+
+        return;
+    }
+
+    float current_time = glfwGetTime();
+    float duration = current_time - flash_message_.start_time;
+    float flash_duration = flash_message_.duration / flash_message_.flashes_per_second;
+
+    if (duration >= flash_message_.duration) {
+        flash_message_.show = false;
+
+        return;
+    }
+
+    if ((int) (duration / flash_duration) % 2 != 0) {
+        shaders_.at("main_shader")->set_uniform_1_i("flash_message.i", -1);
+        shaders_.at("main_shader")->set_uniform_1_i("flash_message.j", -1);
+
+        return;
+    }
+
+    shaders_.at("main_shader")->set_uniform_1_i("flash_message.i", flash_message_.position.line);
+    shaders_.at("main_shader")->set_uniform_1_i("flash_message.j", flash_message_.position.column);
+}
+
 
 void Renderer_3D::render_last_move_() {
     std::pair<std::string, std::string> last_move = game_->get_latest_move();
@@ -615,6 +670,7 @@ void Renderer_3D::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    render_flash_message_();
     render_last_move_();
 
     if (selection_rendring_)

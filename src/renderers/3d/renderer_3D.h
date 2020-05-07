@@ -1,5 +1,4 @@
-#ifndef RENDERER_3D_H
-#define RENDERER_3D_H
+#pragma once
 
 #include <map>
 
@@ -73,6 +72,16 @@ private:
 
     std::map<Piece *, Object *> game_pieces_objects_;
 
+    struct flash {
+        float start_time{0.0};
+        float duration{1.0};
+        unsigned int flashes_per_second{8};
+        bool show;
+        Piece::piece_coordinates position{-1, -1};
+    };
+
+    flash flash_message_;
+
     // options
     bool selection_rendring_{false};
 
@@ -105,7 +114,13 @@ private:
 
     void check_for_board_changes_();
 
+    void show_flash_message_(Piece::piece_coordinates coordinates);
+
     void handle_move_(std::string &from, std::string &to);
+
+    void render_imgui_();
+
+    void render_flash_message_();
 
     void render_last_move_();
 
@@ -117,9 +132,5 @@ public:
 
     inline bool is_running() { return window_.is_running(); }
 
-    void render_imgui_();
-
     void render();
 };
-
-#endif

@@ -65,6 +65,10 @@ uniform Cell last_from_cell;
 uniform Cell last_to_cell;
 uniform vec3 history_color;
 
+// flash message
+uniform Cell flash_message;
+uniform vec3 error_color;
+
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
@@ -138,9 +142,14 @@ void main()
 
             int cell = 8 - (y_row + 48);
 
-            FragColor = vec4(history_color, 1.f);
+            if (flash_message.i == cell && flash_message.j == x_row)
+            {
+                FragColor = vec4(error_color, 1.f);
+                return;
+            }
 
             if ((last_from_cell.i == cell && last_from_cell.j == x_row) || (last_to_cell.i == cell && last_to_cell.j == x_row)){
+                FragColor = vec4(history_color, 1.f);
                 return;
             }
         }
