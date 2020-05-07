@@ -167,7 +167,7 @@ void Renderer_3D::init_() {
 
     main_scene_->add_camera(
             new Camera(
-                    {0.135159, 3.11625, 6.1011},
+                    default_camera_postions[0],
                     {window_.get_width(), window_.get_height()}
             )
     );
@@ -256,6 +256,10 @@ void Renderer_3D::init_() {
 
     shaders_.at("main_shader")->set_uniform_3_fv("error_color",
                                                  glm::vec3(1.f, 0.f, 0.f));
+
+    shaders_.at("main_shader")->set_uniform_1_i("guides_count", 0);
+    shaders_.at("main_shader")->set_uniform_3_fv("guides_color",
+                                                 glm::vec3(1.f, 0.f, 1.f));
 
     // init game scene
     init_game_scene_();
@@ -378,6 +382,8 @@ void Renderer_3D::init_game_scene_() {
             piece_obj->set_shader(shaders_.at("main_shader"));
             piece_obj->set_material(materials_.at(material));
 
+            piece_obj->rotate({0.f, -180.f * (float) (piece->get_player_id()), 0.f});
+
             main_scene_->add_object(piece_obj);
 
             piece_obj->translate({-2.63 + (step * j), 0, 2.63 - (step * i)});
@@ -455,8 +461,16 @@ void Renderer_3D::process_object_selection_(double x, double y) {
 
         if (main_scene_->get_selected_index() == r)
             main_scene_->set_selected_index(-1);
-        else
+        else {
             main_scene_->set_selected_index(r);
+
+            guides_ = game_->get_board().get_possible_moves_for(
+                    *game_->get_current_player(),
+                    Piece::get_id_from_coordinates(
+                            {object_coordinates.line, object_coordinates.column}));
+
+            render_guides_();
+        }
     } else {  // b == 1 cell selection
         Object *object = main_scene_->get_selected_object();
 
@@ -557,6 +571,9 @@ void Renderer_3D::handle_move_(std::string &from, std::string &to) {
 
         check_for_board_changes_();
 
+        guides_.clear();
+        render_guides_();
+
         main_scene_->set_selected_index(-1);
     } catch (std::exception &error) {
         if (error.what() == Errors::ILLEGAL_MOVE) {
@@ -646,13 +663,34 @@ void Renderer_3D::render_last_move_() {
     }
 }
 
+void Renderer_3D::render_guides_() {
+    if (main_scene_->get_selected_index() == -1) {
+        shaders_.at("main_shader")->set_uniform_1_i("guides_count", 0);
+
+        return;
+    }
+
+    shaders_.at("main_shader")->set_uniform_1_i("guides_count", (int) guides_.size());
+
+    for (int i = 0; i < (int) guides_.size(); ++i) {
+        Piece::piece_coordinates coordinates = Piece::get_piece_coordinates_from_id(guides_[i]);
+
+        shaders_.at("main_shader")->set_uniform_1_i("guides[" + std::to_string(i) + "].i",
+                                                    coordinates.line);
+
+        shaders_.at("main_shader")->set_uniform_1_i("guides[" + std::to_string(i) + "].j",
+                                                    coordinates.column);
+    }
+}
+
 void Renderer_3D::render() {
     animation_handler.update();
 
     if (game_->get_current_player()->player_id != last_player_id_) {
         // TODO: move the camera to a known location
         main_scene_->get_camera()->set_position(default_camera_postions.at(last_player_id_));
-        main_scene_->get_camera()->rotate_around_origin({0, -90 + last_player_id_ * 180, 0}, true);
+        main_scene_->get_camera()->rotate_around_origin({-40.f, -90 + last_player_id_ * 180, 0},
+                                                        true);
 
         animation_handler.add_animation(180.0 / 6.0, 1, [this](float step) {
             main_scene_->get_camera()->rotate_around_origin({0, -step * 6, 0});

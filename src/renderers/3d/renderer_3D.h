@@ -57,8 +57,8 @@ private:
     int last_player_id_{0};
 
     std::array<glm::vec3, 2> default_camera_postions{
-            glm::vec3{0.135159, 3.11625, 6.1011},
-            glm::vec3{-0.135159, 3.11625, -6.1011}
+            glm::vec3{0.0334437, 4.25992, 4.04805},
+            glm::vec3{-0.0334437, 4.25992, -4.04805}
     };
 
     std::map<char, std::string> pieces_meshes_{
@@ -81,6 +81,8 @@ private:
     };
 
     flash flash_message_;
+
+    std::vector<std::string> guides_{};
 
     // options
     bool selection_rendring_{false};
@@ -123,6 +125,8 @@ private:
     void render_flash_message_();
 
     void render_last_move_();
+
+    void render_guides_();
 
 public:
 

@@ -4,7 +4,7 @@ Camera::Camera(const glm::vec3 &position, const glm::vec2 &size) : position_{pos
     world_up_ = glm::vec3{0.f, 1.f, 0.f};
     right_ = glm::vec3(0.f);
     view_matrix_ = glm::mat4(1.f);
-    rotation_ = glm::vec3{0.f, -90.f, 0.f};
+    rotation_ = glm::vec3{-40.f, -90.f, 0.f};
 
     // initialize the projection matrix
     projection_matrix_ = glm::perspective(
