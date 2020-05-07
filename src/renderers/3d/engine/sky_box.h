@@ -5,6 +5,7 @@
 class SkyBox : public Object {
 private:
     GLuint texture_id_;
+    Mesh *mesh_cube_;
 
     // TODO: has to change
     std::map<GLuint, std::string> faces_textures_{
@@ -26,6 +27,8 @@ private:
 public:
 
     SkyBox();
+
+    ~SkyBox();
 
     void attach_to_shader(Shader *shader);
 

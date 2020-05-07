@@ -1,5 +1,4 @@
 #include "animation_handler.h"
-#include <iostream>
 
 void
 Animation_Handler::add_animation(float threshold, float step,
@@ -25,9 +24,10 @@ void Animation_Handler::update() {
 
             animations_.erase(animations_.begin());
 
-            return;
+            continue;
         }
 
         animation.animation_callback(animation.step);
+        return;
     }
 }

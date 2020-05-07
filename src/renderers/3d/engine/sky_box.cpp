@@ -1,8 +1,10 @@
 #include "sky_box.h"
 
 SkyBox::SkyBox() : Object() {
-    Object::set_mesh(new Mesh(
-            "./assets/models/cube.obj"));
+    mesh_cube_ = new Mesh(
+            "./assets/models/cube.obj");
+
+    Object::set_mesh(mesh_cube_);
 
 
     glGenTextures(1, &texture_id_);
@@ -73,4 +75,10 @@ void SkyBox::draw() {
 
     shader_->set_uniform_1_i("sky_box", 0);
     unbind_texture_();
+}
+
+SkyBox::~SkyBox() {
+    delete mesh_cube_;
+
+    glDeleteTextures(1, &texture_id_);
 }

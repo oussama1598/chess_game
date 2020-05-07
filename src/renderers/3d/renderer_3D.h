@@ -22,6 +22,8 @@ class Renderer_3D {
 private:
     Window window_;
 
+    bool is_running_{true};
+
     Animation_Handler animation_handler;
 
     float dt_{0};
@@ -87,6 +89,12 @@ private:
     // options
     bool selection_rendring_{false};
 
+    typedef std::function<void(int x, int y)> window_move_callback;
+    typedef std::function<void(const std::string &from, const std::string &to)> move_callback;
+
+    window_move_callback on_window_move_callback_;
+    move_callback on_move_callback_;
+
 private:
     void gl_setup_() const;
 
@@ -114,8 +122,6 @@ private:
 
     void render_selection_();
 
-    void check_for_board_changes_();
-
     void show_flash_message_(Piece::piece_coordinates coordinates);
 
     void handle_move_(std::string &from, std::string &to);
@@ -134,7 +140,13 @@ public:
 
     ~Renderer_3D();
 
-    inline bool is_running() { return window_.is_running(); }
+    inline bool is_running() { return is_running_; }
+
+    void check_for_board_changes();
 
     void render();
+
+    void on_window_move(window_move_callback callback);
+
+    void on_move(move_callback callback);
 };

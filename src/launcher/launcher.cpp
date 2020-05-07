@@ -50,22 +50,20 @@ void Launcher::open_new_game_window_() {
 
         new_game_window_->set_play_button_callback(
                 [this](int opponent_type, int ai_difficulty, int renderer_type) {
-                    std::cout << renderer_type << std::endl;
-
                     new_game_window_->hide();
 
-                    open_game_window_(opponent_type, ai_difficulty);
+                    open_game_window_(opponent_type, ai_difficulty, renderer_type);
                 });
     }
 
     new_game_window_->show();
 }
 
-void Launcher::open_game_window_(int opponent_type, int ai_difficulty) {
+void Launcher::open_game_window_(int opponent_type, int ai_difficulty, int renderer_type) {
     if (game_window_ == nullptr) {
         int ai = opponent_type == 0 ? -1 : 1;
 
-        game_window_ = new Game_Window(ai, ai_difficulty);
+        game_window_ = new Game_Window(ai, ai_difficulty, renderer_type);
 
         game_window_->set_close_callback([this]() {
             game_window_->hide();

@@ -1,6 +1,8 @@
 #include "renderer_2D.h"
 
-Renderer2D::Renderer2D(const char *title) {
+Renderer_2D::Renderer_2D(Game *game) {
+    game_ = game;
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
         throw std::runtime_error(SDL_GetError());
 
@@ -11,7 +13,7 @@ Renderer2D::Renderer2D(const char *title) {
         throw std::runtime_error(SDL_GetError());
 
     window_ = SDL_CreateWindow(
-            title,
+            "Chess Game",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             width_,
@@ -41,7 +43,7 @@ Renderer2D::Renderer2D(const char *title) {
     init_table_();
 }
 
-Renderer2D::~Renderer2D() {
+Renderer_2D::~Renderer_2D() {
     SDL_DestroyTexture(texture_);
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
@@ -50,15 +52,15 @@ Renderer2D::~Renderer2D() {
     SDL_Quit();
 }
 
-void Renderer2D::on_window_move(window_move_callback callback) {
+void Renderer_2D::on_window_move(window_move_callback callback) {
     on_window_move_callback_ = callback;
 }
 
-void Renderer2D::on_move(move_callback callback) {
+void Renderer_2D::on_move(move_callback callback) {
     on_move_callback_ = callback;
 }
 
-void Renderer2D::load_fonts_() {
+void Renderer_2D::load_fonts_() {
     text_renderer.add_font(
             "open-sans-24",
             24,
@@ -71,7 +73,7 @@ void Renderer2D::load_fonts_() {
     );
 }
 
-void Renderer2D::load_texture_() {
+void Renderer_2D::load_texture_() {
     // TODO: remove the absolute path
     SDL_Surface *pieces_sprite = IMG_Load(
             "./assets/sprites/chess_pieces.png");
@@ -91,12 +93,12 @@ void Renderer2D::load_texture_() {
     SDL_FreeSurface(guide_circle_sprite);
 }
 
-void Renderer2D::load_sounds_() {
+void Renderer_2D::load_sounds_() {
     for (auto &sound: sounds_)
         sound_manager_.add_sound(sound.first, sound.second);
 }
 
-void Renderer2D::init_table_() {
+void Renderer_2D::init_table_() {
     std::vector<SDL_Rect> dark_table_rectangles{};
     std::vector<SDL_Rect> light_table_rectangles{};
 
@@ -159,8 +161,8 @@ void Renderer2D::init_table_() {
     SDL_SetRenderTarget(renderer_, nullptr);
 }
 
-void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
-                              Piece::piece_coordinates to_coordinates) {
+void Renderer_2D::handle_move_(Piece::piece_coordinates from_coordinates,
+                               Piece::piece_coordinates to_coordinates) {
     std::string source = Piece::get_id_from_coordinates(from_coordinates);
     std::string destination = Piece::get_id_from_coordinates(to_coordinates);
 
@@ -194,7 +196,7 @@ void Renderer2D::handle_move_(Piece::piece_coordinates from_coordinates,
     }
 }
 
-void Renderer2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
+void Renderer_2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
     Board::piecesType pieces = game_->get_board_pieces();
     Piece *piece = pieces[mouse_i_][mouse_j_];
 
@@ -213,7 +215,7 @@ void Renderer2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
     }
 }
 
-void Renderer2D::handle_mouse_press_up_(SDL_MouseButtonEvent event) {
+void Renderer_2D::handle_mouse_press_up_(SDL_MouseButtonEvent event) {
     if (event.button == SDL_BUTTON_LEFT && selected_) {
         selected_ = false;
 
@@ -221,7 +223,7 @@ void Renderer2D::handle_mouse_press_up_(SDL_MouseButtonEvent event) {
     }
 }
 
-void Renderer2D::handle_events_() {
+void Renderer_2D::handle_events_() {
     SDL_Event event;
 
     SDL_PollEvent(&event);
@@ -261,8 +263,8 @@ void Renderer2D::handle_events_() {
 }
 
 void
-Renderer2D::show_flash_message_(Piece::piece_coordinates position,
-                                SDL_Color color, unsigned int duration) {
+Renderer_2D::show_flash_message_(Piece::piece_coordinates position,
+                                 SDL_Color color, unsigned int duration) {
     flash_message_.start_time = SDL_GetTicks();
     flash_message_.position = position;
     flash_message_.color = color;
@@ -270,7 +272,7 @@ Renderer2D::show_flash_message_(Piece::piece_coordinates position,
     flash_message_.show = true;
 }
 
-void Renderer2D::render_fps_() {
+void Renderer_2D::render_fps_() {
     SDL_Rect fps_rect{width_ - 10, 0, 0, 0};
 
     text_renderer.render_text(
@@ -282,13 +284,13 @@ void Renderer2D::render_fps_() {
     );
 }
 
-void Renderer2D::render_table_() {
+void Renderer_2D::render_table_() {
     SDL_Rect src = {0, 0, width_, height_};
 
     SDL_RenderCopy(renderer_, table_texture_, &src, &src);
 }
 
-void Renderer2D::render_latest_move_() {
+void Renderer_2D::render_latest_move_() {
     std::pair<std::string, std::string> latest_move = game_->get_latest_move();
 
     if (latest_move.first.empty() || latest_move.second.empty())
@@ -322,7 +324,7 @@ void Renderer2D::render_latest_move_() {
 }
 
 
-void Renderer2D::render_cursor_() {
+void Renderer_2D::render_cursor_() {
     if (game_->is_game_ended())
         return;
 
@@ -349,7 +351,7 @@ void Renderer2D::render_cursor_() {
     SDL_RenderFillRect(renderer_, &hover_rectangle);
 }
 
-void Renderer2D::render_flash_message_() {
+void Renderer_2D::render_flash_message_() {
     if (!flash_message_.show)
         return;
 
@@ -384,7 +386,7 @@ void Renderer2D::render_flash_message_() {
     SDL_RenderFillRect(renderer_, &flash_message_rect);
 }
 
-void Renderer2D::render_guides_() {
+void Renderer_2D::render_guides_() {
     if (!selected_)
         return;
 
@@ -404,7 +406,7 @@ void Renderer2D::render_guides_() {
 
 }
 
-void Renderer2D::render_game_() {
+void Renderer_2D::render_game_() {
     std::vector<Player> players = game_->get_players();
     Board::piecesType pieces = game_->get_board_pieces();
 
@@ -435,7 +437,7 @@ void Renderer2D::render_game_() {
     }
 }
 
-void Renderer2D::render() {
+void Renderer_2D::render() {
     // calculate the frame rate
     unsigned int current_time = SDL_GetTicks();
 

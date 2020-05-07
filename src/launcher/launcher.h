@@ -9,7 +9,7 @@
 class Launcher : public QApplication {
 private:
     QString css_path_{
-            "./src/launcher/styles/main.css"};
+            "./assets/styles/main.css"};
 
     Main_Window *main_window_{nullptr};
     New_Game_Window *new_game_window_{nullptr};
@@ -20,7 +20,7 @@ private:
 
     void open_new_game_window_();
 
-    void open_game_window_(int opponent_type, int ai_difficulty);
+    void open_game_window_(int opponent_type, int ai_difficulty, int renderer_type);
 
     void open_about_window_();
 

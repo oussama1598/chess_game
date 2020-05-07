@@ -331,20 +331,17 @@ void Renderer_3D::handle_keyboard_input_() {
     if (glfwGetKey(window_.get_window(), GLFW_KEY_A) == GLFW_PRESS) {
         main_scene_->get_camera()->move(dt_, Camera::Movement_Direction::LEFT, 1);
     }
-
-    if (glfwGetKey(window_.get_window(), GLFW_KEY_P) == GLFW_PRESS) {
-
-        glm::vec3 pos = main_scene_->get_camera()->get_position();
-        main_scene_->get_light(1)->set_position(main_scene_->get_camera()->get_position());
-
-        std::cout << pos.x << " " << pos.y << " " << pos.z << std::endl;
-    }
 }
 
 
 void Renderer_3D::handle_inputs_() {
     handle_mouse_input_();
     handle_keyboard_input_();
+
+    int x, y;
+    glfwGetWindowPos(window_.get_window(), &x, &y);
+
+    on_window_move_callback_(x, y);
 }
 
 void Renderer_3D::init_game_scene_() {
@@ -527,7 +524,7 @@ bool Renderer_3D::piece_exists_(Piece *piece) {
     return false;
 }
 
-void Renderer_3D::check_for_board_changes_() {
+void Renderer_3D::check_for_board_changes() {
     Board::piecesType pieces = game_->get_board_pieces();
 
     float step = 0.753176;
@@ -569,12 +566,14 @@ void Renderer_3D::handle_move_(std::string &from, std::string &to) {
     try {
         game_->make_move(from, to);
 
-        check_for_board_changes_();
+        check_for_board_changes();
 
         guides_.clear();
         render_guides_();
 
         main_scene_->set_selected_index(-1);
+
+        on_move_callback_(from, to);
     } catch (std::exception &error) {
         if (error.what() == Errors::ILLEGAL_MOVE) {
             show_flash_message_(from_coordinates);
@@ -684,10 +683,16 @@ void Renderer_3D::render_guides_() {
 }
 
 void Renderer_3D::render() {
+    if (glewInit() != GLEW_OK) {
+        return;
+    }
+
+    is_running_ = !glfwWindowShouldClose(window_.get_window());
+
     animation_handler.update();
 
     if (game_->get_current_player()->player_id != last_player_id_) {
-        // TODO: move the camera to a known location
+        // move the camera to a known location
         main_scene_->get_camera()->set_position(default_camera_postions.at(last_player_id_));
         main_scene_->get_camera()->rotate_around_origin({-40.f, -90 + last_player_id_ * 180, 0},
                                                         true);
@@ -746,4 +751,12 @@ Renderer_3D::~Renderer_3D() {
     }
 
     delete main_scene_;
+}
+
+void Renderer_3D::on_window_move(window_move_callback callback) {
+    on_window_move_callback_ = callback;
+}
+
+void Renderer_3D::on_move(move_callback callback) {
+    on_move_callback_ = callback;
 }

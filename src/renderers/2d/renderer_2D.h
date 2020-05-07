@@ -12,7 +12,7 @@
 #include "text_renderer.h"
 #include "game/Game.h"
 
-class Renderer2D {
+class Renderer_2D {
 private:
     unsigned int last_time_{0};
     int current_frames_count_{0};
@@ -154,13 +154,11 @@ private:
 
 public:
 
-    explicit Renderer2D(const char *title);
+    explicit Renderer_2D(Game *game);
 
-    ~Renderer2D();
+    ~Renderer_2D();
 
     [[nodiscard]] inline bool is_running() const { return is_running_; }
-
-    inline void set_game(Game *game) { game_ = game; }
 
     void on_window_move(window_move_callback callback);
 

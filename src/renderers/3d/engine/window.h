@@ -33,7 +33,5 @@ public:
 
     inline int get_height() { return height_; }
 
-    inline bool is_running() { return !glfwWindowShouldClose(window_); }
-
     void set_title(const std::string &title);
 };
