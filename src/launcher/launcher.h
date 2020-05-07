@@ -9,7 +9,7 @@
 class Launcher : public QApplication {
 private:
     QString css_path_{
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/launcher/styles/main.css"};
+            "./src/launcher/styles/main.css"};
 
     Main_Window *main_window_{nullptr};
     New_Game_Window *new_game_window_{nullptr};

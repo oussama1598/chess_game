@@ -44,7 +44,7 @@ void Renderer_3D::init_pices_meshes_() {
                 {
                         piece_name + "_mesh",
                         new Mesh(
-                                "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/models/" +
+                                "./assets/models/" +
                                 piece_name + "_low.obj")
                 }
         );
@@ -54,13 +54,13 @@ void Renderer_3D::init_pices_meshes_() {
 void Renderer_3D::init_() {
     // add shaders
     shaders_.insert({"main_shader", new Shader(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/vertex_core.glsl",
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/fragment_core.glsl"
+            "./assets/shaders/vertex_core.glsl",
+            "./assets/shaders/fragment_core.glsl"
     )});
 
     shaders_.insert({"selection_shader", new Shader(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/vertex_core.glsl",
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/src/renderers/3d/shaders/fragment_selection.glsl"
+            "./assets/shaders/vertex_core.glsl",
+            "./assets/shaders/fragment_selection.glsl"
     )});
 
     // add materials
@@ -139,7 +139,7 @@ void Renderer_3D::init_() {
             {
                     "main_diffuse_texture",
                     new Texture(
-                            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/table.png")
+                            "./assets/sprites/table.png")
             }
     );
 
@@ -147,7 +147,7 @@ void Renderer_3D::init_() {
             {
                     "main_specular_texture",
                     new Texture(
-                            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/table_specular.png")
+                            "./assets/sprites/table_specular.png")
             }
     );
 
@@ -158,7 +158,7 @@ void Renderer_3D::init_() {
             {
                     "table_mesh",
                     new Mesh(
-                            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/models/table.obj")
+                            "./assets/models/table.obj")
             }
     );
 

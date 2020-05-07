@@ -2,7 +2,7 @@
 
 SkyBox::SkyBox() : Object() {
     Object::set_mesh(new Mesh(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/models/cube.obj"));
+            "./assets/models/cube.obj"));
 
 
     glGenTextures(1, &texture_id_);

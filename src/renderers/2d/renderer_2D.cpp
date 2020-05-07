@@ -62,21 +62,21 @@ void Renderer2D::load_fonts_() {
     text_renderer.add_font(
             "open-sans-24",
             24,
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/fonts/OpenSans-Regular.ttf"
+            "./assets/fonts/OpenSans-Regular.ttf"
     );
     text_renderer.add_font(
             "open-sans-20",
             20,
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/fonts/OpenSans-Regular.ttf"
+            "./assets/fonts/OpenSans-Regular.ttf"
     );
 }
 
 void Renderer2D::load_texture_() {
     // TODO: remove the absolute path
     SDL_Surface *pieces_sprite = IMG_Load(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/chess_pieces.png");
+            "./assets/sprites/chess_pieces.png");
     SDL_Surface *guide_circle_sprite = IMG_Load(
-            "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sprites/circle.png");
+            "./assets/sprites/circle.png");
 
     if (pieces_sprite == nullptr || guide_circle_sprite == nullptr)
         throw std::runtime_error(SDL_GetError());

@@ -71,9 +71,9 @@ private:
     Sound_Manager sound_manager_{};
 
     std::map<std::string, std::string> sounds_{
-            {"move",    "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/move.wav"},
-            {"capture", "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/move.wav"},
-            {"illegal", "/home/red-scule/Desktop/projects/cpp_projects/chess_game/assets/sounds/illegal.wav"}
+            {"move",    "./assets/sounds/move.wav"},
+            {"capture", "./assets/sounds/move.wav"},
+            {"illegal", "./assets/sounds/illegal.wav"}
     };
 
     SDL_Cursor *arrow_cursor_;
