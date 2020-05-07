@@ -34,6 +34,8 @@ public:
 
 public:
 
+    ~Scene();
+
     inline Camera *get_camera() const { return cameras_[selected_camera_index_]; }
 
     inline Light *get_light(int index) { return lights_.at(index); }

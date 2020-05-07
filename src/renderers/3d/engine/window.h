@@ -3,7 +3,12 @@
 #include <iostream>
 #include <stdexcept>
 
+#ifndef __glew_h__
+
 #include <GL/glew.h>
+
+#endif
+
 #include <GLFW/glfw3.h>
 
 class Window {

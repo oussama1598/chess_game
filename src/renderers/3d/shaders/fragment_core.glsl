@@ -3,6 +3,12 @@
 
 out vec4 FragColor;
 
+struct Cell
+{
+    int i;
+    int j;
+};
+
 struct Material {
     vec3 ambient;
     vec3 diffuse;
@@ -53,6 +59,11 @@ uniform samplerCube sky_cube_texture;
 uniform int reflection_enabled;
 uniform int enabled_directional_lighting;
 uniform int enabled_points_lights[MAX_POINT_LIGHTS];
+
+// history
+uniform Cell last_from_cell;
+uniform Cell last_to_cell;
+uniform vec3 history_color;
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
@@ -119,6 +130,21 @@ void main()
     {
         FragColor = texture(sky_cube_texture, vs_position);
     } else {
+
+        if (material.use_texture == 1)
+        {
+            int x_row = int((vs_text_coord.x - 0.7034) / 0.036);
+            int y_row = int((vs_text_coord.y - 0.70285) / 0.0353);
+
+            int cell = 8 - (y_row + 48);
+
+            FragColor = vec4(history_color, 1.f);
+
+            if ((last_from_cell.i == cell && last_from_cell.j == x_row) || (last_to_cell.i == cell && last_to_cell.j == x_row)){
+                return;
+            }
+        }
+
         vec3 norm = normalize(vs_normal);
         vec3 viewDir = normalize(camera_position - vs_position);
 

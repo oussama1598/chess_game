@@ -35,6 +35,8 @@ public:
 public:
     Object();
 
+    virtual ~Object() = default;
+
     virtual void set_mesh(Mesh *mesh);
 
     virtual void set_shader(Shader *shader);

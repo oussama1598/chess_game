@@ -32,8 +32,10 @@ enable_testing()
 add_compile_options(-Wall -Werror -Wextra -fPIC)
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    add_compile_options(-D DEBUG)
+    add_compile_options(-DDEBUG)
 endif()
+
+add_compile_options(-DQT_NO_OPENGL)
 
 add_subdirectory(test)
 add_subdirectory(src)

@@ -1,6 +1,6 @@
 set(FILES
-        renderer_3d.h
-        renderer_3d.cpp
+        renderer_3D.h
+        renderer_3D.cpp
         engine/shader.cpp
         engine/shader.h
 

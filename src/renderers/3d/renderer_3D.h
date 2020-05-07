@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RENDERER_3D_H
+#define RENDERER_3D_H
 
 #include <map>
 
@@ -106,9 +107,13 @@ private:
 
     void handle_move_(std::string &from, std::string &to);
 
+    void render_last_move_();
+
 public:
 
     Renderer_3D(Game *game);
+
+    ~Renderer_3D();
 
     inline bool is_running() { return window_.is_running(); }
 
@@ -116,3 +121,5 @@ public:
 
     void render();
 };
+
+#endif

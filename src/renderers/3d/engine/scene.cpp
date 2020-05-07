@@ -120,3 +120,19 @@ void Scene::use_camera(int camera_index) {
 
     selected_camera_index_ = camera_index;
 }
+
+Scene::~Scene() {
+    for (Camera *camera: cameras_) {
+        delete camera;
+    }
+
+    for (Light *light: lights_) {
+        delete light;
+    }
+
+    for (Object *object: objects_) {
+        delete object;
+    }
+
+    delete sky_box_;
+}

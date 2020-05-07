@@ -1,4 +1,4 @@
-#include "renderer_3d.h"
+#include "renderer_3D.h"
 
 Renderer_3D::Renderer_3D(Game *game) {
     game_ = game;
@@ -119,6 +119,20 @@ void Renderer_3D::init_() {
             }
     );
 
+    materials_.insert(
+            {
+                    "history_material",
+                    new Material(
+                            glm::vec3(0.2f, 0.f, 0.f),
+                            glm::vec3(246 / 255, 231 / 255, 116 / 255),
+                            glm::vec3(1.f),
+                            50.f,
+                            0,
+                            1
+                    )
+            }
+    );
+
 
     // add textures
     textures_.insert(
@@ -227,6 +241,18 @@ void Renderer_3D::init_() {
     main_scene_->set_selection_shader(shaders_.at("selection_shader"));
     main_scene_->set_selection_material(materials_.at("selection_material"));
     main_scene_->set_hover_material(materials_.at("selection_material"));
+
+
+    // init uniforms
+    shaders_.at("main_shader")->set_uniform_1_i("last_from_cell.i", -1);
+    shaders_.at("main_shader")->set_uniform_1_i("last_from_cell.j", -1);
+
+    shaders_.at("main_shader")->set_uniform_1_i("last_to_cell.i", -1);
+    shaders_.at("main_shader")->set_uniform_1_i("last_to_cell.j", -1);
+
+    shaders_.at("main_shader")->set_uniform_3_fv("history_color",
+                                                 glm::vec3(246.f / 255.f, 231.f / 255.f,
+                                                           116.f / 255.f));
 
     // init game scene
     init_game_scene_();
@@ -550,6 +576,21 @@ void Renderer_3D::render_imgui_() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
+void Renderer_3D::render_last_move_() {
+    std::pair<std::string, std::string> last_move = game_->get_latest_move();
+
+    if (!last_move.first.empty() && !last_move.second.empty()) {
+        Piece::piece_coordinates from = Piece::get_piece_coordinates_from_id(last_move.first);
+        Piece::piece_coordinates to = Piece::get_piece_coordinates_from_id(last_move.second);
+
+        shaders_.at("main_shader")->set_uniform_1_i("last_from_cell.i", from.line);
+        shaders_.at("main_shader")->set_uniform_1_i("last_from_cell.j", from.column);
+
+        shaders_.at("main_shader")->set_uniform_1_i("last_to_cell.i", to.line);
+        shaders_.at("main_shader")->set_uniform_1_i("last_to_cell.j", to.column);
+    }
+}
+
 void Renderer_3D::render() {
     animation_handler.update();
 
@@ -574,6 +615,7 @@ void Renderer_3D::render() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    render_last_move_();
 
     if (selection_rendring_)
         main_scene_->render_for_selection();
@@ -590,4 +632,24 @@ void Renderer_3D::render() {
     glActiveTexture(0);
 
     window_.set_title("Chess Game - FPS: " + std::to_string(fps_));
+}
+
+Renderer_3D::~Renderer_3D() {
+    for (auto &mesh: meshes_) {
+        delete mesh.second;
+    }
+
+    for (auto &shader: shaders_) {
+        delete shader.second;
+    }
+
+    for (auto &material: materials_) {
+        delete material.second;
+    }
+
+    for (auto &texture: textures_) {
+        delete texture.second;
+    }
+
+    delete main_scene_;
 }
