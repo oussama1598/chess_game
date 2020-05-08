@@ -71,9 +71,7 @@ void Game_Window::render_2D_() {
         }
 
         if (!renderer_2D_->is_running()) {
-            states_window_->hide();
-
-            on_close_callback_();
+            exit(0);
         }
 
 
@@ -103,10 +101,7 @@ void Game_Window::render_3D_() {
             dialog_box_->setText(QString(message.c_str()));
             dialog_box_->exec();
 
-            states_window_->hide();
-            on_close_callback_();
-
-            return;
+            exit(0);
         }
 
         if (!renderer_3D_->is_running()) {
