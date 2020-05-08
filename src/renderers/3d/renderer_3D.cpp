@@ -1,8 +1,6 @@
 #include "renderer_3D.h"
 
-Renderer_3D::Renderer_3D(Game *game) {
-    game_ = game;
-
+Renderer_3D::Renderer_3D(Game *game, bool is_ai) : is_ai_{is_ai}, game_{game} {
     gl_setup_();
     init_();
 }
@@ -419,6 +417,8 @@ void Renderer_3D::render_selection_() {
 }
 
 void Renderer_3D::process_object_selection_(double x, double y) {
+    if (animation_handler_.is_animating()) return;
+
     render_selection_();
 
     unsigned char color[4];
@@ -482,6 +482,8 @@ void Renderer_3D::process_object_selection_(double x, double y) {
 }
 
 void Renderer_3D::process_object_hover_(double x, double y) {
+    if (animation_handler_.is_animating()) return;
+
     render_selection_();
 
     unsigned char color[4];
@@ -538,14 +540,36 @@ void Renderer_3D::check_for_board_changes() {
             }
 
             Object *piece_obj = game_pieces_objects_.at(piece);
-            piece_obj->move_to({-2.63 + (step * j), 0, 2.63 - (step * i)});
+            glm::vec3 end_position{-2.63 + (step * j), 0, 2.63 - (step * i)};
+
+            if (piece_obj->get_position() != end_position) {
+                animation_handler_.add_position_animation(piece_obj->get_position(), end_position,
+                                                          1,
+                                                          [piece_obj](glm::vec3 position, float) {
+                                                              piece_obj->move_to(position);
+                                                          });
+            }
         }
     }
 
     for (auto &piece_object: game_pieces_objects_) {
         if (piece_exists_(piece_object.first)) continue;
 
-        main_scene_->remove_object(piece_object.second);
+        auto it = game_pieces_objects_.find(piece_object.first);
+
+        glm::vec3 end_position = piece_object.second->get_position() + glm::vec3{0, 2, 0};
+
+        animation_handler_.add_position_animation(piece_object.second->get_position(), end_position,
+                                                  1, [this, piece_object, it](
+                        glm::vec3 position, float alpha) {
+                    piece_object.second->move_to(position);
+
+                    if (alpha >= 1) {
+                        main_scene_->remove_object(piece_object.second);
+
+                        game_pieces_objects_.erase(it);
+                    }
+                });
     }
 }
 
@@ -689,15 +713,15 @@ void Renderer_3D::render() {
 
     is_running_ = !glfwWindowShouldClose(window_.get_window());
 
-    animation_handler.update();
+    animation_handler_.update(dt_);
 
-    if (game_->get_current_player()->player_id != last_player_id_) {
+    if ((game_->get_current_player()->player_id != last_player_id_) && !is_ai_ && !is_animating()) {
         // move the camera to a known location
         main_scene_->get_camera()->set_position(default_camera_postions.at(last_player_id_));
         main_scene_->get_camera()->rotate_around_origin({-40.f, -90 + last_player_id_ * 180, 0},
                                                         true);
 
-        animation_handler.add_animation(180.0 / 6.0, 1, [this](float step) {
+        animation_handler_.add_animation(180.0 / 6.0, 1, [this](float step) {
             main_scene_->get_camera()->rotate_around_origin({0, -step * 6, 0});
             main_scene_->get_camera()->rotate(step * 6);
         });

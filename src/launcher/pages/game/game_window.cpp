@@ -43,7 +43,7 @@ void Game_Window::init_2D_renderer_() {
 }
 
 void Game_Window::init_3D_renderer_() {
-    renderer_3D_ = new Renderer_3D(game_);
+    renderer_3D_ = new Renderer_3D(game_, ai_player_id_ != -1);
 
     renderer_3D_->on_window_move([this](int x, int y) {
         states_window_->move(x + 1000, y - 36);
@@ -118,7 +118,7 @@ void Game_Window::render_3D_() {
             renderer_3D_->render();
 
             if (game_->get_current_player()->player_id == ai_player_id_ &&
-                !AI_Player::is_thinking()) {
+                !AI_Player::is_thinking() && !renderer_3D_->is_animating()) {
                 AI_Player::make_a_move(game_, ai_level_);
 
                 renderer_3D_->check_for_board_changes();

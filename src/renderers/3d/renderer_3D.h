@@ -22,9 +22,11 @@ class Renderer_3D {
 private:
     Window window_;
 
+    bool is_ai_{false};
+
     bool is_running_{true};
 
-    Animation_Handler animation_handler;
+    Animation_Handler animation_handler_;
 
     float dt_{0};
     float last_time_{0};
@@ -136,7 +138,7 @@ private:
 
 public:
 
-    Renderer_3D(Game *game);
+    Renderer_3D(Game *game, bool is_ai);
 
     ~Renderer_3D();
 
@@ -149,4 +151,6 @@ public:
     void on_window_move(window_move_callback callback);
 
     void on_move(move_callback callback);
+
+    inline bool is_animating() { return animation_handler_.is_animating(); }
 };

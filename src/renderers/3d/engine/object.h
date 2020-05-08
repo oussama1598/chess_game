@@ -53,6 +53,8 @@ public:
 
     virtual void draw();
 
+    glm::vec3 &get_position() { return position_; }
+
     virtual void move_to(glm::vec3 position);
 
     virtual void translate(glm::vec3 translate_vector);
