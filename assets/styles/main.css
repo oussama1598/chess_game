@@ -39,10 +39,6 @@ QTableWidget {
     font-size: 13px;
 }
 
-.player-panel .icon {
-    background-color: #dbd9d7;
-}
-
 .player-panel QLabel {
     margin-left: 5px;
     font-weight: 700;

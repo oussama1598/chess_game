@@ -94,7 +94,7 @@
            <number>15</number>
           </property>
           <item>
-           <widget class="QFrame" name="frame_4">
+           <widget class="QFrame" name="player_2_icon">
             <property name="minimumSize">
              <size>
               <width>50</width>
@@ -108,7 +108,7 @@
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true"/>
+             <string notr="true">background: url(./assets/sprites/person.png) center no-repeat;</string>
             </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
@@ -116,18 +116,6 @@
             <property name="frameShadow">
              <enum>QFrame::Plain</enum>
             </property>
-            <property name="class" stdset="0">
-             <string>icon</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/icons/brain.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
            </widget>
           </item>
           <item>
@@ -266,7 +254,7 @@
            <number>15</number>
           </property>
           <item>
-           <widget class="QFrame" name="frame_5">
+           <widget class="QFrame" name="player_1_icon">
             <property name="minimumSize">
              <size>
               <width>50</width>
@@ -279,6 +267,9 @@
               <height>50</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true">background: url(./assets/sprites/person.png) center no-repeat;</string>
+            </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
@@ -286,7 +277,7 @@
              <enum>QFrame::Plain</enum>
             </property>
             <property name="class" stdset="0">
-             <string>icon</string>
+             <string>player-icon</string>
             </property>
            </widget>
           </item>
@@ -320,8 +311,6 @@
    </layout>
   </widget>
  </widget>
- <resources>
-  <include location="../../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

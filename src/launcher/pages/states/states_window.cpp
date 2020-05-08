@@ -15,12 +15,17 @@ States_Window::States_Window(int ai_player_id, int ai_level, Game *game, QWidget
     connect(timer_, SIGNAL(timeout()), this, SLOT(Render()));
     timer_->start(1000 / 60);
 
-    if (ai_player_id != -1)
+    if (ai_player_id != -1) {
         ui->player_2_name->setText(
                 QString(
                         ("Computer Level " + std::to_string(ai_level)).c_str()
                 )
         );
+
+        ui->player_2_icon->setStyleSheet(
+                "background: url(./assets/sprites/brain.png) center no-repeat;");
+
+    }
 }
 
 States_Window::~States_Window() {
