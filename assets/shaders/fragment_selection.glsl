@@ -26,10 +26,8 @@ void main()
 {
     if (material.use_texture == 1) {
 
-        int x_row = int((vs_text_coord.x - 0.703) / 0.036);
-        int y_row = int((vs_text_coord.y - 0.709) / 0.0353);
-
-        int cell = 8 - (y_row + 48);
+        int x_row = clamp(int((vs_text_coord.x - 0.7034) / 0.036), 0, 7);
+        int cell = clamp(int((-vs_text_coord.y - 0.70915) / 0.0353), 0, 7);
 
         FragColor = vec4(x_row/255.f, cell/255.f, 1.f, 1.f);
     }

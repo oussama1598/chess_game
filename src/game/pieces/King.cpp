@@ -2,6 +2,10 @@
 
 King::King(int player_id) : Piece{'K', player_id} {}
 
+Piece *King::clone() const {
+    return new King(*this);
+}
+
 std::vector<std::string>
 King::get_possible_moves(bool is_top,
                          const std::string &from) {
@@ -38,10 +42,10 @@ King::get_possible_moves(bool is_top,
 
 
     if (is_first_move_) {
-        if (!is_top) {
+        if (!is_top && from == "E1") {
             possible_moves.emplace_back("G1");
             possible_moves.emplace_back("C1");
-        } else {
+        } else if (is_top && from == "E8") {
             possible_moves.emplace_back("G8");
             possible_moves.emplace_back("C8");
         }

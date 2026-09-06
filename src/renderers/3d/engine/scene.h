@@ -1,5 +1,8 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+
 #include "object.h"
 #include "light.h"
 #include "point_light.h"
@@ -12,15 +15,15 @@ private:
     std::vector<Light *> lights_;
     std::vector<Object *> objects_;
 
-    int selected_camera_index_;
+    int selected_camera_index_{-1};
 
-    SkyBox *sky_box_;
+    SkyBox *sky_box_{nullptr};
 
-    Shader *selection_shader_;
-    Material *selection_material_;
+    Shader *selection_shader_{nullptr};
+    Material *selection_material_{nullptr};
     int selected_index_{-1};
 
-    Material *hover_material_;
+    Material *hover_material_{nullptr};
     int hovered_index_{-1};
 
     int points_lights_count{0};
@@ -30,7 +33,7 @@ public:
     bool sky_box_enabled{true};
     bool reflection_enabled{true};
     bool enabled_directional_lighting{true};
-    bool enabled_points_lights[4]{true};
+    bool enabled_points_lights[4]{true, false, true, true};
 
 public:
 
@@ -74,7 +77,11 @@ public:
 
     Object *get_object(int index);
 
+    int get_object_index(Object *object) const;
+
     void render();
 
     void render_for_selection();
+
+    void render_depth(Shader *depth_shader);
 };

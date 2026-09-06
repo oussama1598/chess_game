@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <bits/stdc++.h>
-#include <boost/algorithm/string.hpp>
+#include <map>
+#include <string>
 
 #include "game/Game.h"
 

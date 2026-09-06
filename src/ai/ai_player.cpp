@@ -92,20 +92,20 @@ int AI_Player::get_random_index_(int size) {
 void AI_Player::make_a_move(Game *game, int level) {
     thinking_ = true;
 
-    switch (level) {
-        case 1:
-            random_move(game);
-            break;
-        case 2:
-            high_value_move(game);
-            break;
-        default:
-            try {
-                mini_max_algorithm(game, level - 1);
-            } catch (std::exception &error) {
+    try {
+        switch (level) {
+            case 1:
+                random_move(game);
+                break;
+            case 2:
                 high_value_move(game);
-            }
-            break;
+                break;
+            default:
+                mini_max_algorithm(game, level - 1);
+                break;
+        }
+    } catch (const std::exception &) {
+        // Keep the UI responsive if an individual search branch is invalid.
     }
 
     thinking_ = false;
@@ -138,13 +138,13 @@ void AI_Player::high_value_move(Game *game) {
             all_possible_moves = game->get_board().get_all_valid_moves_for(
             *ai_player);
 
-    float best_value = INT_MIN;
+    float best_value = std::numeric_limits<float>::lowest();
     std::string best_from_move;
     std::string best_to_move;
 
     for (auto &move: all_possible_moves)
         for (auto &to: move.second) {
-            Game temp_game(game);
+            Game temp_game(*game);
 
             temp_game.make_move(move.first, to);
 
@@ -158,7 +158,9 @@ void AI_Player::high_value_move(Game *game) {
             }
         }
 
-    game->make_move(best_from_move, best_to_move);
+    if (!best_from_move.empty()) {
+        game->make_move(best_from_move, best_to_move);
+    }
 }
 
 float AI_Player::evaluate_board(int player_id, Game &game) {
@@ -179,42 +181,42 @@ float AI_Player::get_piece_value(int player_id, Piece *piece, int i, int j) {
     if (symbol == 'P') {
         eval_array eval(pawn_eval_player_2);
 
-        if (player_id != 1)
+        if (piece->get_player_id() != 1)
             std::reverse(std::begin(eval), std::end(eval));
 
         piece_value = 10 + eval[i][j];
     } else if (symbol == 'k') {
         eval_array eval(knight_eval_player_2);
 
-        if (player_id != 1)
+        if (piece->get_player_id() != 1)
             std::reverse(std::begin(eval), std::end(eval));
 
         piece_value = 30 + eval[i][j];
     } else if (symbol == 'B') {
         eval_array eval(bishop_eval_player_2);
 
-        if (player_id != 1)
+        if (piece->get_player_id() != 1)
             std::reverse(std::begin(eval), std::end(eval));
 
         piece_value = 30 + eval[i][j];
     } else if (symbol == 'R') {
         eval_array eval(rook_eval_player_2);
 
-        if (player_id != 1)
+        if (piece->get_player_id() != 1)
             std::reverse(std::begin(eval), std::end(eval));
 
         piece_value = 50 + eval[i][j];
     } else if (symbol == 'Q') {
         eval_array eval(queen_eval_player_2);
 
-        if (player_id != 1)
+        if (piece->get_player_id() != 1)
             std::reverse(std::begin(eval), std::end(eval));
 
         piece_value = 90 + eval[i][j];
     } else if (symbol == 'K') {
         eval_array eval(king_eval_player_2);
 
-        if (player_id != 1)
+        if (piece->get_player_id() != 1)
             std::reverse(std::begin(eval), std::end(eval));
 
         piece_value = 900 + eval[i][j];
@@ -225,41 +227,40 @@ float AI_Player::get_piece_value(int player_id, Piece *piece, int i, int j) {
 }
 
 void AI_Player::mini_max_algorithm(Game *game, int depth) {
+    if (depth <= 0) {
+        high_value_move(game);
+        return;
+    }
+
     Player *ai_player = game->get_current_player();
     std::vector<std::pair<std::string, std::vector<std::string >>>
             all_possible_moves = game->get_board().get_all_valid_moves_for(
             *ai_player);
 
-    float best_value = -MAXFLOAT;
+    float best_value = std::numeric_limits<float>::lowest();
     std::string best_from_move;
     std::string best_to_move;
 
     auto start = std::chrono::system_clock::now();
 
-#pragma omp parallel
-    {
-#pragma omp single
-        {
-            for (auto &move: all_possible_moves) {
-#pragma omp task
-                {
-                    for (auto &to: move.second) {
-                        Game temp_game(game);
+    for (auto &move: all_possible_moves) {
+        for (auto &to: move.second) {
+            try {
+                Game temp_game(*game);
+                temp_game.make_move(move.first, to);
 
-                        temp_game.make_move(move.first, to);
+                float board_value = mini_max(
+                        ai_player, depth - 1, &temp_game, false,
+                        std::numeric_limits<float>::lowest(),
+                        std::numeric_limits<float>::max());
 
-                        float board_value = mini_max(ai_player, depth - 1, &temp_game, false,
-                                                     -MAXFLOAT,
-                                                     MAXFLOAT);
-
-                        if (board_value > best_value) {
-                            best_from_move = move.first;
-                            best_to_move = to;
-
-                            best_value = board_value;
-                        }
-                    }
+                if (board_value > best_value) {
+                    best_from_move = move.first;
+                    best_to_move = to;
+                    best_value = board_value;
                 }
+            } catch (const std::exception &) {
+                // Ignore a corrupt candidate without discarding the whole search.
             }
         }
     }
@@ -272,10 +273,8 @@ void AI_Player::mini_max_algorithm(Game *game, int depth) {
     std::cout << "finished computation at " << std::ctime(&end_time)
               << "elapsed time: " << elapsed_seconds.count() << "s\n";
 
-    try {
+    if (!best_from_move.empty()) {
         game->make_move(best_from_move, best_to_move);
-    } catch (std::exception &error) {
-        mini_max_algorithm(game, depth - 1);
     }
 }
 
@@ -283,7 +282,7 @@ float AI_Player::mini_max(Player *ai_player, int depth, Game *game, bool is_max,
                           float beta) {
     Player *player = game->get_current_player();
 
-    if (depth == 0) {
+    if (depth <= 0 || game->is_game_ended()) {
         return evaluate_board(ai_player->player_id, *game);
     }
 
@@ -291,12 +290,16 @@ float AI_Player::mini_max(Player *ai_player, int depth, Game *game, bool is_max,
             all_possible_moves = game->get_board().get_all_valid_moves_for(
             *player);
 
+    if (all_possible_moves.empty()) {
+        return evaluate_board(ai_player->player_id, *game);
+    }
+
     if (is_max) {
-        float best_move = -MAXFLOAT;
+        float best_move = std::numeric_limits<float>::lowest();
 
         for (auto &move: all_possible_moves)
             for (auto &to: move.second) {
-                Game temp_game{game};
+                Game temp_game{*game};
                 temp_game.make_move(move.first, to);
 
                 best_move = std::max(best_move,
@@ -312,11 +315,11 @@ float AI_Player::mini_max(Player *ai_player, int depth, Game *game, bool is_max,
 
         return best_move;
     } else {
-        float best_move = MAXFLOAT;
+        float best_move = std::numeric_limits<float>::max();
 
         for (auto &move: all_possible_moves)
             for (auto &to: move.second) {
-                Game temp_game{game};
+                Game temp_game{*game};
                 temp_game.make_move(move.first, to);
 
                 best_move = std::min(best_move,

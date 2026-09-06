@@ -21,7 +21,7 @@ namespace {
                 std::string from{test_case.first};
 
                 CHECK_THAT(bishop.get_possible_moves(false, from),
-                           Catch::UnorderedEquals(test_case.second)
+                           Catch::Matchers::UnorderedEquals(test_case.second)
                 );
             }
 

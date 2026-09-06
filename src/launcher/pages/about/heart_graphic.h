@@ -16,12 +16,6 @@ public:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
 
-protected:
-    void advance(int phase) override;
-
 private:
     QPolygonF poly_;
-    QColor heart_color_{221, 63, 63};
-    int heart_animation_direction_{1};
-    float heart_scale_{3};
 };

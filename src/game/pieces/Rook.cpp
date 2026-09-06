@@ -2,6 +2,10 @@
 
 Rook::Rook(int player_id) : Piece{'R', player_id} {}
 
+Piece *Rook::clone() const {
+    return new Rook(*this);
+}
+
 std::vector<std::string>
 Rook::get_possible_moves([[maybe_unused]] bool is_top,
                            const std::string &from) {

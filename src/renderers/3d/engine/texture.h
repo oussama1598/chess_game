@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 #include <GL/glew.h>
-#include <SOIL2/SOIL2.h>
+#include <stb_image.h>
 
 class Texture {
 private:

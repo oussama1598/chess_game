@@ -8,7 +8,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
-#include "sound_manager.h"
+#include "common/sound_manager.h"
 #include "text_renderer.h"
 #include "game/Game.h"
 
@@ -53,7 +53,7 @@ private:
         unsigned int flashes_per_second{8};
         bool show{false};
         Piece::piece_coordinates position{0, 0};
-        SDL_Color color{255, 0, 0, 255};
+        SDL_Color color{239, 68, 68, 155};
     };
 
     flash flash_message_;
@@ -72,12 +72,12 @@ private:
 
     std::map<std::string, std::string> sounds_{
             {"move",    "./assets/sounds/move.wav"},
-            {"capture", "./assets/sounds/move.wav"},
+            {"capture", "./assets/sounds/capture.wav"},
             {"illegal", "./assets/sounds/illegal.wav"}
     };
 
-    SDL_Cursor *arrow_cursor_;
-    SDL_Cursor *hand_cursor_;
+    SDL_Cursor *arrow_cursor_{nullptr};
+    SDL_Cursor *hand_cursor_{nullptr};
 
     std::map<char, std::map<std::string, SDL_Rect>> pieces_texture_rectangles_{
             {'P', {
@@ -136,7 +136,7 @@ private:
     void handle_events_();
 
     void show_flash_message_(Piece::piece_coordinates position,
-                             SDL_Color color = {255, 0, 0, 255}, unsigned int duration = 1000);
+                             SDL_Color color = {239, 68, 68, 155}, unsigned int duration = 1000);
 
     void render_fps_();
 
@@ -163,6 +163,8 @@ public:
     void on_window_move(window_move_callback callback);
 
     void on_move(move_callback callback);
+
+    void play_move_sound(bool is_capture);
 
     void render();
 };

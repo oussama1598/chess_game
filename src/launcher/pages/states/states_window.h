@@ -4,6 +4,8 @@
 #include <string>
 #include "QMainWindow"
 #include "QTimer"
+#include "QLabel"
+#include "QTableWidgetItem"
 #include "game/Game.h"
 
 namespace Ui {
@@ -20,6 +22,10 @@ private:
 
     int ai_player_id_;
     int ai_level_;
+    int last_player_id_{-1};
+    int ply_count_{0};
+    QLabel *history_status_{nullptr};
+    QTableWidgetItem *latest_move_item_{nullptr};
 
 private slots:
 

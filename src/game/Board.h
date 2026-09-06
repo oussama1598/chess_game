@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <utility>
 #include "pieces/Piece.h"
 #include "pieces/King.h"
 #include "pieces/Queen.h"
@@ -22,6 +23,16 @@ public:
     piecesType pieces_{};
 
     Board();
+
+    Board(const Board &other);
+
+    Board(Board &&other) noexcept;
+
+    Board &operator=(const Board &other);
+
+    Board &operator=(Board &&other) noexcept;
+
+    ~Board();
 
     piecesType &get_pieces();
 
@@ -66,7 +77,16 @@ public:
     std::vector<Piece::piece_coordinates>
     where_to_castle(Player &player, const std::string &to);
 
-    void swap_castle(Player &source_player, std::string &to);
+    void swap_castle(Player &source_player, const std::string &to);
 
     std::vector<std::pair<std::string, std::vector<std::string>>> get_all_valid_moves_for(Player &player);
+
+private:
+    void clear() noexcept;
+
+    [[nodiscard]] bool is_castling_move(Piece *source_piece,
+                                        const std::string &from,
+                                        const std::string &to) const;
+
+    bool is_square_attacked(Player &player, Piece::piece_coordinates target);
 };

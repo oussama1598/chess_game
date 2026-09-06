@@ -1,9 +1,11 @@
 #pragma once
 
 #include <fstream>
-#include <bits/stdc++.h>
-#include <boost/algorithm/string.hpp>
-#include <catch2/catch.hpp>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+#include <catch2/catch_all.hpp>
 #include "game/Game.h"
 
 typedef std::vector<std::pair<std::string, std::string>> movesType;

@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <map>
-#include <boost/lexical_cast.hpp>
 #include <vector>
 #include "../Player.h"
 
@@ -29,9 +28,11 @@ public:
 
     virtual ~Piece();
 
+    [[nodiscard]] virtual Piece *clone() const;
+
     void did_move();
 
-    inline char get_symbol() { return symbol_; }
+    [[nodiscard]] inline char get_symbol() const { return symbol_; }
 
     static piece_coordinates
     get_piece_coordinates_from_id(const std::string &id);

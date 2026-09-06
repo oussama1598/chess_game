@@ -1,5 +1,7 @@
 #include "Piece.h"
 
+#include <algorithm>
+
 Piece::Piece() : symbol_{' '}, player_id_{-1},
                  is_first_move_{true} {}
 
@@ -9,6 +11,10 @@ Piece::Piece(char symbol, int player_id)
 
 
 Piece::~Piece() = default;
+
+Piece *Piece::clone() const {
+    return new Piece(*this);
+}
 
 const std::map<char, size_t> Piece::cols_map_{{'A', 0},
                                               {'B', 1},
@@ -25,13 +31,12 @@ void Piece::did_move() {
 
 Piece::piece_coordinates
 Piece::get_piece_coordinates_from_id(const std::string &id) {
-    int line = (int) boost::lexical_cast<size_t>(id[1]) - 1;
-
-    // this checks if the id is valid
-    if (Piece::cols_map_.find(id[0]) == Piece::cols_map_.end() ||
-        line > (Piece::cols - 1))
+    if (id.size() != 2 || Piece::cols_map_.find(id[0]) == Piece::cols_map_.end() ||
+        id[1] < '1' || id[1] > '8') {
         return {-1, -1};
+    }
 
+    int line = id[1] - '1';
     int column = Piece::cols_map_.at(id[0]);
 
     return {line, column};
@@ -39,16 +44,26 @@ Piece::get_piece_coordinates_from_id(const std::string &id) {
 
 std::string
 Piece::get_id_from_coordinates(Piece::piece_coordinates coordinates) {
+    if (coordinates.line < 0 || coordinates.line >= rows ||
+        coordinates.column < 0 || coordinates.column >= cols) {
+        return {};
+    }
+
     std::string line = std::to_string(coordinates.line + 1);
 
     int column = coordinates.column;
 
-    char c = std::find_if(cols_map_.begin(), cols_map_.end(),
-                          [&column](const std::pair<char, int> &p) {
-                              return p.second == column;
-                          })->first;
+    const auto column_entry = std::find_if(
+            cols_map_.begin(), cols_map_.end(),
+            [&column](const std::pair<const char, size_t> &entry) {
+                return static_cast<int>(entry.second) == column;
+            });
 
-    return std::string{c} + line;
+    if (column_entry == cols_map_.end()) {
+        return {};
+    }
+
+    return std::string{column_entry->first} + line;
 }
 
 int Piece::get_player_id() const {

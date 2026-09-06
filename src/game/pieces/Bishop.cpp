@@ -2,6 +2,10 @@
 
 Bishop::Bishop(int player_id) : Piece{'B', player_id} {}
 
+Piece *Bishop::clone() const {
+    return new Bishop(*this);
+}
+
 std::vector<std::string>
 Bishop::get_possible_moves([[maybe_unused]] bool is_top,
                            const std::string &from) {

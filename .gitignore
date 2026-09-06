@@ -6,6 +6,9 @@
 *.lo
 *.o
 *.obj
+!assets/models/
+!assets/models/*.obj
+!assets/models/**/*.obj
 
 # Precompiled Headers
 *.gch
@@ -32,4 +35,6 @@
 *.app
 
 .idea/*.xml
+/build/
+/build-*/
 /cmake-build-*/

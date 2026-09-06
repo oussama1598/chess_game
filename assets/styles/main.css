@@ -1,68 +1,394 @@
 QMainWindow, QWidget {
-    background-color: #2e3034;
-    font-family: monospace;
+    background-color: #0b1120;
+    color: #e7edf7;
+    font-family: "Inter", "Noto Sans", "DejaVu Sans", sans-serif;
+    font-size: 14px;
 }
 
 QLabel {
-    color: white;
+    color: #dce5f2;
+    background: transparent;
+}
+
+QLabel#subtitle {
+    color: #8192aa;
     font-size: 13px;
+    font-weight: 500;
 }
 
 QPushButton {
-    color: white;
-    border: 1px solid white;
-    padding: 10px;
-    text-transform: uppercase;
-    background-color: rgba(68, 68, 68, 0.3);
+    min-height: 26px;
+    padding: 11px 18px;
+    color: #f8fafc;
+    background-color: #287f70;
+    border: 1px solid #339482;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 QPushButton:hover {
-    background-color: rgba(68, 68, 68, 0.7);
+    background-color: #319582;
+    border-color: #56b9a7;
 }
 
-.logo {
-    border: 1px solid white;
-    color: white;
-    text-transform: uppercase;
-    font-size: 15px;
-    padding: 15px;
-    font-weight: bold;
+QPushButton:pressed {
+    background-color: #20695e;
+    border-color: #287f70;
+    padding-top: 12px;
+    padding-bottom: 10px;
 }
 
-QTableWidget {
-    background-color: white;
+QPushButton:focus {
+    border: 2px solid #7dd3c2;
 }
 
-.player-panel {
-    background-color: #f1f1f1;
-    font-weight: 700;
-    font-size: 13px;
+QPushButton#about_button {
+    background-color: #172238;
+    border-color: #2a3a54;
 }
 
-.player-panel QLabel {
-    margin-left: 5px;
-    font-weight: 700;
-    color: #005e94;
+QPushButton#about_button:hover {
+    background-color: #21314b;
+    border-color: #3b5272;
+}
+
+QPushButton#back_button {
+    min-width: 82px;
+    color: #c7d3e3;
+    background-color: #172238;
+    border-color: #2a3a54;
+}
+
+QPushButton#back_button:hover {
+    color: #f8fafc;
+    background-color: #21314b;
+    border-color: #3b5272;
+}
+
+QPushButton#quit_button {
+    color: #d5dfec;
     background-color: transparent;
+    border-color: #2a3a54;
 }
 
-.option-frame {
-    border: 1px solid white;
+QPushButton#quit_button:hover {
+    color: #fecaca;
+    background-color: #3a1924;
+    border-color: #7f3042;
+}
+
+QLabel[class~="logo"], .logo {
+    min-height: 70px;
+    padding: 16px;
+    color: #f8fafc;
+    background-color: #111b2e;
+    border: 1px solid #263752;
+    border-radius: 12px;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 4px;
+}
+
+QFrame[class~="option-frame"], .option-frame {
+    padding: 6px;
+    background-color: #111b2e;
+    border: 1px solid #263752;
+    border-radius: 9px;
+}
+
+QFrame[class~="option-frame"] QLabel {
+    color: #aebdd0;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 QComboBox {
+    min-width: 155px;
+    min-height: 24px;
+    padding: 7px 30px 7px 11px;
+    color: #f0f5fb;
+    background-color: #17243a;
+    border: 1px solid #30435e;
+    border-radius: 6px;
+    selection-background-color: #287f70;
+}
+
+QComboBox:hover, QComboBox:focus {
+    border-color: #4ca994;
+    background-color: #1b2b44;
+}
+
+QComboBox::drop-down {
+    width: 26px;
+    border: none;
+}
+
+QComboBox::down-arrow {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #aebdd0;
+}
+
+QComboBox QAbstractItemView {
     padding: 5px;
-    color: white;
-    background-color: #2e3034;
-    border: 1px solid white;
+    color: #e7edf7;
+    background-color: #17243a;
+    border: 1px solid #30435e;
+    border-radius: 6px;
+    selection-background-color: #287f70;
+    outline: none;
 }
 
-QComboBox:item {
-    background-color: #2e3034;
-    color: white;
+QComboBox QAbstractItemView::item {
+    min-height: 30px;
+    padding: 5px 9px;
+    color: #e7edf7;
+    background-color: #17243a;
 }
 
-.turn {
-    font-size: 12px !important;
-    color: white !important;
+QComboBox QAbstractItemView::item:hover,
+QComboBox QAbstractItemView::item:selected {
+    color: #ffffff;
+    background-color: #287f70;
+}
+
+QTableWidget {
+    color: #dce5f2;
+    background-color: #0c1424;
+    alternate-background-color: #101b2e;
+    border: none;
+    gridline-color: #1c2a40;
+    font-size: 13px;
+}
+
+QTableWidget::item {
+    padding: 7px;
+}
+
+QHeaderView::section {
+    min-height: 32px;
+    padding: 5px;
+    color: #7f91aa;
+    background-color: #101a2c;
+    border: none;
+    border-bottom: 1px solid #263752;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+QFrame[class~="states"], .states {
+    background-color: #09111f;
+}
+
+QFrame[class~="player-panel"], .player-panel {
+    background-color: #0e192a;
+    border-top: 1px solid #263751;
+    border-bottom: 1px solid #263751;
+}
+
+QFrame[class~="player-panel"][active="true"] {
+    background-color: #122b30;
+    border-left: 4px solid #55cdb4;
+}
+
+QFrame[class~="player-panel"] QLabel {
+    margin-left: 2px;
+    color: #dce5f2;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+QLabel[class~="turn"], .turn {
+    color: #74dbc4;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+QMainWindow#States_Window {
+    background-color: #09111f;
+}
+
+QFrame#history_header {
+    background-color: #0b1627;
+    border-bottom: 1px solid #263751;
+}
+
+QLabel#history_title {
+    color: #d8b06b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+QLabel#history_status {
+    color: #91a3ba;
+    font-size: 12px;
+    font-weight: 550;
+}
+
+QFrame#player_1_icon,
+QFrame#player_2_icon {
+    min-width: 48px;
+    max-width: 48px;
+    min-height: 48px;
+    max-height: 48px;
+    background-color: #17243a;
+    border: 1px solid #354963;
+    border-radius: 24px;
+}
+
+QFrame#player_1_icon[side="light"] {
+    background-color: #d9d1c0;
+    border-color: #f0e9dc;
+}
+
+QFrame#player_2_icon[side="dark"] {
+    background-color: #17191f;
+    border-color: #625342;
+}
+
+QLabel#piece_glyph {
+    margin: 0;
+    color: #f4eee3;
+    background: transparent;
+    font-family: "DejaVu Serif", serif;
+    font-size: 29px;
+    font-weight: 500;
+}
+
+QFrame#player_1_icon QLabel#piece_glyph {
+    color: #40372d;
+}
+
+QTableWidget#moves_list {
+    padding: 0 6px 8px 6px;
+    color: #d8e1ee;
+    background-color: #09111f;
+    alternate-background-color: #0c1728;
+    border: none;
+    gridline-color: transparent;
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 12px;
+}
+
+QTableWidget#moves_list::item {
+    padding: 6px 3px;
+    border-bottom: 1px solid #15243a;
+}
+
+QTableWidget#moves_list QHeaderView::section {
+    min-height: 34px;
+    padding: 4px 2px;
+    color: #71849d;
+    background-color: #09111f;
+    border: none;
+    border-bottom: 1px solid #2b3b53;
+    font-family: "Inter", "Noto Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+QScrollBar:vertical {
+    width: 8px;
+    margin: 2px;
+    background: #0c1424;
+}
+
+QScrollBar::handle:vertical {
+    min-height: 28px;
+    background: #30435e;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QGraphicsView {
+    background: transparent;
+    border: none;
+}
+
+QMessageBox {
+    background-color: #0b1120;
+}
+
+QToolTip {
+    padding: 6px;
+    color: #f8fafc;
+    background-color: #17243a;
+    border: 1px solid #30435e;
+}
+
+/* Launcher-only cinematic treatment. Game panels and dialogs keep the global theme. */
+QStackedWidget#launcher_shell {
+    background-color: #050b15;
+}
+
+QStackedWidget#launcher_shell > QWidget,
+QStackedWidget#launcher_shell QMainWindow,
+QStackedWidget#launcher_shell QWidget#centralwidget {
+    background-color: transparent;
+}
+
+QStackedWidget#launcher_shell QLabel[class~="logo"] {
+    min-height: 54px;
+    padding: 7px 12px 4px 12px;
+    color: #f5f1e8;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    font-size: 29px;
+    font-weight: 750;
+    letter-spacing: 6px;
+}
+
+QStackedWidget#launcher_shell QFrame#launcher_divider {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                stop:0 #ac8149, stop:0.48 #d4ad69,
+                                stop:0.52 #57b5a2, stop:1 #287f70);
+    border: none;
+    border-radius: 1px;
+}
+
+QStackedWidget#launcher_shell QLabel#subtitle {
+    color: #a9b7ca;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+QStackedWidget#launcher_shell QFrame[class~="option-frame"] {
+    padding: 7px;
+    background-color: rgba(12, 22, 39, 224);
+    border: 1px solid #33435a;
+    border-radius: 10px;
+}
+
+QStackedWidget#launcher_shell QPushButton {
+    min-height: 24px;
+    padding: 11px 18px;
+    border-radius: 8px;
+}
+
+QStackedWidget#launcher_shell QPushButton#new_game_button,
+QStackedWidget#launcher_shell QPushButton#play_button {
+    color: #ffffff;
+    background-color: rgba(36, 132, 113, 238);
+    border-color: #55b49f;
+}
+
+QStackedWidget#launcher_shell QPushButton#about_button,
+QStackedWidget#launcher_shell QPushButton#back_button {
+    color: #e4ebf5;
+    background-color: rgba(14, 27, 47, 224);
+    border-color: #3b4e68;
+}
+
+QStackedWidget#launcher_shell QPushButton#quit_button {
+    color: #d9e1ec;
+    background-color: rgba(8, 16, 29, 190);
+    border-color: #334158;
 }

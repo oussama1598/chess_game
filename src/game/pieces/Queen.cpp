@@ -2,6 +2,10 @@
 
 Queen::Queen(int player_id) : Piece{'Q', player_id} {}
 
+Piece *Queen::clone() const {
+    return new Queen(*this);
+}
+
 std::vector<std::string>
 Queen::get_possible_moves([[maybe_unused]] bool is_top,
                            const std::string &from) {

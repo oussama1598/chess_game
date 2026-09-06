@@ -2,6 +2,10 @@
 
 Knight::Knight(int player_id) : Piece{'k', player_id} {}
 
+Piece *Knight::clone() const {
+    return new Knight(*this);
+}
+
 std::vector<std::string>
 Knight::get_possible_moves([[maybe_unused]] bool is_top,
                            const std::string &from) {

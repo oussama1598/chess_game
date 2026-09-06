@@ -1,5 +1,7 @@
 #include "shader.h"
 
+#include <vector>
+
 Shader::Shader(const std::string &vertex_file_path, const std::string &fragment_file_path) {
     program_id_ = glCreateProgram();
 
@@ -25,12 +27,14 @@ Shader::Shader(const std::string &vertex_file_path, const std::string &fragment_
         int length;
         glGetProgramiv(program_id_, GL_INFO_LOG_LENGTH, &length);
 
-        char *info_log = new char[length];
-
-        glGetProgramInfoLog(program_id_, length, nullptr, info_log);
+        std::vector<char> info_log(static_cast<size_t>(length));
+        glGetProgramInfoLog(program_id_, length, nullptr, info_log.data());
+        glDeleteShader(vertex_shader);
+        glDeleteShader(fragment_shader);
+        glDeleteProgram(program_id_);
 
         throw std::runtime_error(
-                "Linking error for \n reason" + std::string(info_log));
+                "Linking error for \n reason" + std::string(info_log.data()));
     }
 
     glUseProgram(0); // revert any setting of the program
@@ -74,12 +78,13 @@ GLuint Shader::compiler_shader_(unsigned int type, const std::string &file_path)
         int length;
         glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &length);
 
-        char *info_log = new char[length];
-
-        glGetShaderInfoLog(shader_id, length, nullptr, info_log);
+        std::vector<char> info_log(static_cast<size_t>(length));
+        glGetShaderInfoLog(shader_id, length, nullptr, info_log.data());
+        glDeleteShader(shader_id);
 
         throw std::runtime_error(
-                "Compilation error for " + file_path + "\n reason" + std::string(info_log));
+                "Compilation error for " + file_path + "\n reason" +
+                std::string(info_log.data()));
     }
 
     return shader_id;
@@ -125,6 +130,16 @@ void Shader::set_uniform_1_f(const std::string &name, const GLfloat value) const
 void Shader::set_uniform_3_fv(const std::string &name, const glm::vec3 &vector) const {
     bind();
     glUniform3fv(
+            glGetUniformLocation(program_id_, name.c_str()),
+            1,
+            glm::value_ptr(vector)
+    );
+    unbind();
+}
+
+void Shader::set_uniform_2_fv(const std::string &name, const glm::vec2 &vector) const {
+    bind();
+    glUniform2fv(
             glGetUniformLocation(program_id_, name.c_str()),
             1,
             glm::value_ptr(vector)

@@ -1,22 +1,46 @@
 #include "Game.h"
 
 Game::Game() : is_game_in_check_{false}, is_game_ended_{false} {
-    add_player(0, true, false);
-    add_player(1, false, true);
+    // White starts from the near side and moves first, matching standard chess.
+    add_player(0, false, false);
+    add_player(1, true, true);
 
     initialize_game();
 }
 
-Game::Game(Game *game) : Game() {
-    is_game_in_check_ = game->is_game_in_check();
-    is_game_ended_ = game->is_game_ended();
+Game::Game(const Game &game)
+        : game_board_{game.game_board_},
+          players_{game.players_},
+          is_game_in_check_{game.is_game_in_check_},
+          is_game_ended_{game.is_game_ended_},
+          result_{game.result_},
+          winner_id_{game.winner_id_},
+          latest_from_{game.latest_from_},
+          latest_to_{game.latest_to_} {
+    if (game.current_player_ != nullptr) {
+        current_player_ = &players_.at(game.current_player_->player_id);
+    }
+}
 
-    current_player_ = &players_.at(game->current_player_->player_id);
+Game &Game::operator=(const Game &game) {
+    if (this == &game) {
+        return *this;
+    }
 
-    for (int i = 0; i < Piece::rows; ++i)
-        for (int j = 0; j < Piece::cols; ++j) {
-            game_board_.pieces_[i][j] = game->get_board_pieces()[i][j];
-        }
+    const int current_player_id =
+            game.current_player_ == nullptr ? -1 : game.current_player_->player_id;
+
+    game_board_ = game.game_board_;
+    players_ = game.players_;
+    is_game_in_check_ = game.is_game_in_check_;
+    is_game_ended_ = game.is_game_ended_;
+    result_ = game.result_;
+    winner_id_ = game.winner_id_;
+    latest_from_ = game.latest_from_;
+    latest_to_ = game.latest_to_;
+    current_player_ = current_player_id == -1 ? nullptr : &players_.at(current_player_id);
+
+    return *this;
 }
 
 void Game::add_player(const int player_id, const bool is_dark,
@@ -110,6 +134,8 @@ void Game::make_move(const std::string &from, const std::string &to) {
                                   to_piece_coordinates, destination_piece))
         throw std::runtime_error(Errors::KING_IS_NOT_SAFE);
 
+    source_piece->did_move();
+
     // if it was previously in check reset it
     is_game_in_check_ = false;
 
@@ -125,10 +151,16 @@ void Game::make_move(const std::string &from, const std::string &to) {
 
     if (!game_board_.player_has_valid_move(opponent_player)) {
         is_game_ended_ = true;
+        if (is_game_in_check_) {
+            result_ = Result::Checkmate;
+            winner_id_ = source_player.player_id;
+        } else {
+            result_ = Result::Stalemate;
+            winner_id_ = -1;
+        }
+        switch_players();
         return;
     }
-
-    source_piece->did_move();
 
     switch_players();
 }

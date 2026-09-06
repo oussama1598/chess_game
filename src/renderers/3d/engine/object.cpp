@@ -53,6 +53,9 @@ void Object::draw() {
     calculate_model_matrix_();
 
     shader_->set_uniform_1_i("material.use_texture", 0);
+    shader_->set_uniform_1_i("is_chess_board", chess_board_ ? 1 : 0);
+    shader_->set_uniform_1_f("surface_seed", surface_seed_);
+    shader_->set_uniform_2_fv("texture_scale", texture_scale_);
 
     if (texture_diffuse_ != nullptr) {
         texture_diffuse_->bind(0);

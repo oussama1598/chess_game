@@ -34,4 +34,6 @@ public:
     void set_uniform_1_f(const std::string &name, const GLfloat value) const;
 
     void set_uniform_3_fv(const std::string &name, const glm::vec3 &vector) const;
+
+    void set_uniform_2_fv(const std::string &name, const glm::vec2 &vector) const;
 };

@@ -1,8 +1,14 @@
 #include "sky_box.h"
 
+#include <filesystem>
+
+#include "primitive_mesh.h"
+
 SkyBox::SkyBox() : Object() {
-    mesh_cube_ = new Mesh(
-            "./assets/models/cube.obj");
+    const std::string cube_model_path = "./assets/models/cube.obj";
+    mesh_cube_ = std::filesystem::exists(cube_model_path)
+                 ? new Mesh(cube_model_path)
+                 : new Mesh(Procedural_Mesh::make_box(), std::vector<GLuint>{});
 
     Object::set_mesh(mesh_cube_);
 
@@ -13,36 +19,39 @@ SkyBox::SkyBox() : Object() {
     for (auto &texture: faces_textures_)
         set_texture_face_(texture.first, texture.second);
 
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    Object::scale_ = glm::vec3(400.f);
+    Object::scale_ = glm::vec3(40.f);
     calculate_model_matrix_();
 
-    glActiveTexture(0);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void SkyBox::set_texture_face_(GLuint type, const std::string &file_path) {
     int image_width = 0;
     int image_height = 0;
-    unsigned char *image = SOIL_load_image(
+    unsigned char *image = stbi_load(
             file_path.c_str(),
             &image_width,
             &image_height,
             nullptr,
-            SOIL_LOAD_RGBA
+            STBI_rgb_alpha
     );
 
     if (!image)
-        throw std::runtime_error("Texture loading failed");
+        throw std::runtime_error(
+                "Texture loading failed for " + file_path + ": " +
+                (stbi_failure_reason() == nullptr ? "unknown error" : stbi_failure_reason()));
 
     glTexImage2D(type, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, image);
 
-    SOIL_free_image_data(image);
+    stbi_image_free(image);
 }
 
 void SkyBox::bind_texture_() {
@@ -52,7 +61,8 @@ void SkyBox::bind_texture_() {
 
 
 void SkyBox::unbind_texture_() {
-    glActiveTexture(0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 void SkyBox::attach_to_shader(Shader *shader) {

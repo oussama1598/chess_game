@@ -23,7 +23,7 @@ namespace {
                 std::string from{test_case.first};
 
                 CHECK_THAT(board.get_all_empty_spots(from),
-                           Catch::UnorderedEquals(test_case.second)
+                           Catch::Matchers::UnorderedEquals(test_case.second)
                 );
             }
 
@@ -79,6 +79,75 @@ namespace {
             CHECK(board1_.player_has_valid_move(player1));
         }
 
+        SECTION("A normal king move is not treated as castling") {
+            Board board_;
+            Player player{0, true, false, false};
+
+            board_.add_piece("E1", new King(0));
+            board_.add_piece("A8", new King(1));
+
+            Piece *king = board_.get_piece_at(0, 4);
+            Piece *destination = board_.get_piece_at(0, 5);
+
+            REQUIRE(board_.can_make_move(king, player, "E1", "F1"));
+            REQUIRE(board_.perform_move(player, {0, 4}, king, {0, 5}, destination));
+            CHECK(board_.get_piece_at(0, 5) == king);
+        }
+
+        SECTION("Castling cannot cross an attacked square") {
+            Board board_;
+            Player player{0, true, false, false};
+
+            board_.add_piece("E1", new King(0));
+            board_.add_piece("H1", new Rook(0));
+            board_.add_piece("A8", new King(1));
+            board_.add_piece("F8", new Rook(1));
+
+            CHECK(!board_.can_castle(player, board_.get_piece_at(0, 4), "E1", "G1"));
+        }
+
+        SECTION("Castling requires a friendly rook") {
+            Board board_;
+            Player player{0, true, false, false};
+
+            board_.add_piece("E1", new King(0));
+            board_.add_piece("H1", new Rook(1));
+            board_.add_piece("A8", new King(1));
+
+            CHECK(!board_.can_castle(player, board_.get_piece_at(0, 4), "E1", "G1"));
+        }
+
+        SECTION("A king cannot be captured") {
+            Board board_;
+            Player player{0, true, false, false};
+
+            board_.add_piece("A1", new King(0));
+            board_.add_piece("E7", new Queen(0));
+            board_.add_piece("E8", new King(1));
+
+            CHECK(!board_.can_make_move(board_.get_piece_at(6, 4), player, "E7", "E8"));
+        }
+
+        SECTION("A board without a king is unsafe") {
+            Board board_;
+            Player player{0, true, false, false};
+
+            CHECK(!board_.is_king_safe(player));
+        }
+
+        SECTION("Coordinates must contain exactly one valid file and rank") {
+            const auto valid = Piece::get_piece_coordinates_from_id("A1");
+            const auto too_long = Piece::get_piece_coordinates_from_id("A10");
+            const auto too_short = Piece::get_piece_coordinates_from_id("A");
+            const auto bad_rank = Piece::get_piece_coordinates_from_id("Ax");
+
+            CHECK(valid.line == 0);
+            CHECK(valid.column == 0);
+            CHECK(too_long.line == -1);
+            CHECK(too_short.line == -1);
+            CHECK(bad_rank.line == -1);
+        }
+
         SECTION("Testing get possible moves for function") {
             Board board_;
             Player player{0, true, false, true};
@@ -88,7 +157,7 @@ namespace {
             board_.add_piece("B1", new Rook(1));
 
             CHECK_THAT(board_.get_possible_moves_for(player, "A1"),
-                       Catch::UnorderedEquals(std::vector<std::string>{"B1"}));
+                       Catch::Matchers::UnorderedEquals(std::vector<std::string>{"B1"}));
         }
 
         SECTION("Test castling") {
@@ -97,7 +166,7 @@ namespace {
             Player player{0, true, false, true};
 
             Piece *piece_top = new King(1);
-            Player player_top{0, true, true, true};
+            Player player_top{1, true, true, true};
 
             board_.add_piece("E1", piece_bottom);
             board_.add_piece("H1", new Rook(0));
@@ -106,14 +175,14 @@ namespace {
             CHECK(board_.can_castle(player, piece_bottom, "E1", "G1"));
             CHECK(!board_.can_castle(player, piece_bottom, "E1", "C1"));
 
-            std::vector<Piece::piece_coordinates> to_castle_coords = board.where_to_castle(player,
-                                                                                           "G1");
+            std::vector<Piece::piece_coordinates> to_castle_coords = board_.where_to_castle(player,
+                                                                                            "G1");
 
             std::string rook_id = Piece::get_id_from_coordinates(to_castle_coords[0]);
             std::string empty_spot = Piece::get_id_from_coordinates(to_castle_coords[1]);
 
             CHECK_THAT((std::vector<std::string>{rook_id, empty_spot}),
-                       Catch::UnorderedEquals(
+                       Catch::Matchers::UnorderedEquals(
                                std::vector<std::string>{"H1",
                                                         "F1"}
                        ));
@@ -122,8 +191,8 @@ namespace {
             board_.add_piece("H8", new Rook(1));
             board_.add_piece("B8", new Rook(1));
 
-            CHECK(board_.can_castle(player_top, piece_bottom, "E8", "G8"));
-            CHECK(!board_.can_castle(player_top, piece_bottom, "E8", "C8"));
+            CHECK(board_.can_castle(player_top, piece_top, "E8", "G8"));
+            CHECK(!board_.can_castle(player_top, piece_top, "E8", "C8"));
 
         }
     }

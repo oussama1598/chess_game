@@ -2,6 +2,7 @@
 
 Heart_Graphic::Heart_Graphic() {
     setPos(mapToParent(350 / 2, 192 / 2));
+    setScale(2.f);
 
     int num_points = 100;
     double dt = (2 * M_PI / num_points);
@@ -21,34 +22,14 @@ QRectF Heart_Graphic::boundingRect() const {
 void
 Heart_Graphic::paint(QPainter *painter, [[maybe_unused]] const QStyleOptionGraphicsItem *option,
                      [[maybe_unused]] QWidget *widget) {
-    setScale(heart_scale_);
-
-    QPen pen(heart_color_);
-    painter->setPen(pen);
-
-    QBrush brush;
-    brush.setColor(heart_color_);
-    brush.setStyle(Qt::SolidPattern);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setPen(QPen(QColor(203, 155, 86, 224), 1.35));
+    painter->setBrush(QColor(61, 178, 151, 28));
 
     QPainterPath path;
     path.addPolygon(poly_);
+    path.closeSubpath();
 
     painter->rotate(180);
-
-    painter->drawPolygon(poly_);
-    painter->fillPath(path, brush);
-}
-
-void Heart_Graphic::advance(int phase) {
-    if (!phase) return;
-
-    if (heart_animation_direction_ == 1)
-        heart_scale_ += .1 * phase;
-    else
-        heart_scale_ -= .05 * phase;
-
-    if (heart_scale_ > 5)
-        heart_animation_direction_ = 0;
-    else if (heart_scale_ <= 3)
-        heart_animation_direction_ = 1;
+    painter->drawPath(path);
 }

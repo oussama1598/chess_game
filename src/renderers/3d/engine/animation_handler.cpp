@@ -1,5 +1,7 @@
 #include "animation_handler.h"
 
+#include <algorithm>
+
 void
 Animation_Handler::add_animation(float threshold, float step,
                                  std::function<void(float)> animation_callback) {
@@ -34,18 +36,19 @@ void Animation_Handler::update(float dt) {
 
         animation.current_time += dt;
 
-        float progress = animation.current_time / animation.duration;
-        glm::vec3 position = glm::mix(animation.start_position, animation.end_position, progress);
+        const float progress = std::clamp(animation.current_time / animation.duration, 0.f, 1.f);
+        const float eased_progress = progress * progress * (3.f - 2.f * progress);
+        const glm::vec3 position = glm::mix(animation.start_position, animation.end_position,
+                                            eased_progress);
 
-        if (animation.current_time >= animation.duration) {
-            animation.animation_callback(animation.end_position, progress);
+        animation.animation_callback(position, eased_progress);
+
+        if (progress >= 1.f) {
 
             position_animations_.erase(position_animations_.begin() + i);
 
             continue;
         }
-
-        animation.animation_callback(position, progress);
     }
 
     for (int i = (int) animations_.size() - 1; i >= 0; --i) {
@@ -56,12 +59,11 @@ void Animation_Handler::update(float dt) {
         if (animation.current_value >= animation.threshold) {
             animation.animation_callback(1);
 
-            animations_.erase(animations_.begin());
+            animations_.erase(animations_.begin() + i);
 
             continue;
         }
 
         animation.animation_callback(animation.step);
-        return;
     }
 }

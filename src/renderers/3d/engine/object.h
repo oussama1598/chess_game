@@ -20,6 +20,11 @@ protected:
     Texture *texture_diffuse_{nullptr};
     Texture *texture_specular_{nullptr};
     Material *material_{nullptr};
+    bool selectable_{true};
+    bool casts_shadow_{true};
+    bool chess_board_{false};
+    float surface_seed_{0.f};
+    glm::vec2 texture_scale_{1.f};
 
     glm::mat4 model_matrix_{1.f};
 
@@ -50,6 +55,20 @@ public:
     virtual void set_material(Material *material);
 
     virtual Material *get_material() const { return material_; }
+
+    inline void set_selectable(bool selectable) { selectable_ = selectable; }
+
+    [[nodiscard]] inline bool is_selectable() const { return selectable_; }
+
+    inline void set_casts_shadow(bool casts_shadow) { casts_shadow_ = casts_shadow; }
+
+    [[nodiscard]] inline bool casts_shadow() const { return casts_shadow_; }
+
+    inline void set_chess_board(bool chess_board) { chess_board_ = chess_board; }
+
+    inline void set_surface_seed(float surface_seed) { surface_seed_ = surface_seed; }
+
+    inline void set_texture_scale(glm::vec2 texture_scale) { texture_scale_ = texture_scale; }
 
     virtual void draw();
 

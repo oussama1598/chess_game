@@ -1,11 +1,10 @@
 #pragma once
 
+#include <array>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <bits/stdc++.h>
-#include <boost/algorithm/string.hpp>
 
 #include "vertex.h"
 

@@ -3,7 +3,7 @@
 Renderer_2D::Renderer_2D(Game *game) {
     game_ = game;
 
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
         throw std::runtime_error(SDL_GetError());
 
     if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
@@ -13,7 +13,7 @@ Renderer_2D::Renderer_2D(Game *game) {
         throw std::runtime_error(SDL_GetError());
 
     window_ = SDL_CreateWindow(
-            "Chess Game",
+            "Chess 2D",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             width_,
@@ -23,6 +23,15 @@ Renderer_2D::Renderer_2D(Game *game) {
 
     if (window_ == nullptr)
         throw std::runtime_error("Could not create a window_");
+
+    SDL_Rect display_bounds{};
+    if (SDL_GetDisplayUsableBounds(0, &display_bounds) == 0) {
+        constexpr int side_panel_width = 262;
+        const int x = display_bounds.x +
+                      std::max(0, (display_bounds.w - width_ - side_panel_width) / 2);
+        const int y = display_bounds.y + std::max(0, (display_bounds.h - height_) / 2);
+        SDL_SetWindowPosition(window_, x, y);
+    }
 
     renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_PRESENTVSYNC);
 
@@ -44,12 +53,18 @@ Renderer_2D::Renderer_2D(Game *game) {
 }
 
 Renderer_2D::~Renderer_2D() {
+    sound_manager_.clear();
+    text_renderer.clear();
+    SDL_FreeCursor(arrow_cursor_);
+    SDL_FreeCursor(hand_cursor_);
+    SDL_DestroyTexture(table_texture_);
+    SDL_DestroyTexture(guide_circle_texture_);
     SDL_DestroyTexture(texture_);
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
     TTF_Quit();
     IMG_Quit();
-    SDL_Quit();
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void Renderer_2D::on_window_move(window_move_callback callback) {
@@ -80,14 +95,24 @@ void Renderer_2D::load_texture_() {
     SDL_Surface *guide_circle_sprite = IMG_Load(
             "./assets/sprites/circle.png");
 
-    if (pieces_sprite == nullptr || guide_circle_sprite == nullptr)
+    if (pieces_sprite == nullptr || guide_circle_sprite == nullptr) {
+        SDL_FreeSurface(pieces_sprite);
+        SDL_FreeSurface(guide_circle_sprite);
         throw std::runtime_error(SDL_GetError());
+    }
 
     texture_ = SDL_CreateTextureFromSurface(renderer_, pieces_sprite);
     guide_circle_texture_ = SDL_CreateTextureFromSurface(renderer_, guide_circle_sprite);
 
-    if (texture_ == nullptr || guide_circle_texture_ == nullptr)
+    if (texture_ == nullptr || guide_circle_texture_ == nullptr) {
+        SDL_DestroyTexture(texture_);
+        texture_ = nullptr;
+        SDL_DestroyTexture(guide_circle_texture_);
+        guide_circle_texture_ = nullptr;
+        SDL_FreeSurface(pieces_sprite);
+        SDL_FreeSurface(guide_circle_sprite);
         throw std::runtime_error(SDL_GetError());
+    }
 
     SDL_FreeSurface(pieces_sprite);
     SDL_FreeSurface(guide_circle_sprite);
@@ -102,8 +127,8 @@ void Renderer_2D::init_table_() {
     std::vector<SDL_Rect> dark_table_rectangles{};
     std::vector<SDL_Rect> light_table_rectangles{};
 
-    SDL_Color dark_color{222, 172, 93, 255};
-    SDL_Color light_color{249, 227, 192, 255};
+    SDL_Color dark_color{82, 122, 105, 255};
+    SDL_Color light_color{220, 229, 218, 255};
 
     piece_width_ = (int) (width_ / cols_);
     piece_height_ = (int) (height_ / rows_);
@@ -167,6 +192,9 @@ void Renderer_2D::handle_move_(Piece::piece_coordinates from_coordinates,
     std::string destination = Piece::get_id_from_coordinates(to_coordinates);
 
     Player *current_player = game_->get_current_player();
+    const bool is_capture = game_->get_board()
+                                    .get_piece_at(to_coordinates.line, to_coordinates.column)
+                                    ->get_player_id() != -1;
 
     if (from_coordinates.line == to_coordinates.line &&
         from_coordinates.column == to_coordinates.column)
@@ -175,9 +203,11 @@ void Renderer_2D::handle_move_(Piece::piece_coordinates from_coordinates,
     try {
         game_->make_move(source, destination);
 
-        sound_manager_.play_sound("move");
+        play_move_sound(is_capture);
 
-        on_move_callback_(source, destination);
+        if (on_move_callback_) {
+            on_move_callback_(source, destination);
+        }
     } catch (std::exception &error) {
         if (error.what() == Errors::ILLEGAL_MOVE) {
             sound_manager_.play_sound("illegal");
@@ -194,6 +224,10 @@ void Renderer_2D::handle_move_(Piece::piece_coordinates from_coordinates,
             show_flash_message_(king_coordinates);
         }
     }
+}
+
+void Renderer_2D::play_move_sound(bool is_capture) {
+    sound_manager_.play_sound(is_capture ? "capture" : "move");
 }
 
 void Renderer_2D::handle_mouse_press_down_(SDL_MouseButtonEvent &event) {
@@ -224,24 +258,24 @@ void Renderer_2D::handle_mouse_press_up_(SDL_MouseButtonEvent event) {
 }
 
 void Renderer_2D::handle_events_() {
-    SDL_Event event;
+    SDL_Event event{};
 
-    SDL_PollEvent(&event);
+    while (SDL_PollEvent(&event) != 0) {
+        int current_mouse_i_;
+        int current_mouse_j_;
 
-    int current_mouse_i_;
-    int current_mouse_j_;
-
-    switch (event.type) {
+        switch (event.type) {
         case SDL_QUIT:
             is_running_ = false;
             break;
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&mouse_x_, &mouse_y_);
 
-            current_mouse_i_ = (height_ - mouse_y_) / piece_height_;
+            current_mouse_i_ = (height_ - 1 - mouse_y_) / piece_height_;
             current_mouse_j_ = mouse_x_ / piece_width_;
 
-            if (current_mouse_i_ >= rows_ || current_mouse_j_ >= cols_)
+            if (current_mouse_i_ < 0 || current_mouse_j_ < 0 ||
+                current_mouse_i_ >= rows_ || current_mouse_j_ >= cols_)
                 break;
 
             mouse_i_ = current_mouse_i_;
@@ -256,9 +290,21 @@ void Renderer_2D::handle_events_() {
             break;
         case SDL_WINDOWEVENT:
             if (event.window.event == SDL_WINDOWEVENT_MOVED) {
-                on_window_move_callback_(event.window.data1, event.window.data2);
+                if (on_window_move_callback_) {
+                    on_window_move_callback_(event.window.data1, event.window.data2);
+                }
             }
             break;
+        default:
+            break;
+        }
+    }
+
+    if (on_window_move_callback_) {
+        int window_x = 0;
+        int window_y = 0;
+        SDL_GetWindowPosition(window_, &window_x, &window_y);
+        on_window_move_callback_(window_x, window_y);
     }
 }
 
@@ -280,7 +326,7 @@ void Renderer_2D::render_fps_() {
             fps_rect,
             renderer_,
             "open-sans-24",
-            {255, 0, 0, 255}
+            {125, 145, 169, 255}
     );
 }
 
@@ -319,7 +365,8 @@ void Renderer_2D::render_latest_move_() {
     };
 
 
-    SDL_SetRenderDrawColor(renderer_, 246, 231, 116, 255);
+    SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer_, 243, 178, 62, 145);
     SDL_RenderFillRects(renderer_, &rectangles.front(), rectangles.size());
 }
 
@@ -347,7 +394,8 @@ void Renderer_2D::render_cursor_() {
     };
 
     // TODO: remove the hardcoded color
-    SDL_SetRenderDrawColor(renderer_, 135, 100, 43, 50);
+    SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer_, 55, 185, 158, 72);
     SDL_RenderFillRect(renderer_, &hover_rectangle);
 }
 
@@ -383,6 +431,7 @@ void Renderer_2D::render_flash_message_() {
             flash_message_.color.b,
             flash_message_.color.a
     );
+    SDL_SetRenderDrawBlendMode(renderer_, SDL_BLENDMODE_BLEND);
     SDL_RenderFillRect(renderer_, &flash_message_rect);
 }
 
@@ -468,11 +517,6 @@ void Renderer_2D::render() {
         SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 100);
         SDL_RenderFillRect(renderer_, &rect);
     }
-
-    // Render fps if we're in debug mode
-#ifdef DEBUG
-    render_fps_();
-#endif
 
     SDL_RenderPresent(renderer_);
 }

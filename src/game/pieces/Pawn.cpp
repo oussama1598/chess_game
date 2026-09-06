@@ -2,10 +2,15 @@
 
 Pawn::Pawn(int player_id) : Piece{'P', player_id} {}
 
+Piece *Pawn::clone() const {
+    return new Pawn(*this);
+}
+
 std::vector<std::string>
 Pawn::get_possible_moves(const bool is_top, const std::string &from) {
     piece_coordinates source = get_piece_coordinates_from_id(from);
-    bool is_first_move = is_top ? source.line >= rows - 2 : source.line < 2;
+    bool can_move_two_squares = is_first_move_ &&
+                                (is_top ? source.line == rows - 2 : source.line == 1);
 
     std::vector<std::string> possible_moves;
 
@@ -32,7 +37,7 @@ Pawn::get_possible_moves(const bool is_top, const std::string &from) {
     }
 
     // add the first move, two steps manually
-    if (is_first_move)
+    if (can_move_two_squares)
         possible_moves.push_back(
                 get_id_from_coordinates(
                         {

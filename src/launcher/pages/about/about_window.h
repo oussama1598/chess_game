@@ -5,7 +5,6 @@
 #include <functional>
 #include "QWidget"
 #include "QCloseEvent"
-#include "QTimer"
 #include "heart_graphic.h"
 
 namespace Ui {
@@ -17,7 +16,6 @@ Q_OBJECT
 
 private:
     Ui::About_Window *ui;
-    QTimer *timer_;
     Heart_Graphic *heart_graphic_;
     QGraphicsScene *graphics_scene_;
 
